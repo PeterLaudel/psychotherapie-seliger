@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main>
-      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start p-4 gap-8 sticky top-0 bg-black">
+      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start p-4 gap-8 sticky top-0 bg-white">
         <Link href="/about-me">Über mich</Link>
         <Link href="/praxis">Praxis</Link>
         <Link href="/kosten">Kosten</Link>
@@ -12,10 +12,16 @@ export default function Home() {
           Termin buchen
         </Link>
       </div>
-      <div className="flex h-[80vh] bg-[url('/raum.jpg')] bg-cover bg-fixed bg-center">
-        <div className="m-auto">Psychotherapie am Stadion</div>
+      <div className="flex h-[80vh] bg-[url('/raum.jpg')] bg-cover bg-fixed bg-center text-white">
+        <div className="m-auto grid-flow-row">
+          <div>Ute Seliger, Psychologische Psychotherapeutin</div>
+          <div className="text-7xl">Praxis für Psychotherapie</div>
+        </div>
       </div>
-      <div className="grid grid-flow-col grid-cols-2 gap-x-12 items-center justify-items-center">
+      <div className="grid grid-flow-col grid-cols-2 items-center justify-items-center px-4 py-28">
+        <div>
+          <Image src="/person.jpg" alt="Raum" width={400} height={400} />
+        </div>
         <div>
           <div className="text-2xl pb-2">Philosophie</div>
           <div>
@@ -32,9 +38,6 @@ export default function Home() {
             wichtig, da der Zugang zu sich selbst von Mensch zu Mensch
             unterschiedlich ist.
           </div>
-        </div>
-        <div>
-          <Image src="/raum.jpg" alt="Raum" width={400} height={400} />
         </div>
       </div>
       <div className="text-center w-full h-[40vw] content-center bg-red-600">
