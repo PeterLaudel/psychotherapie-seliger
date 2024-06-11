@@ -12,7 +12,7 @@ export default function Home() {
           Termin buchen
         </Link>
       </div>
-      <div className="flex h-[80vh] bg-[url('/raum.jpg')] bg-cover bg-fixed bg-center text-white">
+      <div className="flex h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-fixed bg-center text-white">
         <div className="m-auto grid-flow-row">
           <div>Ute Seliger, Psychologische Psychotherapeutin</div>
           <div className="text-7xl">Praxis für Psychotherapie</div>
@@ -20,7 +20,12 @@ export default function Home() {
       </div>
       <div className="grid grid-flow-col grid-cols-2 items-center justify-items-center px-4 py-28">
         <div>
-          <Image src="/person.jpg" alt="Raum" width={400} height={400} />
+          <Image
+            src="/psychotherapie-seliger/person.jpg"
+            alt="Raum"
+            width={400}
+            height={400}
+          />
         </div>
         <div>
           <div className="text-2xl pb-2">Philosophie</div>
