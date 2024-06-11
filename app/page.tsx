@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Image from "next/image";
 import Navbar from "../components/navbar";
 
@@ -6,7 +5,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-center text-white">
+      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-center bg-fixed text-white">
         <div className="m-auto grid-flow-row">
           <div className="text-xs md:text-xl">
             Ute Seliger, Psychologische Psychotherapeutin

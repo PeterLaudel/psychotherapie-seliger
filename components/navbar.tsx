@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <div className="p-4">
-      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start gap-8 sticky top-0 bg-white max-md:hidden">
+    <div className="p-4 sticky top-0 bg-white">
+      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start gap-8 max-md:hidden">
         <Link href="/about-me">Über mich</Link>
         <Link href="/praxis">Praxis</Link>
         <Link href="/kosten">Kosten</Link>
