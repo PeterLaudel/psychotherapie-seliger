@@ -18,7 +18,7 @@ export default function Home() {
           <div className="text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div className="grid grid-flow-col grid-cols-2 items-center justify-items-center px-4 py-28">
+      <div className="grid grid-flow-row md:grid-flow-col items-center justify-items-center px-4 py-28">
         <div>
           <Image
             src="/psychotherapie-seliger/person.jpg"
