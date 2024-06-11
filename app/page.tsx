@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main>
-      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start p-4 gap-8 sticky top-0 bg-white">
+      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start p-4 gap-8 sticky top-0 bg-white max-md:hidden">
         <Link href="/about-me">Über mich</Link>
         <Link href="/praxis">Praxis</Link>
         <Link href="/kosten">Kosten</Link>
@@ -12,13 +12,15 @@ export default function Home() {
           Termin buchen
         </Link>
       </div>
-      <div className="flex h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-fixed bg-center text-white">
+      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-center text-white">
         <div className="m-auto grid-flow-row">
-          <div>Ute Seliger, Psychologische Psychotherapeutin</div>
-          <div className="text-7xl">Praxis für Psychotherapie</div>
+          <div className="text-xs md:text-xl">
+            Ute Seliger, Psychologische Psychotherapeutin
+          </div>
+          <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div className="grid grid-flow-row md:grid-flow-col items-center justify-items-center px-4 py-28">
+      <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center px-4 py-28">
         <div>
           <Image
             src="/psychotherapie-seliger/person.jpg"
