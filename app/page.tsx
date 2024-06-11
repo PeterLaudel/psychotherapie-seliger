@@ -1,17 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import Navbar from "../components/navbar";
 
 export default function Home() {
   return (
     <main>
-      <div className="grid grid-cols-[repeat(3,auto)_4fr] justify-start p-4 gap-8 sticky top-0 bg-white max-md:hidden">
-        <Link href="/about-me">Über mich</Link>
-        <Link href="/praxis">Praxis</Link>
-        <Link href="/kosten">Kosten</Link>
-        <Link className="justify-self-end" href="/book">
-          Termin buchen
-        </Link>
-      </div>
+      <Navbar />
       <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-center text-white">
         <div className="m-auto grid-flow-row">
           <div className="text-xs md:text-xl">
