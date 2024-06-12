@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     "Psychotherapie (Verhaltenstherapie) in Leipzig/Waldstraßenviertel für Selbstzahler und Privatversicherte",
   keywords: [
     "Psychotherapie",
+    "Psychotherapeut",
     "Psychologische Psychotherapeutin",
     "Ute Seliger",
     "Psychotherapie Seliger",
