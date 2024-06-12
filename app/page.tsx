@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Navbar from "../components/navbar";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,7 +14,10 @@ export default function Home() {
           <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center px-4 py-28">
+      <div
+        id="about_me"
+        className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center px-4 py-28"
+      >
         <div>
           <Image
             src="/psychotherapie-seliger/person.jpg"
@@ -42,6 +46,10 @@ export default function Home() {
       </div>
       <div className="text-center w-full h-[40vw] content-center bg-red-600">
         Über mich
+      </div>
+      <div className="flex bg-black p-8 text-white gap-4 justify-end">
+        <Link href="/impressum">Impressum</Link>
+        <Link href="/datenschutz">Datenschutz</Link>
       </div>
     </main>
   );
