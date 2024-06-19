@@ -20,8 +20,15 @@ export default function Navbar() {
           Termin buchen
         </Link>
       </div>
-      <div className="grid grid-flow-col md:hidden">
-        <div>Test1</div>
+      <div className="grid grid-flow-col md:hidden py-3 px-5 items-center">
+        <Image
+          src="/psychotherapie-seliger/logo3.svg"
+          alt=""
+          width="0"
+          height="0"
+          sizes="100%"
+          className="w-auto h-12"
+        />
         <div className="justify-self-end">
           <input
             id="check01"
@@ -29,11 +36,17 @@ export default function Navbar() {
             name="menu"
             className="peer hidden"
           />
-          <label htmlFor="check01">sMenu</label>
-          <ul className="hidden peer-checked:block">
-            <li>HUHU</li>
-            <li>HAHA</li>
-          </ul>
+          <label htmlFor="check01">
+            <Image
+              src="/psychotherapie-seliger/menu.svg"
+              alt=""
+              width="0"
+              height="0"
+              sizes="100%"
+              className="w-auto h-8"
+            />
+          </label>
+          <div className="hidden peer-checked:block relative"> HUHU</div>
         </div>
       </div>
     </div>
