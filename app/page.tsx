@@ -14,33 +14,43 @@ export default function Home() {
           <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div
-        id="about_me"
-        className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center px-4 py-28"
-      >
-        <div>
-          <Image
-            src="/psychotherapie-seliger/person.jpg"
-            alt="Raum"
-            width={400}
-            height={400}
-          />
-        </div>
-        <div>
-          <div className="text-2xl pb-2">Philosophie</div>
+      <div id="about_me" className="relative px-20 py-28">
+        <Image
+          src="/psychotherapie-seliger/links_unten.svg"
+          alt=""
+          width="0"
+          height="0"
+          sizes="100%"
+          className="absolute bottom-0 left-0 w-auto h-[50%] -z-10 "
+        />
+        <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
           <div>
-            Psychotherapie bedeutet für mich einen sicheren Raum zu gestalten,
-            indem Sie ihre Probleme und Herausforderungen unbefangen anschauen
-            können. Dabei ist mir ein gemeinsames Verstehen ihrer Problematik in
-            der Ursache, sowie der auslösenden und aufrechterhaltenden Faktoren
-            wichtig. Hierzu sollen Gefühle gelebt, Gedanken ausgesprochen und
-            Verhalten gezeigt werden können, um Veränderungen anzustoßen und
-            neue Denk- und Verhaltensweisen aufbauen zu können. Ich verwende die
-            Methode der Verhaltenstherapie und lasse hierzu emotionsfokussierten
-            Techniken, sowie schematherapeutische und ACT- basierende Elemente
-            einfließen. Generell ist mir jedoch ein individuelles Vorgehen
-            wichtig, da der Zugang zu sich selbst von Mensch zu Mensch
-            unterschiedlich ist.
+            <Image
+              src="/psychotherapie-seliger/person.jpg"
+              alt="Raum"
+              width={0}
+              height={0}
+              sizes="100%"
+              className="h-[70vh] w-auto rounded-[50%]"
+            />
+          </div>
+          <div>
+            <div className="text-2xl pb-2">Philosophie</div>
+            <div>
+              Psychotherapie bedeutet für mich einen sicheren Raum zu gestalten,
+              indem Sie ihre Probleme und Herausforderungen unbefangen anschauen
+              können. Dabei ist mir ein gemeinsames Verstehen ihrer Problematik
+              in der Ursache, sowie der auslösenden und aufrechterhaltenden
+              Faktoren wichtig. Hierzu sollen Gefühle gelebt, Gedanken
+              ausgesprochen und Verhalten gezeigt werden können, um
+              Veränderungen anzustoßen und neue Denk- und Verhaltensweisen
+              aufbauen zu können. Ich verwende die Methode der
+              Verhaltenstherapie und lasse hierzu emotionsfokussierten
+              Techniken, sowie schematherapeutische und ACT- basierende Elemente
+              einfließen. Generell ist mir jedoch ein individuelles Vorgehen
+              wichtig, da der Zugang zu sich selbst von Mensch zu Mensch
+              unterschiedlich ist.
+            </div>
           </div>
         </div>
       </div>

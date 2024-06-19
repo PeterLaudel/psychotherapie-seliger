@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   keywords: [
     "Psychotherapie",
     "Psychotherapeut",
+    "Psychotherapeutin",
     "Psychologische Psychotherapeutin",
+    "Psychologischer Psychotherapeut",
+    "Einzeltherapie",
     "Ute Seliger",
     "Psychotherapie Seliger",
     "Praxis für Psychotherapie",
