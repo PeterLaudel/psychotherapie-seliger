@@ -6,32 +6,24 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-center md:bg-fixed text-white">
-        <div className="m-auto grid-flow-row">
+      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum2.jpg')] bg-cover bg-center md:bg-fixed text-white">
+        <div className="m-auto grid-flow-row [text-shadow:_0_1px_0_rgb(0_0_0_/_40%)]">
           <div className="text-xs md:text-xl">
             Ute Seliger, Psychologische Psychotherapeutin
           </div>
           <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div id="about_me" className="relative px-20 py-28">
-        <Image
-          src="/psychotherapie-seliger/links_unten.svg"
-          alt=""
-          width="0"
-          height="0"
-          sizes="100%"
-          className="absolute bottom-0 left-0 w-auto h-[50%] -z-10 "
-        />
+      <div id="about_me" className="px-20 py-28 ">
         <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
           <div>
             <Image
               src="/psychotherapie-seliger/person.jpg"
-              alt="Raum"
+              alt="Person"
               width={0}
               height={0}
               sizes="100%"
-              className="h-[70vh] w-auto rounded-[50%]"
+              className="h-auto max-h-[70vh] w-auto rounded-[50%]"
             />
           </div>
           <div>
