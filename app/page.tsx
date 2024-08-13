@@ -97,9 +97,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="text-center w-full h-[40vw] content-center bg-red-600">
-        Über mich
-      </div>
       <div className="flex bg-black p-8 text-white gap-4 justify-end">
         <Link href="/impressum">Impressum</Link>
         <Link href="/datenschutz">Datenschutz</Link>
