@@ -6,7 +6,7 @@ export default function Navbar() {
     <div>
       <div className="grid grid-cols-[repeat(4,auto)_4fr] justify-start items-center gap-8 max-md:hidden px-10 py-3">
         <Image
-          src="/psychotherapie-seliger/logo3.svg"
+          src="/psychotherapie-seliger/logo.svg"
           alt=""
           width="0"
           height="0"
@@ -22,7 +22,7 @@ export default function Navbar() {
       </div>
       <div className="grid grid-flow-col md:hidden py-3 px-5 items-center">
         <Image
-          src="/psychotherapie-seliger/logo3.svg"
+          src="/psychotherapie-seliger/logo.svg"
           alt=""
           width="0"
           height="0"
