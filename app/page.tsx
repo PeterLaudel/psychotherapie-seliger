@@ -14,16 +14,16 @@ export default function Home() {
           <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div id="therapie" className="px-20 py-28 bg-slate-50">
+      <div id="therapie" className="px-20 py-28 bg-regular-green">
         <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
           <div>
             <Image
-              src="/psychotherapie-seliger/prozess.png"
+              src="/psychotherapie-seliger/filler.png"
               alt="Person"
               width={0}
               height={0}
               sizes="100%"
-              className="h-auto max-h-[70vh] w-auto rounded-[50%]"
+              className="h-auto max-h-[70vh] w-auto rounded-[40%]"
             />
           </div>
           <div>
