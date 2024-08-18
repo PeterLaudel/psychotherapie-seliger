@@ -8,13 +8,45 @@ export default function Home() {
       <Navbar />
       <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum2.jpg')] bg-cover bg-center md:bg-fixed text-white">
         <div className="m-auto grid-flow-row [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
-          <div className="text-xs md:text-xl">
-            Ute Seliger, Psychologische Psychotherapeutin
-          </div>
           <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
       </div>
-      <div id="therapie" className="px-20 py-28 bg-regular-green">
+      <div id="about_me" className="px-20 py-16 bg-regular-green ">
+        <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
+          <div>
+            <Image
+              src="/psychotherapie-seliger/person.jpg"
+              alt="Person"
+              width={0}
+              height={0}
+              sizes="100%"
+              className="h-auto max-h-[70vh] w-auto rounded-[50%]"
+            />
+          </div>
+          <div>
+            <div className="pb-4">
+              <div className="text-4xl">Ute Seliger</div>
+              <div className="text-xl">
+                Psychologische Psychotherapeutin in Verhaltenstherapie
+              </div>
+            </div>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>Studium der Psychologie (M.Sc.) </li>
+              <li>
+                5-jährige Ausbildung zur Psychologischen Psychotherapeutin in
+                Verhaltenstherapie
+              </li>
+              <li>seit 2017 therapeutische Tätigkeit im ambulanten Setting</li>
+              <li>2015-2016 Psychologin in Rehaklinik</li>
+              <li>2016-2020 Psychologin in psychiatrischer Klinik</li>
+              <li>2021 approbierte psychologische Psychotherapeutin</li>
+              <li>seit 2021 therapeutische Tätigkeit in Online-Therapie</li>
+              <li>seit 2024 Privatpraxis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div id="therapie" className="px-20 py-16">
         <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
           <div>
             <Image
@@ -66,34 +98,6 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
-      </div>
-      <div id="about_me" className="px-20 py-28 ">
-        <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
-          <div>
-            <Image
-              src="/psychotherapie-seliger/person.jpg"
-              alt="Person"
-              width={0}
-              height={0}
-              sizes="100%"
-              className="h-auto max-h-[70vh] w-auto rounded-[50%]"
-            />
-          </div>
-          <div>
-            <div className="text-2xl pb-2">Qualifikation</div>
-            <ul className="list-disc space-y-2 pl-5">
-              <li>Studium der Psychologie (Masterabschluss)</li>
-              <li>
-                5-jährige Ausbildung zur Psychologischen Psychotherapeutin in
-                Verhaltenstherapie
-              </li>
-              <li>seit 2017 therapeutische Tätigkeit im ambulanten Setting</li>
-              <li>2015-2016 Psychologin in Rehaklinik</li>
-              <li>2016-2020 Psychologin in psychiatrischer Klinik</li>
-              <li>seit 2021 therapeutische Tätigkeit in Online-Therapie</li>
-            </ul>
           </div>
         </div>
       </div>
