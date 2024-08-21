@@ -101,6 +101,37 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <div id="therapie" className="px-20 py-16 bg-regular-green">
+        <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
+          <div>
+            <div className="text-2xl pb-2 underline">Behandlungsspektrum</div>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>Beziehungs- und Interaktionsstörungen</li>
+              <li>Anpassungsstörung</li>
+              <li>Depression</li>
+              <li>Bipolare Störung</li>
+              <li>Zwangsstörung</li>
+              <li>Panik und Agoraphobie</li>
+              <li>Soziale Phobie</li>
+              <li>Generalisierte</li>
+              <li>Angststörung</li>
+              <li>Somatoforme</li>
+              <li>Störungen</li>
+              <li>Essstörung</li>
+            </ul>
+          </div>
+          <div>
+            <Image
+              src="/psychotherapie-seliger/brain.png"
+              alt="Person"
+              width={0}
+              height={0}
+              sizes="100%"
+              className="h-auto max-h-[70vh] w-auto rounded-[40%]"
+            />
+          </div>
+        </div>
+      </div>
       <div className="flex bg-black p-8 text-white gap-4 justify-end">
         <Link href="/impressum">Impressum</Link>
         <Link href="/datenschutz">Datenschutz</Link>
