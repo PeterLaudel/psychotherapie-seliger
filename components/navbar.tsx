@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Navbar() {
   return (
     <div>
-      <div className="grid grid-cols-[repeat(4,auto)_4fr] justify-start items-center gap-8 max-md:hidden px-10 py-3">
+      <div className="grid grid-cols-[repeat(5,auto)_4fr] justify-start items-center gap-8 max-md:hidden px-10 py-3">
         <Image
           src="/psychotherapie-seliger/logo.svg"
           alt=""
@@ -14,7 +14,8 @@ export default function Navbar() {
           className="w-auto h-12"
         />
         <Link href="/#about_me">Über mich</Link>
-        <Link href="/#praxis">Praxis</Link>
+        <Link href="/#therapie">Therapie</Link>
+        <Link href="/#behandlungsspektrum">Behandlungsspektrum</Link>
         <Link href="/#kosten">Kosten</Link>
         <Link className="justify-self-end" href="/book">
           Termin buchen
