@@ -132,11 +132,13 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div id="kosten" className="px-20 py-16">
-        <div className="grid grid-flow-row md:grid-flow-col md:gap-8 items-center justify-items-center">
+      <div id="kosten" className="px-20 py-16 bg-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-items-center">
           <div>
-            <div className="text-2xl pb-2 underline">Kosten der Therapie</div>
-            <div>
+            <h2 className="text-2xl pb-2 underline font-bold">
+              Kosten der Therapie
+            </h2>
+            <p>
               Die Abrechnung in meiner Praxis erfolgt gemäß den aktuellen{" "}
               <a
                 href="https://api.bptk.de/uploads/Uebersicht_Analogleistungen_gemaess_Abrechnungsempfehlungen_B_Pt_K_B_Ae_K_PKV_Beihilfe_2024_07_01_5d59d963de.pdf"
@@ -150,18 +152,16 @@ export default function Home() {
               . Die genauen Kosten hängen von der jeweiligen Therapieleistung ab
               und orientieren sich an den empfohlenen Sätzen. Für weitere
               Informationen stehe ich Ihnen gerne zur Verfügung.
-            </div>
+            </p>
           </div>
           <div>
-            <div className="font-bold">Therapie möglich für:</div>
-            <div>
-              <ul>
-                <li>Privatversicherte</li>
-                <li>Beihilfefähige</li>
-                <li>Heilfürsorgeberechtigte</li>
-                <li>Selbstzahler*innen</li>
-              </ul>
-            </div>
+            <h3 className="font-bold text-xl">Therapie möglich für:</h3>
+            <ul className="list-disc pl-5">
+              <li>Privatversicherte</li>
+              <li>Beihilfefähige</li>
+              <li>Heilfürsorgeberechtigte</li>
+              <li>Selbstzahler*innen</li>
+            </ul>
           </div>
         </div>
       </div>
