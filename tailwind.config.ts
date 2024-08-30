@@ -14,7 +14,14 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        "regular-green": "#e6dfcf",
+        even: {
+          background: "#2a4d4e",
+          text: "#f1ede1",
+        },
+        odd: {
+          background: "#faf3e0",
+          text: "#2c2c2c",
+        },
       },
     },
   },

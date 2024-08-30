@@ -7,8 +7,34 @@ body {
   background-color: #e7d4b8ff;
 }
 
+.image-text-grid {
+  grid-template-areas: "image text";
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .bg-color {
+    > div:nth-child(odd) {
+      @apply bg-odd-background;
+      @apply text-odd-text;
+    }
+
+    > div:nth-child(even) {
+      @apply bg-even-background;
+      @apply text-even-text;
+    }
+  }
+}
+
+@layer components {
+  .section-grid {
+    @apply grid;
+    @apply md:grid-cols-2;
+    @apply md:[grid-template-areas:'image_text'];
+    @apply items-center justify-items-center;
+    @apply px-20 py-16;
   }
 }
