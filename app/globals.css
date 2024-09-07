@@ -2,26 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  color: #0b4450ff;
-  background-color: #e7d4b8ff;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 
-  .bg-color {
-    > div:nth-child(odd) {
-      @apply bg-odd-background;
-      @apply text-odd-text;
-    }
-
-    > div:nth-child(even) {
-      @apply bg-even-background;
-      @apply text-even-text;
-    }
+  .end {
+    display: flex;
+    justify-content: flex-end;
+    background-color: black;
+    padding: 2rem;
+    color: white;
   }
 }
 
@@ -51,5 +42,17 @@ body {
 
   .text {
     @apply md:[grid-area:text];
+  }
+
+  .sections {
+    > div:nth-child(odd) {
+      @apply bg-odd-background;
+      @apply text-odd-text;
+    }
+
+    > div:nth-child(even) {
+      @apply bg-even-background;
+      @apply text-even-text;
+    }
   }
 }
