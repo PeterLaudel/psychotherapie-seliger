@@ -7,10 +7,6 @@ body {
   background-color: #e7d4b8ff;
 }
 
-.image-text-grid {
-  grid-template-areas: "image text";
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -30,11 +26,30 @@ body {
 }
 
 @layer components {
-  .section-grid {
+  .section {
+    @apply px-20 py-16;
+  }
+  .image-text {
     @apply grid;
-    @apply md:grid-cols-2;
+    @apply gap-8;
+    @apply md:[grid-template-areas:'image''text'];
     @apply md:[grid-template-areas:'image_text'];
     @apply items-center justify-items-center;
-    @apply px-20 py-16;
+  }
+
+  .text-image {
+    @apply grid;
+    @apply gap-8;
+    @apply md:[grid-template-areas:'image''text'];
+    @apply md:[grid-template-areas:'text_image'];
+    @apply items-center justify-items-center;
+  }
+
+  .image {
+    @apply md:[grid-area:image];
+  }
+
+  .text {
+    @apply md:[grid-area:text];
   }
 }

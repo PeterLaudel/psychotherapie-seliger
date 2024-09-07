@@ -13,8 +13,8 @@ export default function Home() {
       </div>
 
       {/* über mich */}
-      <div id="about_me" className="section-grid">
-        <div className="md:[grid-area:image]">
+      <div id="about_me" className="section image-text">
+        <div className="image">
           <Image
             src="/psychotherapie-seliger/person.jpg"
             alt="Person"
@@ -24,7 +24,7 @@ export default function Home() {
             className="h-auto max-h-[70vh] w-auto rounded-[50%]"
           />
         </div>
-        <div className="md:[grid-area:text]">
+        <div className="text">
           <div className="pb-4">
             <div className="text-4xl">Ute Seliger</div>
             <div className="text-xl">
@@ -48,97 +48,93 @@ export default function Home() {
       </div>
 
       {/* Therapie */}
-      <div id="therapie" className="px-20 py-16">
-        <div className="grid grid-flow-row md:grid-cols-2 md:gap-8 items-center justify-items-center">
+      <div id="therapie" className="section text-image">
+        <div className="image">
+          <Image
+            src="/psychotherapie-seliger/filler.png"
+            alt="Person"
+            width={0}
+            height={0}
+            sizes="100%"
+            className="h-auto max-h-[70vh] w-auto rounded-[40%]"
+          />
+        </div>
+        <div className="text">
+          <div className="text-2xl pb-2">Ablauf der Therapie</div>
+          <div className="py-4">Einzeltherapie: 50 Minuten</div>
           <div>
-            <Image
-              src="/psychotherapie-seliger/filler.png"
-              alt="Person"
-              width={0}
-              height={0}
-              sizes="100%"
-              className="h-auto max-h-[70vh] w-auto rounded-[40%]"
-            />
-          </div>
-          <div>
-            <div className="text-2xl pb-2">Ablauf der Therapie</div>
-            <div className="py-4">Einzeltherapie: 50 Minuten</div>
-            <div>
-              <ul className="space-y-4">
-                <li className="space-y-2">
-                  <div className="font-bold">
-                    1 Kennlernenphase - Diagnostik und Zielsetzung
-                  </div>
-                  <div>
-                    In den ersten 5 Gesprächen (Probatorik) werden wir uns
-                    kennenlernen. Wir betrachten dabei gemeinsam die Einflüsse,
-                    die ihre Probleme verursachen und aufrechterhalten. Zudem
-                    werden wir konkrete Therapieziele festlegen.
-                  </div>
-                </li>
-                <li className="space-y-2">
-                  <div className="font-bold">
-                    2 Therapiephase - Prozess der Veränderung
-                  </div>
-                  <div>
-                    Auf Basis der Therapieziele wenden wir uns nun den nötigen
-                    Schritten zu, um Veränderungen schaffen zu können. Dabei
-                    kommen verschiedene psychotherapeutische Methoden zum
-                    Einsatz, welche innerhalb der Therapiesitzung, als auch
-                    zwischen den Sitzungen umgesetzt werden. Im engen Austausch
-                    beleuchten wir, was für Sie funktioniert und was nicht.
-                  </div>
-                </li>
-                <li className="space-y-2">
-                  <div className="font-bold">3 Abschlussphase - Abschied</div>
-                  <div>
-                    Immer mehr schaffen Sie es, die gewünschte Veränderung
-                    aufrechtzuerhalten und die Erkenntnisse aus der Therapie in
-                    ihren Alltag zu integrieren. Es wird nun Zeit, die
-                    Sitzungsfrequenz zu reduzieren.
-                  </div>
-                </li>
-              </ul>
-            </div>
+            <ul className="space-y-4">
+              <li className="space-y-2">
+                <div className="font-bold">
+                  1 Kennlernenphase - Diagnostik und Zielsetzung
+                </div>
+                <div>
+                  In den ersten 5 Gesprächen (Probatorik) werden wir uns
+                  kennenlernen. Wir betrachten dabei gemeinsam die Einflüsse,
+                  die ihre Probleme verursachen und aufrechterhalten. Zudem
+                  werden wir konkrete Therapieziele festlegen.
+                </div>
+              </li>
+              <li className="space-y-2">
+                <div className="font-bold">
+                  2 Therapiephase - Prozess der Veränderung
+                </div>
+                <div>
+                  Auf Basis der Therapieziele wenden wir uns nun den nötigen
+                  Schritten zu, um Veränderungen schaffen zu können. Dabei
+                  kommen verschiedene psychotherapeutische Methoden zum Einsatz,
+                  welche innerhalb der Therapiesitzung, als auch zwischen den
+                  Sitzungen umgesetzt werden. Im engen Austausch beleuchten wir,
+                  was für Sie funktioniert und was nicht.
+                </div>
+              </li>
+              <li className="space-y-2">
+                <div className="font-bold">3 Abschlussphase - Abschied</div>
+                <div>
+                  Immer mehr schaffen Sie es, die gewünschte Veränderung
+                  aufrechtzuerhalten und die Erkenntnisse aus der Therapie in
+                  ihren Alltag zu integrieren. Es wird nun Zeit, die
+                  Sitzungsfrequenz zu reduzieren.
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
       {/* Behandlungsspektrum */}
-      <div id="behandlungsspektrum" className="px-20 py-16">
-        <div className="grid grid-flow-row md:grid-cols-2 md:gap-8 items-center justify-items-center">
-          <div>
-            <div className="text-2xl pb-2 underline">Behandlungsspektrum</div>
-            <ul className="list-disc space-y-2 pl-5">
-              <li>Beziehungs- und Interaktionsstörungen</li>
-              <li>Anpassungsstörung</li>
-              <li>Depression</li>
-              <li>Bipolare Störung</li>
-              <li>Zwangsstörung</li>
-              <li>Panik und Agoraphobie</li>
-              <li>Soziale Phobie</li>
-              <li>Generalisierte</li>
-              <li>Angststörung</li>
-              <li>Somatoforme</li>
-              <li>Störungen</li>
-              <li>Essstörung</li>
-            </ul>
-          </div>
-          <div>
-            <Image
-              src="/psychotherapie-seliger/brain.png"
-              alt="Person"
-              width={0}
-              height={0}
-              sizes="100%"
-              className="h-auto max-h-[70vh] w-auto rounded-[40%]"
-            />
-          </div>
+      <div id="behandlungsspektrum" className="section image-text">
+        <div className="image">
+          <Image
+            src="/psychotherapie-seliger/brain.png"
+            alt="Person"
+            width={0}
+            height={0}
+            sizes="100%"
+            className="h-auto max-h-[70vh] w-auto rounded-[40%]"
+          />
+        </div>
+        <div className="text">
+          <div className="text-2xl pb-2 underline">Behandlungsspektrum</div>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>Beziehungs- und Interaktionsstörungen</li>
+            <li>Anpassungsstörung</li>
+            <li>Depression</li>
+            <li>Bipolare Störung</li>
+            <li>Zwangsstörung</li>
+            <li>Panik und Agoraphobie</li>
+            <li>Soziale Phobie</li>
+            <li>Generalisierte</li>
+            <li>Angststörung</li>
+            <li>Somatoforme</li>
+            <li>Störungen</li>
+            <li>Essstörung</li>
+          </ul>
         </div>
       </div>
 
       {/* Kosten */}
-      <div id="kosten" className="px-20 py-16">
+      <div id="kosten" className="section">
         <div>
           <h2 className="text-2xl pb-2 underline font-bold">
             Kosten der Therapie
@@ -151,7 +147,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="text-blue-500 underline"
             >
-              Abrechnungsempfehlungen der Bundespsychotherapeutenkammer für
+              Abrechnungsempfehlungen der Bundespsychotherapeutenkammer fürg
               Privatversicherte und Beihilfeberechtigte (Stand: 01.07.2024)
             </a>
             . Die genauen Kosten hängen von der jeweiligen Therapieleistung ab
