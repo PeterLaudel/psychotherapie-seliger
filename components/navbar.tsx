@@ -3,53 +3,51 @@ import Image from "next/image";
 
 export default function Navbar() {
   return (
-    <div>
-      <div className="grid grid-cols-[repeat(5,auto)_4fr] justify-start items-center gap-8 max-md:hidden px-10 py-3">
-        <Image
-          src="/psychotherapie-seliger/logo.svg"
-          alt=""
-          width="0"
-          height="0"
-          sizes="100%"
-          className="w-auto h-12"
-        />
-        <Link href="/#about_me">Über mich</Link>
-        <Link href="/#therapie">Therapie</Link>
-        <Link href="/#behandlungsspektrum">Behandlungsspektrum</Link>
-        <Link href="/#kosten">Kosten</Link>
-        <Link className="justify-self-end" href="/book">
-          Termin buchen
-        </Link>
-      </div>
-      <div className="grid grid-flow-col md:hidden py-3 px-5 items-center">
-        <Image
-          src="/psychotherapie-seliger/logo.svg"
-          alt=""
-          width="0"
-          height="0"
-          sizes="100%"
-          className="w-auto h-12"
-        />
-        <div className="justify-self-end">
-          <input
-            id="check01"
-            type="checkbox"
-            name="menu"
-            className="peer hidden"
+    <nav className="bg-odd-background text-odd-text">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <Link href="/">
+          <Image
+            src="/psychotherapie-seliger/logo.svg"
+            alt=""
+            width="0"
+            height="0"
+            sizes="100%"
+            className="w-auto h-12"
           />
-          <label htmlFor="check01">
-            <Image
-              src="/psychotherapie-seliger/menu.svg"
-              alt=""
-              width="0"
-              height="0"
-              sizes="100%"
-              className="w-auto h-8"
-            />
-          </label>
-          <div className="hidden peer-checked:block relative"> HUHU</div>
+        </Link>
+        <input
+          id="check01"
+          type="checkbox"
+          name="menu"
+          className="peer hidden"
+        />
+        <label className="md:hidden" htmlFor="check01">
+          <Image
+            src="/psychotherapie-seliger/menu.svg"
+            alt=""
+            width="0"
+            height="0"
+            sizes="100%"
+            className="w-auto h-8"
+          />
+        </label>
+        <div className="hidden peer-checked:block w-full md:block md:w-auto">
+          <ul className="flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
+            <li>
+              <Link href="/#about_me">Über mich</Link>
+            </li>
+            <li>
+              <Link href="/#therapie">Therapie</Link>
+            </li>
+            <li>
+              <Link href="/#behandlungsspektrum">Behandlungsspektrum</Link>
+            </li>
+            <li>
+              <Link href="/#kosten">Kosten</Link>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

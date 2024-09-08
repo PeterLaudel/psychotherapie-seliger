@@ -5,16 +5,14 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main>
-      <div className="sections">
-        <Navbar />
-        <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum2.jpg')] bg-cover bg-center md:bg-fixed text-white">
-          <div className="m-auto grid-flow-row [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
-            <div className="text-2xl md:text-7xl">
-              Praxis für Psychotherapie
-            </div>
-          </div>
+      <Navbar />
+      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum2.jpg')] bg-cover bg-center md:bg-fixed text-white">
+        <div className="m-auto grid-flow-row [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
+          <div className="text-2xl md:text-7xl">Praxis für Psychotherapie</div>
         </div>
+      </div>
 
+      <div className="sections">
         {/* über mich */}
         <div id="about_me" className="section image-text">
           <div className="image">
@@ -137,12 +135,10 @@ export default function Home() {
         </div>
 
         {/* Kosten */}
-        <div id="kosten" className="section">
-          <div>
-            <h2 className="text-2xl pb-2 underline font-bold">
-              Kosten der Therapie
-            </h2>
-            <p>
+        <div id="kosten" className="section py-8 px-4 md:px-8 lg:px-16">
+          <div className="mb-8">
+            <h2 className="text-2xl pb-2">Kosten der Therapie</h2>
+            <p className="text-lg leading-relaxed">
               Die Abrechnung in meiner Praxis erfolgt gemäß den aktuellen{" "}
               <a
                 href="https://api.bptk.de/uploads/Uebersicht_Analogleistungen_gemaess_Abrechnungsempfehlungen_B_Pt_K_B_Ae_K_PKV_Beihilfe_2024_07_01_5d59d963de.pdf"
@@ -159,8 +155,8 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <h3 className="font-bold text-xl">Therapie möglich für:</h3>
-            <ul className="list-disc pl-5">
+            <h3 className="font-bold text-xl mb-4">Therapie möglich für:</h3>
+            <ul className="list-disc pl-5 space-y-2">
               <li>Privatversicherte</li>
               <li>Beihilfefähige</li>
               <li>Heilfürsorgeberechtigte</li>
