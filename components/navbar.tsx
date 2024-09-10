@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Navbar() {
   return (
     <nav className="bg-odd-background text-odd-text">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="flex flex-wrap items-center justify-between mx-auto px-8 py-4">
         <Link href="/">
           <Image
             src="/psychotherapie-seliger/logo.svg"
@@ -32,7 +32,7 @@ export default function Navbar() {
           />
         </label>
         <div className="hidden peer-checked:block w-full md:block md:w-auto">
-          <ul className="flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
+          <ul className="flex flex-col md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
             <li>
               <Link href="/#about_me">Über mich</Link>
             </li>
