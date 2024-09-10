@@ -27,10 +27,8 @@ export default function Home() {
           </div>
           <div className="text">
             <div className="pb-4">
-              <div className="text-4xl">Ute Seliger</div>
-              <div className="text-xl">
-                Psychologische Psychotherapeutin in Verhaltenstherapie
-              </div>
+              <h1>Ute Seliger</h1>
+              <h4>Psychologische Psychotherapeutin in Verhaltenstherapie</h4>
             </div>
             <ul className="list-disc space-y-2 pl-5">
               <li>Studium der Psychologie (M.Sc.) </li>
@@ -61,7 +59,7 @@ export default function Home() {
             />
           </div>
           <div className="text">
-            <div className="text-2xl pb-2">Ablauf der Therapie</div>
+            <h3 className="pb-2">Ablauf der Therapie</h3>
             <div className="py-4">Einzeltherapie: 50 Minuten</div>
             <div>
               <ul className="space-y-4">
@@ -116,7 +114,7 @@ export default function Home() {
             />
           </div>
           <div className="text">
-            <div className="text-2xl pb-2 underline">Behandlungsspektrum</div>
+            <h3 className="pb-2 underline">Behandlungsspektrum</h3>
             <ul className="list-disc space-y-2 pl-5">
               <li>Beziehungs- und Interaktionsstörungen</li>
               <li>Anpassungsstörung</li>
@@ -137,7 +135,7 @@ export default function Home() {
         {/* Kosten */}
         <div id="kosten" className="section py-8 px-4 md:px-8 lg:px-16">
           <div className="mb-8">
-            <h2 className="text-2xl pb-2">Kosten der Therapie</h2>
+            <h3 className="pb-2">Kosten der Therapie</h3>
             <p className="text-lg leading-relaxed">
               Die Abrechnung in meiner Praxis erfolgt gemäß den aktuellen{" "}
               <a
@@ -155,7 +153,7 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <h3 className="font-bold text-xl mb-4">Therapie möglich für:</h3>
+            <h4 className="font-bold mb-4">Therapie möglich für:</h4>
             <ul className="list-disc pl-5 space-y-2">
               <li>Privatversicherte</li>
               <li>Beihilfefähige</li>
