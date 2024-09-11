@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Navbar from "../components/navbar";
 import Link from "next/link";
+import { Contact } from "../components/contact";
 
 export default function Home() {
   return (
@@ -165,6 +168,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Contact />
       <div className="end">
         <Link href="/impressum">Impressum</Link>
         <Link href="/datenschutz">Datenschutz</Link>
