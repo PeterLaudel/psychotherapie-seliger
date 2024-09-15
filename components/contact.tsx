@@ -30,19 +30,17 @@ export function Contact() {
             onSubmit={handleSubmit}
             className="w-full max-w-md bg-white p-6 rounded-md shadow-md"
           >
-            <Field name="name" validate={required}>
+            <Field name="name" validate={required} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="vorname"
+                    htmlFor={input.name}
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Vorname
                   </label>
                   <input
                     {...input}
-                    type="text"
-                    name="vorname"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
                   {touched && error && <Error>{error}</Error>}
@@ -50,19 +48,17 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="surname" validate={required}>
+            <Field name="surname" validate={required} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="nachname"
+                    htmlFor={input.name}
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Nachname
                   </label>
                   <input
                     {...input}
-                    type="text"
-                    name="nachname"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
                   {touched && error && <Error>{error}</Error>}
@@ -70,19 +66,17 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="email" validate={required}>
+            <Field name="email" validate={required} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="email"
+                    htmlFor={input.name}
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Email
                   </label>
                   <input
                     {...input}
-                    type="text"
-                    name="email"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
                   {touched && error && <Error>{error}</Error>}
@@ -90,19 +84,17 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="phonenumber" validate={required}>
+            <Field name="phonenumber" validate={required} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="phonenumber"
+                    htmlFor={input.name}
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Telefonnummer
                   </label>
                   <input
                     {...input}
-                    type="text"
-                    name="phonenumber"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
                   {touched && error && <Error>{error}</Error>}
@@ -110,20 +102,19 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="message" validate={required}>
+            <Field name="message" validate={required} type="textarea">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="nachricht"
+                    htmlFor={input.name}
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Nachricht
                   </label>
                   <textarea
                     {...input}
-                    name="nachricht"
                     className="border-2 border-gray-300 p-2 rounded-md"
-                  ></textarea>
+                  />
                   {touched && error && <Error>{error}</Error>}
                 </div>
               )}
@@ -133,14 +124,13 @@ export function Contact() {
               {({ input, meta }) => (
                 <div className="flex flex-col mb-4">
                   <label
-                    htmlFor="bezahlung"
+                    htmlFor={input.name}
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Bezahlung
                   </label>
                   <select
                     {...input}
-                    name="bezahlung"
                     className="border-2 border-gray-300 p-2 rounded-md bg-white"
                   >
                     <option value="privatversichert">Privatversichert</option>
@@ -152,19 +142,11 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="privacy" validate={required}>
+            <Field name="privacy" validate={required} type="checkbox">
               {({ input, meta }) => (
                 <div className="flex items-center mb-4">
-                  <input
-                    {...input}
-                    name={"datenschutz"}
-                    type="checkbox"
-                    className="mr-2"
-                  />
-                  <label
-                    htmlFor="datenschutz"
-                    className="text-lg text-gray-900"
-                  >
+                  <input {...input} className="mr-2" />
+                  <label htmlFor={input.name} className="text-lg text-gray-900">
                     Datenschutz
                   </label>
                 </div>
