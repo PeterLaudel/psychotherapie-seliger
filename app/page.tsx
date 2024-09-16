@@ -138,9 +138,9 @@ export default function Home() {
         </div>
 
         {/* Kosten */}
-        <div id="kosten" className="section py-8 px-4 md:px-8 lg:px-16">
+        <div id="kosten" className="section">
           <div className="mb-8">
-            <h3 className="pb-2">Kosten der Therapie</h3>
+            <h2 className="pb-2">Kosten der Therapie</h2>
             <p className="text-lg leading-relaxed">
               Die Abrechnung in meiner Praxis erfolgt gemäß den aktuellen{" "}
               <a
@@ -167,8 +167,82 @@ export default function Home() {
             </ul>
           </div>
         </div>
+        <div id="kontakt" className="bg-white">
+          <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8">
+            <div className="relative bg-white shadow-xl">
+              <h2 className="sr-only">Kontaktinformationen</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-3">
+                <div className="relative overflow-hidden py-10 px-6 bg-gray-200 sm:px-10 xl:p-12">
+                  <div className="relative">
+                    <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">
+                      Kontaktinformationen
+                    </h3>
+                    <dl className="mt-8 space-y-6 text-base text-gray-500">
+                      <div>
+                        <dt className="sr-only">Adresse</dt>
+                        <dd className="flex">
+                          <Image
+                            src="psychotherapie-seliger/house.svg"
+                            alt=""
+                            width="0"
+                            height="0"
+                            sizes="100%"
+                            className="w-auto h-6"
+                          />
+                          <div className="flex flex-col">
+                            <span className="ml-3">
+                              Friedrich-Ebert-Str. 98
+                            </span>
+                            <span className="ml-3">04105 Leipzig</span>
+                          </div>
+                        </dd>
+                      </div>
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19938.110177165818!2d12.322077279101553!3d51.343060099999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2f6adde980e3097d%3A0xc7bbc36db54d6411!2sUte%20Seliger%2C%20M.Sc.%20-%20Psych.%20%7C%20Praxis%20f%C3%BCr%20Psychotherapie%20-%20Seliger%20%7C!5e0!3m2!1sde!2sde!4v1726413366495!5m2!1sde!2sde"
+                        width="0"
+                        height="0"
+                        loading="lazy"
+                        className="w-full h-64"
+                      ></iframe>
+                      <div>
+                        <dt className="sr-only">Telefonnummer</dt>
+                        <dd className="flex">
+                          <Image
+                            src="psychotherapie-seliger/phone.svg"
+                            alt=""
+                            width="0"
+                            height="0"
+                            sizes="100%"
+                            className="w-auto h-6"
+                          />
+                          <span className="ml-3">+49 123 456789</span>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="sr-only">Email</dt>
+                        <dd className="flex">
+                          <Image
+                            src="psychotherapie-seliger/email.svg"
+                            alt=""
+                            width="0"
+                            height="0"
+                            sizes="100%"
+                            className="w-auto h-6"
+                          />
+                          <span className="ml-3">fake@example.com</span>
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+                <div className="py-10 px-6 sm:px-10 lg:col-span-2 xl:p-12">
+                  <Contact />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <Contact />
       <div className="end">
         <Link href="/impressum">Impressum</Link>
         <Link href="/datenschutz">Datenschutz</Link>

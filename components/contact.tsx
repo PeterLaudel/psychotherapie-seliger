@@ -22,14 +22,14 @@ export function Contact() {
   const onSubmit = (values: ContactFormValues) => {};
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-2">
-      <h1 className="text-2xl font-bold mb-5">Kontakt</h1>
+    <div className="flex flex-col items-center justify-center">
       <Form<ContactFormValues> onSubmit={onSubmit}>
         {({ handleSubmit, hasValidationErrors, submitFailed }) => (
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-md bg-white p-6 rounded-md shadow-md"
+            className="w-full max-w-md bg-white p-6"
           >
+            <h1 className="text-2xl font-bold mb-5">Termin anfragen</h1>
             <Field name="name" validate={required} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
