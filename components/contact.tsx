@@ -29,7 +29,12 @@ export function Contact() {
             onSubmit={handleSubmit}
             className="w-full max-w-md bg-white p-6"
           >
-            <h1 className="text-2xl font-bold mb-5">Termin anfragen</h1>
+            <h1 className="text-2xl font-bold">Termin anfragen</h1>
+            <div className="my-5">
+              Bitte beschrieben Sie kurz Ihr Anliegen. Geben Sie uns bitte
+              außerdem an, in welchen Zeiträumen Therapiesitzungen stattfinden
+              könnten.
+            </div>
             <Field name="name" validate={required} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
@@ -113,6 +118,7 @@ export function Contact() {
                   </label>
                   <textarea
                     {...input}
+                    placeholder="Bitte beschreiben Sie Ihr Anliegen und nennen Sie Ihre Verfügbarkeit"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
                   {touched && error && <Error>{error}</Error>}
