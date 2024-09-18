@@ -182,7 +182,7 @@ export default function Home() {
                         <dt className="sr-only">Adresse</dt>
                         <dd className="flex">
                           <Image
-                            src="psychotherapie-seliger/house.svg"
+                            src="/psychotherapie-seliger/house.svg"
                             alt=""
                             width="0"
                             height="0"
@@ -208,7 +208,7 @@ export default function Home() {
                         <dt className="sr-only">Telefonnummer</dt>
                         <dd className="flex">
                           <Image
-                            src="psychotherapie-seliger/phone.svg"
+                            src="/psychotherapie-seliger/phone.svg"
                             alt=""
                             width="0"
                             height="0"
@@ -222,7 +222,7 @@ export default function Home() {
                         <dt className="sr-only">Email</dt>
                         <dd className="flex">
                           <Image
-                            src="psychotherapie-seliger/email.svg"
+                            src="/psychotherapie-seliger/email.svg"
                             alt=""
                             width="0"
                             height="0"
