@@ -7,7 +7,6 @@ interface ContactFormValues {
   email?: string;
   message?: string;
   payment?: string;
-  privacy: boolean;
 }
 
 const required = (value?: string) =>
@@ -24,10 +23,7 @@ export function Contact() {
     <div className="flex flex-col items-center justify-center">
       <Form<ContactFormValues> onSubmit={onSubmit}>
         {({ handleSubmit, hasValidationErrors, submitFailed }) => (
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-md bg-white p-6"
-          >
+          <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h1 className="text-2xl font-bold">Termin anfragen</h1>
             <div className="my-5">
               Bitte beschrieben Sie kurz Ihr Anliegen. Geben Sie uns bitte
@@ -129,18 +125,7 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="privacy" validate={required} type="checkbox">
-              {({ input, meta }) => (
-                <div className="flex items-center mb-4">
-                  <input {...input} className="mr-2" />
-                  <label htmlFor={input.name} className="text-lg text-gray-900">
-                    Datenschutz
-                  </label>
-                </div>
-              )}
-            </Field>
-
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-col">
               <button
                 type="submit"
                 className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50"

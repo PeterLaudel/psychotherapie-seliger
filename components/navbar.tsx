@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Navbar() {
   return (
     <nav className="bg-odd-background text-odd-text">
-      <div className="flex flex-wrap items-center justify-between mx-auto px-8 py-4">
+      <div className="flex flex-wrap items-center justify-between mx-auto px-2 py-2 md:px-8 md:py-4">
         <Link href="/">
           <Image
             src="/psychotherapie-seliger/logo.svg"
@@ -12,7 +12,7 @@ export default function Navbar() {
             width="0"
             height="0"
             sizes="100%"
-            className="w-auto h-12"
+            className="w-auto h-10 md:h-12"
           />
         </Link>
         <input

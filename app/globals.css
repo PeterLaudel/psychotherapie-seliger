@@ -35,7 +35,7 @@
 
 @layer components {
   .section {
-    @apply px-20 py-16;
+    @apply px-10 py-10 md:px-20 md:py-16;
   }
   .image-text {
     @apply grid;
