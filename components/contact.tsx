@@ -5,7 +5,6 @@ interface ContactFormValues {
   name?: string;
   surname?: string;
   email?: string;
-  phonenumber?: string;
   message?: string;
   payment?: string;
   privacy: boolean;
@@ -79,24 +78,6 @@ export function Contact() {
                     className="mb-2 font-bold text-lg text-gray-900"
                   >
                     Email
-                  </label>
-                  <input
-                    {...input}
-                    className="border-2 border-gray-300 p-2 rounded-md"
-                  />
-                  {touched && error && <Error>{error}</Error>}
-                </div>
-              )}
-            </Field>
-
-            <Field name="phonenumber" validate={required} type="text">
-              {({ input, meta: { touched, error } }) => (
-                <div className="flex flex-col mb-4">
-                  <label
-                    htmlFor={input.name}
-                    className="mb-2 font-bold text-lg text-gray-900"
-                  >
-                    Telefonnummer
                   </label>
                   <input
                     {...input}
