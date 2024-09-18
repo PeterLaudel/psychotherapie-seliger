@@ -21,31 +21,37 @@ export default function Navbar() {
           name="menu"
           className="peer hidden"
         />
-        <label className="md:hidden" htmlFor="check01">
-          <Image
-            src="/psychotherapie-seliger/menu.svg"
-            alt=""
-            width="0"
-            height="0"
-            sizes="100%"
-            className="w-auto h-8"
-          />
-        </label>
-        <div className="hidden peer-checked:block w-full md:block md:w-auto">
-          <ul className="flex flex-col md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
-            <li>
-              <Link href="/#about_me">Über mich</Link>
-            </li>
-            <li>
-              <Link href="/#therapie">Therapie</Link>
-            </li>
-            <li>
-              <Link href="/#behandlungsspektrum">Behandlungsspektrum</Link>
-            </li>
-            <li>
-              <Link href="/#kosten">Kosten</Link>
-            </li>
-          </ul>
+        <div className="flex md:flex-row-reverse gap-8 items-center">
+          <label className="md:hidden" htmlFor="check01">
+            <Image
+              src="/psychotherapie-seliger/menu.svg"
+              alt=""
+              width="0"
+              height="0"
+              sizes="100%"
+              className="w-auto h-8"
+            />
+          </label>
+          <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50">
+            Termin anfragen
+          </button>
+
+          <div className="hidden peer-checked:block w-full md:block md:w-auto">
+            <ul className="flex flex-col md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
+              <li>
+                <Link href="/#about_me">Über mich</Link>
+              </li>
+              <li>
+                <Link href="/#therapie">Therapie</Link>
+              </li>
+              <li>
+                <Link href="/#behandlungsspektrum">Behandlungsspektrum</Link>
+              </li>
+              <li>
+                <Link href="/#kosten">Kosten</Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
