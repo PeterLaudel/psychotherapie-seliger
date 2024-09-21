@@ -235,7 +235,10 @@ export default function Home() {
                     </dl>
                   </div>
                 </div>
-                <div className="py-10 px-6 sm:px-10 lg:col-span-2 xl:p-12">
+                <div
+                  className="py-10 px-6 sm:px-10 lg:col-span-2 xl:p-12"
+                  id="kontakt_formular"
+                >
                   <Contact />
                 </div>
               </div>
