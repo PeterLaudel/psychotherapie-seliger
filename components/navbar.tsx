@@ -8,7 +8,7 @@ export default function Navbar() {
         <Link href="/" className="[grid-area:logo]">
           <Image
             src="/psychotherapie-seliger/logo.svg"
-            alt=""
+            alt="Logo von Psychotherapie Seliger"
             width="0"
             height="0"
             sizes="100%"
@@ -27,7 +27,7 @@ export default function Navbar() {
           <label htmlFor="check01">
             <Image
               src="/psychotherapie-seliger/menu.svg"
-              alt=""
+              alt="Menü für mobile Geräte"
               width="0"
               height="0"
               sizes="100%"

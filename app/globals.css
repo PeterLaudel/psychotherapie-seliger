@@ -16,27 +16,29 @@
   h4 {
     @apply text-xl;
   }
-}
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  section {
+    @apply px-10 py-10 md:px-20 md:py-16;
   }
 
-  .end {
-    display: flex;
-    justify-content: flex-end;
-    background-color: black;
-    padding: 2rem;
-    color: white;
-    gap: 1rem;
+  footer {
+    @apply flex justify-end bg-black text-white p-8 gap-4;
+  }
+
+  main {
+    > section:nth-child(odd) {
+      @apply bg-odd-background;
+      @apply text-odd-text;
+    }
+
+    > section:nth-child(even) {
+      @apply bg-even-background;
+      @apply text-even-text;
+    }
   }
 }
 
 @layer components {
-  .section {
-    @apply px-10 py-10 md:px-20 md:py-16;
-  }
   .image-text {
     @apply grid;
     @apply gap-8;
@@ -59,17 +61,5 @@
 
   .text {
     @apply md:[grid-area:text];
-  }
-
-  .sections {
-    > div:nth-child(odd) {
-      @apply bg-odd-background;
-      @apply text-odd-text;
-    }
-
-    > div:nth-child(even) {
-      @apply bg-even-background;
-      @apply text-even-text;
-    }
   }
 }
