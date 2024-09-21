@@ -15,7 +15,7 @@ export default function Navbar() {
             className="w-auto h-10 md:h-12"
           />
         </Link>
-        <Link href="/#kontakt_formular" className="[grid-area:button]">
+        <Link href="#kontakt_formular" className="[grid-area:button]">
           <input
             type="button"
             value="Termin anfragen"
@@ -38,16 +38,16 @@ export default function Navbar() {
         <div className="[grid-area:items] justify-self-start hidden peer-has-[:checked]:block w-full md:block md:w-auto">
           <ul className="flex flex-col md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
             <li>
-              <Link href="/#about_me">Über mich</Link>
+              <Link href="#about_me">Über mich</Link>
             </li>
             <li>
-              <Link href="/#therapie">Therapie</Link>
+              <Link href="#therapie">Therapie</Link>
             </li>
             <li>
-              <Link href="/#behandlungsspektrum">Behandlungsspektrum</Link>
+              <Link href="#behandlungsspektrum">Behandlungsspektrum</Link>
             </li>
             <li>
-              <Link href="/#kosten">Kosten</Link>
+              <Link href="#kosten">Kosten</Link>
             </li>
           </ul>
         </div>
