@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Psychologische Psychotherapeutin | Verhaltentherapie | Ute Seliger",
+  title: "Psychologische Psychotherapeutin | Verhaltenstherapie | Ute Seliger",
   description:
     "Psychotherapie (Verhaltenstherapie) in Leipzig/Waldstraßenviertel für Selbstzahler und Privatversicherte",
   keywords: [

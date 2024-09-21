@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum2.jpg')] bg-cover bg-center md:bg-fixed text-white">
+      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpg')] bg-cover bg-center md:bg-fixed text-white">
         <div className="m-auto grid-flow-row">
           <h1 className="text-2xl md:text-7xl [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
             Praxis für Psychotherapie
