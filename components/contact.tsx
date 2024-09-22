@@ -1,5 +1,5 @@
 import { Field, Form } from "react-final-form";
-import { FORM_ERROR, type FormApi } from "final-form";
+import { FORM_ERROR, FormApi } from "final-form";
 
 interface ContactFormValues {
   name?: string;
@@ -12,30 +12,22 @@ interface ContactFormValues {
 const required = (value?: string) =>
   value ? undefined : "Dieser Eintrag wird benötigt";
 
-function Error({ children }: { children: React.ReactNode }) {
+function getOrCrash(key: string) {
+  const result = process.env[key];
+  if (!result) throw new Error(`${key} environment missing`);
+  return result;
+}
+
+function ErrorText({ children }: { children: React.ReactNode }) {
   return <div className="text-red-500 text-sm">{children}</div>;
 }
 
 export function Contact() {
-  const onSubmit = async (
-    values: ContactFormValues,
-    form: FormApi<ContactFormValues>
-  ) => {
-    const formData = Object.entries(values).reduce((current, [key, value]) => {
-      current.append(key, value);
-      return current;
-    }, new FormData());
-
-    const response = await fetch(
-      process.env.CONTACT_ENDPOINT,
-      {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "accept": "application/json",
-        },
-      }
-    );
+  const onSubmit = async (values: ContactFormValues) => {
+    const response = await fetch(getOrCrash("CONTACT_ENDPOINT"), {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
 
     if (response.ok) return;
 
@@ -68,7 +60,7 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <Error>{error}</Error>}
+                  {touched && error && <ErrorText>{error}</ErrorText>}
                 </div>
               )}
             </Field>
@@ -86,7 +78,7 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <Error>{error}</Error>}
+                  {touched && error && <ErrorText>{error}</ErrorText>}
                 </div>
               )}
             </Field>
@@ -104,7 +96,7 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <Error>{error}</Error>}
+                  {touched && error && <ErrorText>{error}</ErrorText>}
                 </div>
               )}
             </Field>
@@ -123,7 +115,7 @@ export function Contact() {
                     placeholder="Bitte beschreiben Sie Ihr Anliegen und nennen Sie Ihre Verfügbarkeit"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <Error>{error}</Error>}
+                  {touched && error && <ErrorText>{error}</ErrorText>}
                 </div>
               )}
             </Field>
@@ -158,10 +150,10 @@ export function Contact() {
                 Absenden
               </button>
               {hasValidationErrors && submitFailed && (
-                <Error>{"Formular unvollständig"}</Error>
+                <ErrorText>{"Formular unvollständig"}</ErrorText>
               )}
               {!hasValidationErrors && submitFailed && (
-                <Error>{"Ein Fehler ist aufgetreten"}</Error>
+                <ErrorText>{"Ein Fehler ist aufgetreten"}</ErrorText>
               )}
             </div>
           </form>
