@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import { Field, Form } from "react-final-form";
+import { FORM_ERROR, type FormApi } from "final-form";
 
 interface ContactFormValues {
   name?: string;
@@ -17,12 +17,37 @@ function Error({ children }: { children: React.ReactNode }) {
 }
 
 export function Contact() {
-  const onSubmit = (values: ContactFormValues) => {};
+  const onSubmit = async (
+    values: ContactFormValues,
+    form: FormApi<ContactFormValues>
+  ) => {
+    const formData = Object.entries(values).reduce((current, [key, value]) => {
+      current.append(key, value);
+      return current;
+    }, new FormData());
+
+    const response = await fetch(
+      process.env.CONTACT_ENDPOINT,
+      {
+        method: "POST",
+        body: JSON.stringify(values),
+        headers: {
+          "accept": "application/json",
+        },
+      }
+    );
+
+    if (response.ok) return;
+
+    return {
+      [FORM_ERROR]: "Ein Fehler ist aufgetreten",
+    };
+  };
 
   return (
     <div className="flex flex-col items-center justify-center">
       <Form<ContactFormValues> onSubmit={onSubmit}>
-        {({ handleSubmit, hasValidationErrors, submitFailed }) => (
+        {({ hasValidationErrors, submitFailed, handleSubmit }) => (
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h1 className="text-2xl font-bold">Termin anfragen</h1>
             <div className="my-5">
@@ -103,8 +128,8 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="payment" allowNull={true} type="select">
-              {({ input, meta }) => (
+            <Field name="payment" type="select">
+              {({ input }) => (
                 <div className="flex flex-col mb-4">
                   <label
                     htmlFor={input.name}
@@ -134,6 +159,9 @@ export function Contact() {
               </button>
               {hasValidationErrors && submitFailed && (
                 <Error>{"Formular unvollständig"}</Error>
+              )}
+              {!hasValidationErrors && submitFailed && (
+                <Error>{"Ein Fehler ist aufgetreten"}</Error>
               )}
             </div>
           </form>
