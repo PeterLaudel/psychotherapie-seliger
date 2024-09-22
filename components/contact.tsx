@@ -1,5 +1,6 @@
 import { Field, Form } from "react-final-form";
 import { FORM_ERROR, FormApi } from "final-form";
+import { get } from "http";
 
 interface ContactFormValues {
   name?: string;
@@ -17,6 +18,7 @@ function getOrCrash(key: string) {
   if (!result) throw new Error(`${key} environment missing`);
   return result;
 }
+const contactEndpoint = getOrCrash("CONTACT_ENDPOINT");
 
 function ErrorText({ children }: { children: React.ReactNode }) {
   return <div className="text-red-500 text-sm">{children}</div>;
@@ -24,7 +26,7 @@ function ErrorText({ children }: { children: React.ReactNode }) {
 
 export function Contact() {
   const onSubmit = async (values: ContactFormValues) => {
-    const response = await fetch(getOrCrash("CONTACT_ENDPOINT"), {
+    const response = await fetch(contactEndpoint, {
       method: "POST",
       body: JSON.stringify(values),
     });
