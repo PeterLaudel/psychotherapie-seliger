@@ -14,13 +14,7 @@ const contactEndpoint = () => process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || "";
 const required = (value?: string) =>
   value ? undefined : "Dieser Eintrag wird benötigt";
 
-function getOrCrash(key: string) {
-  const result = process.env[key];
-  if (!result) throw new Error(`${key} environment missing`);
-  return result;
-}
-
-function ErrorText({ children }: { children: React.ReactNode }) {
+function Error({ children }: { children: React.ReactNode }) {
   return <div className="text-red-500 text-sm">{children}</div>;
 }
 
@@ -62,7 +56,7 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <ErrorText>{error}</ErrorText>}
+                  {touched && error && <Error>{error}</Error>}
                 </div>
               )}
             </Field>
@@ -80,7 +74,7 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <ErrorText>{error}</ErrorText>}
+                  {touched && error && <Error>{error}</Error>}
                 </div>
               )}
             </Field>
@@ -98,7 +92,7 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <ErrorText>{error}</ErrorText>}
+                  {touched && error && <Error>{error}</Error>}
                 </div>
               )}
             </Field>
@@ -117,7 +111,7 @@ export function Contact() {
                     placeholder="Bitte beschreiben Sie Ihr Anliegen und nennen Sie Ihre Verfügbarkeit"
                     className="border-2 border-gray-300 p-2 rounded-md"
                   />
-                  {touched && error && <ErrorText>{error}</ErrorText>}
+                  {touched && error && <Error>{error}</Error>}
                 </div>
               )}
             </Field>
@@ -152,10 +146,10 @@ export function Contact() {
                 Absenden
               </button>
               {hasValidationErrors && submitFailed && (
-                <ErrorText>{"Formular unvollständig"}</ErrorText>
+                <Error>{"Formular unvollständig"}</Error>
               )}
               {!hasValidationErrors && submitFailed && (
-                <ErrorText>{"Ein Fehler ist aufgetreten"}</ErrorText>
+                <Error>{"Ein Fehler ist aufgetreten"}</Error>
               )}
             </div>
           </form>
