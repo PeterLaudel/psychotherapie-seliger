@@ -4,6 +4,9 @@ import Image from "next/image";
 import Navbar from "../components/navbar";
 import Link from "next/link";
 import { Contact } from "../components/contact";
+import Address from "../components/address";
+import PhoneNumber from "../components/phonenumber";
+import Email from "../components/email";
 
 export default function Home() {
   return (
@@ -189,9 +192,8 @@ export default function Home() {
                         sizes="100%"
                         className="w-auto h-6"
                       />
-                      <div className="flex flex-col">
-                        <span className="ml-3">Friedrich-Ebert-Str. 98</span>
-                        <span className="ml-3">04105 Leipzig</span>
+                      <div className="flex flex-col ml-3">
+                        <Address />
                       </div>
                     </dd>
                   </div>
@@ -211,9 +213,9 @@ export default function Home() {
                         width="0"
                         height="0"
                         sizes="100%"
-                        className="w-auto h-6"
+                        className="w-auto h-6 mr-3"
                       />
-                      <span className="ml-3">+49 123 456789</span>
+                      <PhoneNumber />
                     </dd>
                   </div>
                   <div>
@@ -225,9 +227,9 @@ export default function Home() {
                         width="0"
                         height="0"
                         sizes="100%"
-                        className="w-auto h-6"
+                        className="w-auto h-6 mr-3"
                       />
-                      <span className="ml-3">fake@example.com</span>
+                      <Email />
                     </dd>
                   </div>
                 </dl>

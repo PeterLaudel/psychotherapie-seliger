@@ -1,6 +1,9 @@
 "use client";
 
+import Address from "../../components/address";
+import Email from "../../components/email";
 import Navbar from "../../components/navbar";
+import PhoneNumber from "../../components/phonenumber";
 
 export default function Impressum() {
   return (
@@ -19,9 +22,9 @@ export default function Impressum() {
                   <br />
                   Praxis für Psychotherapie
                   <br />
-                  Friedrich-Ebert-Str. 98
-                  <br />
-                  04105 Leipzig
+                  <div className="flex flex-col">
+                    <Address />
+                  </div>
                   <br />
                 </span>
               </p>
@@ -32,12 +35,9 @@ export default function Impressum() {
                 </strong>
               </h3>
               <p>
-                <strong>Telefon:</strong>{" "}
-                <a href="tel:1234567">
-                  <span>1234567</span>
-                </a>
+                <strong>Telefon:</strong> <PhoneNumber />
                 <br />
-                <strong>E-Mail:</strong> <a href="mailto:email">email</a>
+                <strong>E-Mail:</strong> <Email />
               </p>
               <h3>
                 <strong>

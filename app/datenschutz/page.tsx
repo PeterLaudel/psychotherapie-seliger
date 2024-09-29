@@ -1,5 +1,7 @@
 "use client";
 
+import Address from "../../components/address";
+import Email from "../../components/email";
 import Navbar from "../../components/navbar";
 
 export default function Datenschutz() {
@@ -17,25 +19,29 @@ export default function Datenschutz() {
         <p>
           <strong>Verantwortlich im Sinne der DSGVO ist:</strong>
           <br />
-          [Name]
+          Ute Seliger
           <br />
-          [ladungsfähige Anschrift]
+          <div className="flex flex-col">
+            <Address />
+          </div>
           <br />
-          [E-Mail-Adresse]
+          <Email />
         </p>
         <br />
         <p>
           <strong>Unseren Datenschutzbeauftragten erreichen sie unter:</strong>
           <br />
-          [Name]
+          Ute Seliger
           <br />
-          [ladungsfähige Anschrift]
+          <div className="flex flex-col">
+            <Address />
+          </div>
           <br />
-          [gesonderte E-Mail-Adresse des Datenschutzbeauftragten]
+          <Email />
         </p>
         <br />
         <p>
-          Sollten Sie per E-Mail [oder über Kontaktformular] mit uns Kontakt
+          Sollten Sie per E-Mail oder über Kontaktformular mit uns Kontakt
           aufnehmen, werden die mitgeteilten Daten von uns gespeichert, um Ihr
           Anliegen zu bearbeiten.
         </p>
@@ -43,11 +49,15 @@ export default function Datenschutz() {
         <p>
           <strong>Zu den verarbeiteten Daten zählen:</strong>
           <br />
-          [Ihr Name]
+          Ihr Vorname
           <br />
-          [Ihre E-Mail-Adresse]
+          Ihr Nachname
           <br />
-          [Ihre Telefonnummer]
+          Ihre E-Mail-Adresse
+          <br />
+          Ihre Nachricht
+          <br />
+          Ihre Bezahlung der Psychotherapie
         </p>
         <br />
         <p>
@@ -73,10 +83,7 @@ export default function Datenschutz() {
           folgende Adresse:
         </p>
         <br />
-        <p>
-          [Adresse, E-Mail-Adresse (oder Verweis nach oben), ggf.
-          Datenschutzbeauftragter]
-        </p>
+        <p>siehe Dateschutzbeauftragter</p>
         <br />
         <p>
           Darüber hinaus haben Sie das Recht auf Datenübertragbarkeit. Sie haben
@@ -97,12 +104,18 @@ export default function Datenschutz() {
         </p>
         <br />
         <p>
-          [Name]
+          Ihr Vorname
           <br />
-          [E-Mail-Adresse]
+          Ihr Nachname
+          <br />
+          Ihre E-Mail-Adresse
+          <br />
+          Ihre Nachricht
+          <br />
+          Ihre Bezahlung der Psychotherapie
         </p>
         <br />
-        <p>Pflichtangaben sind mit einem * gekennzeichnet.</p>
+        <p>Pflichtangaben sind alle Felder.</p>
         <br />
         <p>
           Die Daten werden ausschließlich zum Zweck der Übermittlung von
@@ -122,10 +135,8 @@ export default function Datenschutz() {
         </p>
         <br />
         <p>
-          Ihre Daten werden nach [Abschluss der Bearbeitung / einem Monat / zum
-          Ende des Jahres] gelöscht. [Für uns gilt gemäß [§ 147 AO / § 257] eine
-          gesetzliche Aufbewahrungsfrist von [X] Jahren für folgende Dokumente:
-          [ ]]
+          Ihre Daten werden nach Abschluss der Bearbeitung oder nach einem Jahr
+          gelöscht.
         </p>
         <br />
         <p>
