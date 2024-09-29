@@ -1,6 +1,7 @@
 # Block all crawlers for /accounts
 User-agent: *
 Disallow: /impressum
+Disallow: /datenschutz
 
 # Allow all crawlers
 User-agent: *
