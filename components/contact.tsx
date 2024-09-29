@@ -37,7 +37,10 @@ export function Contact() {
   );
 
   const onSubmit = async (values: ContactFormValues) => {
-    const response = await fetch(contactEndpoint(), {
+    const searchParams = new URLSearchParams({
+      action: "contactRequest",
+    }).toString();
+    const response = await fetch(contactEndpoint() + "?" + searchParams, {
       method: "POST",
       body: JSON.stringify(values),
     });
