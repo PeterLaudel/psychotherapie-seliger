@@ -2,6 +2,13 @@ import { Field, Form } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { useMemo } from "react";
 import Spinner from "./spinner";
+import {
+  validateEmail,
+  validateMessage,
+  validateName,
+  validatePayment,
+  validateSurname,
+} from "./validations";
 
 const paymentMethods = [
   "privatversichert",
@@ -22,9 +29,6 @@ interface ContactFormValues {
 
 const contactEndpoint = () => process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || "";
 
-const required = (value?: string) =>
-  value ? undefined : "Dieser Eintrag wird benötigt";
-
 function Error({ children }: { children: React.ReactNode }) {
   return <div className="text-red-500 text-sm">{children}</div>;
 }
@@ -32,7 +36,7 @@ function Error({ children }: { children: React.ReactNode }) {
 export function Contact() {
   const initialValues: ContactFormValues = useMemo(
     () => ({
-      payment: "privatversichert",
+      payment: "",
     }),
     []
   );
@@ -73,7 +77,7 @@ export function Contact() {
               außerdem an, in welchen Zeiträumen Therapiesitzungen stattfinden
               könnten.
             </div>
-            <Field name="name" validate={required} type="text">
+            <Field name="name" validate={validateName} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
@@ -91,7 +95,7 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="surname" validate={required} type="text">
+            <Field name="surname" validate={validateSurname} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
@@ -109,7 +113,7 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="email" validate={required} type="text">
+            <Field name="email" validate={validateEmail} type="text">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
@@ -127,7 +131,7 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="message" validate={required} type="textarea">
+            <Field name="message" validate={validateMessage} type="textarea">
               {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
@@ -146,8 +150,8 @@ export function Contact() {
               )}
             </Field>
 
-            <Field name="payment" type="select">
-              {({ input }) => (
+            <Field name="payment" type="select" validate={validatePayment}>
+              {({ input, meta: { touched, error } }) => (
                 <div className="flex flex-col mb-4">
                   <label
                     htmlFor={input.name}
@@ -159,11 +163,13 @@ export function Contact() {
                     {...input}
                     className="border-2 border-gray-300 p-2 rounded-md bg-white"
                   >
+                    <option disabled value=""></option>
                     <option value="privatversichert">Privatversichert</option>
                     <option value="beihilfe">Beihilfe</option>
                     <option value="heilfürsorge">Heilfürsorge</option>
                     <option value="selbstzahler">Selbstzahler</option>
                   </select>
+                  {touched && error && <Error>{error}</Error>}
                 </div>
               )}
             </Field>
