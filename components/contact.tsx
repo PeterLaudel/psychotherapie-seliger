@@ -1,5 +1,15 @@
 import { Field, Form } from "react-final-form";
 import { FORM_ERROR } from "final-form";
+import { useMemo } from "react";
+
+const paymentMethods = [
+  "privatversichert",
+  "beihilfe",
+  "heilfürsorge",
+  "selbstzahler",
+] as const;
+
+type PaymentMethod = typeof paymentMethods[number];
 
 interface ContactFormValues {
   name?: string;
@@ -19,6 +29,13 @@ function Error({ children }: { children: React.ReactNode }) {
 }
 
 export function Contact() {
+  const initialValues: ContactFormValues = useMemo(
+    () => ({
+      payment: "privatversichert",
+    }),
+    []
+  );
+
   const onSubmit = async (values: ContactFormValues) => {
     const response = await fetch(contactEndpoint(), {
       method: "POST",
@@ -34,7 +51,10 @@ export function Contact() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <Form<ContactFormValues> onSubmit={onSubmit}>
+      <Form<ContactFormValues>
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+      >
         {({ hasValidationErrors, submitFailed, handleSubmit }) => (
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h1 className="text-2xl font-bold">Termin anfragen</h1>
