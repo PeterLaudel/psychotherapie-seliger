@@ -1,6 +1,7 @@
 import { Field, Form } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { useMemo } from "react";
+import Spinner from "./spinner";
 
 const paymentMethods = [
   "privatversichert",
@@ -58,7 +59,13 @@ export function Contact() {
         onSubmit={onSubmit}
         initialValues={initialValues}
       >
-        {({ hasValidationErrors, submitFailed, handleSubmit }) => (
+        {({
+          hasValidationErrors,
+          submitFailed,
+          handleSubmit,
+          submitSucceeded,
+          submitting,
+        }) => (
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h1 className="text-2xl font-bold">Termin anfragen</h1>
             <div className="my-5">
@@ -164,10 +171,18 @@ export function Contact() {
             <div className="flex flex-col">
               <button
                 type="submit"
+                disabled={submitting || submitSucceeded}
                 className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md disabled:opacity-50"
               >
+                {submitting && <Spinner />}
                 Absenden
               </button>
+              {submitSucceeded && (
+                <div className="text-green-500">
+                  Vielen Dank für Ihre Anfrage. Wir werden uns in Kürze bei
+                  Ihnen melden.
+                </div>
+              )}
               {hasValidationErrors && submitFailed && (
                 <Error>{"Formular unvollständig"}</Error>
               )}

@@ -166,6 +166,8 @@ export default function Home() {
           </ul>
         </div>
       </section>
+
+      {/* Kontakt */}
       <section id="kontakt" className="bg-white">
         <div className="relative bg-white shadow-xl">
           <h2 className="sr-only">Kontaktinformationen</h2>
@@ -240,6 +242,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
       <footer>
         <Link href="/impressum">Impressum</Link>
         <Link href="/datenschutz">Datenschutz</Link>
