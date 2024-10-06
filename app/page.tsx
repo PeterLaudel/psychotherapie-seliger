@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/psychotherapie-seliger/raum.jpeg')] bg-cover bg-center md:bg-fixed text-white">
+      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/raum.jpeg')] bg-cover bg-center md:bg-fixed text-white">
         <div className="m-auto grid-flow-row">
           <h1 className="text-2xl md:text-7xl [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
             Praxis für Psychotherapie
@@ -24,7 +24,7 @@ export default function Home() {
       <section id="about_me" className="image-text">
         <div className="image">
           <Image
-            src="/psychotherapie-seliger/person.jpg"
+            src="/person.jpg"
             alt="Foto von Ute Seliger"
             width={0}
             height={0}
@@ -57,7 +57,7 @@ export default function Home() {
       <section id="therapie" className="text-image">
         <div className="image">
           <Image
-            src="/psychotherapie-seliger/filler.png"
+            src="/filler.png"
             alt="Füllbild was den verlauf der Therapie darstellt"
             width={0}
             height={0}
@@ -112,7 +112,7 @@ export default function Home() {
       <section id="behandlungsspektrum" className="image-text">
         <div className="image">
           <Image
-            src="/psychotherapie-seliger/brain.png"
+            src="/brain.png"
             alt="Füllbild was das Behandlungsspektrum darstellt"
             width={0}
             height={0}
@@ -185,7 +185,7 @@ export default function Home() {
                     <dt className="sr-only">Adresse</dt>
                     <dd className="flex">
                       <Image
-                        src="/psychotherapie-seliger/house.svg"
+                        src="/house.svg"
                         alt="Symbol für Adresse"
                         width="0"
                         height="0"
@@ -208,7 +208,7 @@ export default function Home() {
                     <dt className="sr-only">Telefonnummer</dt>
                     <dd className="flex">
                       <Image
-                        src="/psychotherapie-seliger/phone.svg"
+                        src="/phone.svg"
                         alt="Symbol für Telefonnummer"
                         width="0"
                         height="0"
@@ -222,7 +222,7 @@ export default function Home() {
                     <dt className="sr-only">Email</dt>
                     <dd className="flex">
                       <Image
-                        src="/psychotherapie-seliger/email.svg"
+                        src="/email.svg"
                         alt="Symbol für Email"
                         width="0"
                         height="0"

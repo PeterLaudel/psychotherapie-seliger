@@ -7,7 +7,7 @@ export default function Navbar() {
       <div className="grid [grid-template-areas:'logo_button_menu''items_items_items'] md:[grid-template-areas:'logo_items_button'] items-center justify-between mx-auto px-2 py-2 md:px-8 md:py-4">
         <Link href="/" className="[grid-area:logo]">
           <Image
-            src="/psychotherapie-seliger/logo.svg"
+            src="/logo.svg"
             alt="Logo von Psychotherapie Seliger"
             width="0"
             height="0"
@@ -26,7 +26,7 @@ export default function Navbar() {
           <input id="check01" type="checkbox" name="menu" className="hidden" />
           <label htmlFor="check01">
             <Image
-              src="/psychotherapie-seliger/menu.svg"
+              src="/menu.svg"
               alt="Menü für mobile Geräte"
               width="0"
               height="0"
