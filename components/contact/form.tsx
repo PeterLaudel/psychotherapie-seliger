@@ -1,4 +1,4 @@
-import { Field, Form } from "react-final-form";
+import { Field, Form as FinalForm } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { useMemo } from "react";
 import Spinner from "./spinner";
@@ -33,7 +33,7 @@ function Error({ children }: { children: React.ReactNode }) {
   return <div className="text-red-500 text-sm">{children}</div>;
 }
 
-export function Contact() {
+export default function Form() {
   const initialValues: ContactFormValues = useMemo(
     () => ({
       payment: "",
@@ -59,7 +59,7 @@ export function Contact() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <Form<ContactFormValues>
+      <FinalForm<ContactFormValues>
         onSubmit={onSubmit}
         initialValues={initialValues}
       >
@@ -198,7 +198,7 @@ export function Contact() {
             </div>
           </form>
         )}
-      </Form>
+      </FinalForm>
     </div>
   );
 }
