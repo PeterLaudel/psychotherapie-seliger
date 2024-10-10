@@ -27,13 +27,13 @@
 
   main {
     > section:nth-child(odd) {
-      @apply bg-odd-background;
-      @apply text-odd-text;
+      @apply bg-even-background;
+      @apply text-even-text;
     }
 
     > section:nth-child(even) {
-      @apply bg-even-background;
-      @apply text-even-text;
+      @apply bg-odd-background;
+      @apply text-odd-text;
     }
   }
 }

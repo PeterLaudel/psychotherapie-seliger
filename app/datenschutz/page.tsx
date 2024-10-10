@@ -7,7 +7,6 @@ import Navbar from "../../components/navbar";
 export default function Datenschutz() {
   return (
     <div>
-      <Navbar />
       <div className="section md:w-[50%]">
         <p>
           <strong>Datenschutzerklärung</strong>

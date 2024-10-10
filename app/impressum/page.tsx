@@ -8,7 +8,6 @@ import PhoneNumber from "../../components/contact//phonenumber";
 export default function Impressum() {
   return (
     <main>
-      <Navbar />
       <div className="section">
         <div>
           <div>

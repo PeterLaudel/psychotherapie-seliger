@@ -1,7 +1,5 @@
 "use client";
 
-import Navbar from "../components/navbar";
-import Link from "next/link";
 import Contact from "../components/contact";
 import AboutMe from "../components/about_me";
 import Therapie from "../components/therapie";
@@ -11,7 +9,6 @@ import Costs from "../components/costs";
 export default function Home() {
   return (
     <main>
-      <Navbar />
       <div className="flex h-[30vh] md:h-[80vh] bg-[url('/raum.jpeg')] bg-cover bg-center md:bg-fixed text-white">
         <div className="m-auto grid-flow-row">
           <h1 className="text-2xl md:text-7xl [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
@@ -39,12 +36,6 @@ export default function Home() {
       <section id="kontakt">
         <Contact />
       </section>
-
-      {/* Footer */}
-      <footer>
-        <Link href="/impressum">Impressum</Link>
-        <Link href="/datenschutz">Datenschutz</Link>
-      </footer>
     </main>
   );
 }
