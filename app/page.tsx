@@ -1,7 +1,7 @@
 "use client";
 
 import Contact from "../components/contact";
-import AboutMe from "../components/about_me";
+import AboutMe from "../components/aboutMe";
 import Therapie from "../components/therapie";
 import TreatmentSpectrum from "../components/treatmentSpectrum";
 import Costs from "../components/costs";
