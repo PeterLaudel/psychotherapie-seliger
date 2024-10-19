@@ -153,8 +153,8 @@ const services: Service[] = [
     points: 722,
     amounts: [
       ["1.0", 42.08],
-      ["1.8", undefined],
-      ["2.3", 75.75],
+      ["1.8", 75.75],
+      ["2.3", undefined],
     ],
   },
   {
@@ -165,8 +165,8 @@ const services: Service[] = [
     points: 722,
     amounts: [
       ["1.0", 42.08],
-      ["1.8", undefined],
-      ["2.3", 75.75],
+      ["1.8", 75.75],
+      ["2.3", undefined],
     ],
   },
   {
