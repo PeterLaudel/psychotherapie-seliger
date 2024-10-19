@@ -36,7 +36,6 @@ export default function Sheets({ patients, services }: Props) {
         onSubmit={() => {}}
         initialValues={initialValues}
         mutators={{
-          // potentially other mutators could be merged here
           ...arrayMutators,
         }}
       >
