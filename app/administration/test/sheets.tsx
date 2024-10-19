@@ -1,9 +1,17 @@
-import { getPatientRepository } from "../../../server";
+"use client";
 
-export default async function Sheets() {
-  const patientRepository = await getPatientRepository();
+import { Patient } from "../../../models/patient";
+import Select from "react-select";
 
-  return (await patientRepository.get()).map((patient) => {
-    return <div key={patient.id}>{`${patient.name} ${patient.surname}`}</div>;
-  });
+interface Props {
+  patients: Patient[];
+}
+
+export default function Sheets({ patients }: Props) {
+  const options = patients.map((patient) => ({
+    label: `${patient.name} ${patient.surname}`,
+    value: patient.id,
+  }));
+
+  return <Select options={options} />;
 }
