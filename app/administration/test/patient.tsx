@@ -16,13 +16,16 @@ export default function Patient({ patients }: Props) {
   return (
     <Field<PatientType> name="patient" type="select">
       {({ input }) => (
-        <CreatableSelect<PatientType>
-          instanceId={input.name}
-          {...input}
-          options={options}
-          isClearable={true}
-          isValidNewOption={() => false}
-        />
+        <div>
+          <label>Patient</label>
+          <CreatableSelect<PatientType>
+            instanceId={input.name}
+            {...input}
+            options={options}
+            isClearable={true}
+            isValidNewOption={() => false}
+          />
+        </div>
       )}
     </Field>
   );
