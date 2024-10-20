@@ -45,9 +45,9 @@ export default function Service({ services }: Props) {
   }));
 
   return (
-    <FieldArray<BillEntry[]> name="entries">
+    <FieldArray<BillEntry> name="entries">
       {({ fields }) =>
-        fields.map((name) => (
+        fields.map((name, index) => (
           <Fragment key={name}>
             <Field<Date>
               key={`${name}.date`}
@@ -121,6 +121,26 @@ export default function Service({ services }: Props) {
                 </Field>
               )}
             </ValueSubscription>
+            {(fields.length || 0) > 1 && (
+              <button type="button" onClick={() => fields.remove(index)}>
+                Entfernen
+              </button>
+            )}
+            {index === (fields.length || 0) - 1 && (
+              <button
+                type="button"
+                onClick={() =>
+                  fields.push({
+                    date: undefined,
+                    service: undefined,
+                    number: 1,
+                    factor: undefined,
+                  })
+                }
+              >
+                Hinzufügen
+              </button>
+            )}
           </Fragment>
         ))
       }
