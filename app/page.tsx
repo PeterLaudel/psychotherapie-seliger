@@ -1,5 +1,3 @@
-"use client";
-
 import Contact from "../components/contact";
 import AboutMe from "../components/aboutMe";
 import Therapie from "../components/therapie";
