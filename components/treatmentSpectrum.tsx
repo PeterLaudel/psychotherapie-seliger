@@ -3,14 +3,14 @@ import Image from "next/image";
 export default function TreatmentSpectrum() {
   return (
     <div className="image-text">
-      <div className="image">
+      <div className="image w-full h-auto md:h-full md:w-auto">
         <Image
           src="/brain.png"
           alt="Füllbild was das Behandlungsspektrum darstellt"
           width={0}
           height={0}
           sizes="100%"
-          className="h-auto max-h-[70vh] w-auto rounded-[40%]"
+          className="w-full h-auto md:h-full md:w-auto md:min-h-[70vh] rounded-[40%]"
         />
       </div>
       <div className="text">

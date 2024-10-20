@@ -3,14 +3,14 @@ import Image from "next/image";
 export default function AboutMe() {
   return (
     <div className="image-text">
-      <div className="image">
+      <div className="image w-full h-auto md:h-full md:w-auto">
         <Image
           src="/person.jpg"
           alt="Foto von Ute Seliger"
           width={0}
           height={0}
           sizes="100%"
-          className="h-auto max-h-[70vh] w-auto rounded-[50%]"
+          className="w-full h-auto md:h-full md:w-auto md:min-h-[60vh] rounded-[50%]"
         />
       </div>
       <div className="text">
