@@ -168,6 +168,7 @@ export default function Form() {
                     <option value="beihilfe">Beihilfe</option>
                     <option value="heilfürsorge">Heilfürsorge</option>
                     <option value="selbstzahler">Selbstzahler</option>
+                    <option value="kostenübernahme">Kostenübernahme</option>
                   </select>
                   {touched && error && <Error>{error}</Error>}
                 </div>
