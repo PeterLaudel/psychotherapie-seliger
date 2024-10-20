@@ -1,4 +1,4 @@
-import { FieldArray } from "react-final-form-arrays";
+import { FieldArray, FieldArrayRenderProps } from "react-final-form-arrays";
 import { Service as ServiceType } from "../../../models/service";
 import { Field, useField } from "react-final-form";
 import DatePicker from "react-datepicker";
@@ -44,6 +44,15 @@ export default function Service({ services }: Props) {
     ...service,
   }));
 
+  const addEntry = (push: (value: BillEntry) => void) => () => {
+    push({
+      date: undefined,
+      service: undefined,
+      number: 1,
+      factor: undefined,
+    });
+  };
+
   return (
     <FieldArray<BillEntry> name="entries">
       {({ fields }) =>
@@ -56,11 +65,14 @@ export default function Service({ services }: Props) {
               validate={(value) => (value ? undefined : "Required")}
             >
               {({ input: { onChange, value } }) => (
-                <DatePicker
-                  className="border-2"
-                  selected={value}
-                  onChange={onChange}
-                />
+                <div>
+                  <label htmlFor={`${name}.date`}>Datum</label>
+                  <DatePicker
+                    id={`${name}.date`}
+                    selected={value}
+                    onChange={onChange}
+                  />
+                </div>
               )}
             </Field>
             <Field<ServiceType>
@@ -70,13 +82,16 @@ export default function Service({ services }: Props) {
               validate={(value) => (value ? undefined : "Required")}
             >
               {({ input }) => (
-                <CreatableSelect<ServiceType>
-                  instanceId={input.name}
-                  {...input}
-                  options={serviceOptions}
-                  isClearable={true}
-                  isValidNewOption={() => false}
-                />
+                <div>
+                  <label htmlFor={`${name}.service`}>Leistung</label>
+                  <CreatableSelect<ServiceType>
+                    instanceId={input.name}
+                    {...input}
+                    options={serviceOptions}
+                    isClearable={true}
+                    isValidNewOption={() => false}
+                  />
+                </div>
               )}
             </Field>
             <InvalidSubscription name={`${name}.service`}>
@@ -84,16 +99,13 @@ export default function Service({ services }: Props) {
                 <Field<number>
                   key={`${name}.number`}
                   name={`${name}.number`}
-                  type="input"
+                  type="number"
                 >
                   {({ input }) => (
-                    <input
-                      {...input}
-                      type="number"
-                      className="border-2"
-                      min={1}
-                      disabled={invalid}
-                    />
+                    <div>
+                      <label htmlFor={`${name}.number`}>Anzahl</label>
+                      <input {...input} min={1} disabled={invalid} />
+                    </div>
                   )}
                 </Field>
               )}
@@ -108,15 +120,18 @@ export default function Service({ services }: Props) {
                   type="select"
                 >
                   {({ input }) => (
-                    <select {...input} className="border-2" disabled={!service}>
-                      {service?.amounts
-                        .filter((amount) => amount[1])
-                        .map((amount) => (
-                          <option key={amount[0]} value={amount[0]}>
-                            {amount[0]}
-                          </option>
-                        ))}
-                    </select>
+                    <div>
+                      <label htmlFor={`${name}.factor`}>Faktor</label>
+                      <select {...input} disabled={!service}>
+                        {service?.amounts
+                          .filter((amount) => amount[1])
+                          .map((amount) => (
+                            <option key={amount[0]} value={amount[0]}>
+                              {amount[0]}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
                   )}
                 </Field>
               )}
@@ -127,17 +142,7 @@ export default function Service({ services }: Props) {
               </button>
             )}
             {index === (fields.length || 0) - 1 && (
-              <button
-                type="button"
-                onClick={() =>
-                  fields.push({
-                    date: undefined,
-                    service: undefined,
-                    number: 1,
-                    factor: undefined,
-                  })
-                }
-              >
+              <button type="button" onClick={() => addEntry(fields.push)}>
                 Hinzufügen
               </button>
             )}
