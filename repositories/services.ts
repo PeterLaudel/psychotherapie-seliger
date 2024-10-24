@@ -1,3 +1,4 @@
+import IRead from "../interfaces/read.js";
 import type { Service } from "../models/service.ts";
 
 const services: Service[] = [
@@ -196,7 +197,7 @@ const services: Service[] = [
   },
 ];
 
-export class ServiceRepository {
+export class ServiceRepository implements IRead<Service> {
   constructor() {}
 
   async get(): Promise<Service[]> {

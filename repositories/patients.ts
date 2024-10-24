@@ -1,7 +1,8 @@
 import { people_v1 } from "@googleapis/people/";
 import { Patient } from "../models/patient";
+import IRead from "../interfaces/read";
 
-export class PatientRepository {
+export class PatientRepository implements IRead<Patient> {
   private peopleClient: people_v1.People;
 
   constructor(peopleClient: people_v1.People) {
