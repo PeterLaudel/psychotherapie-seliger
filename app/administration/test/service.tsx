@@ -4,8 +4,8 @@ import { Service as ServiceType } from "../../../models/service";
 import { Field, useField } from "react-final-form";
 import DatePicker from "react-datepicker";
 import CreatableSelect from "react-select/creatable";
-import { BillEntry } from "./formProps";
 import { Fragment } from "react";
+import { Position } from "../../../models/invoice";
 
 interface Props {
   services: ServiceType[];
@@ -45,7 +45,7 @@ export default function Service({ services }: Props) {
     ...service,
   }));
 
-  const addEntry = (push: (value: BillEntry) => void) => {
+  const addEntry = (push: (value: Partial<Position>) => void) => {
     push({
       date: undefined,
       service: undefined,
@@ -55,7 +55,7 @@ export default function Service({ services }: Props) {
   };
 
   return (
-    <FieldArray<BillEntry> name="entries">
+    <FieldArray<Partial<Position>> name="positions">
       {({ fields }) =>
         fields.map((name, index) => (
           <Fragment key={name}>

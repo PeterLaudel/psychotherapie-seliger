@@ -7,18 +7,24 @@ import arrayMutators from "final-form-arrays";
 import { useMemo } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Patient from "./patient";
-import type { FormProps } from "./formProps";
 import Service from "./service";
+import { Position } from "../../../models/invoice";
+import { createInvoice } from "./action";
 
 interface Props {
   patients: PatientType[];
   services: ServiceType[];
 }
 
+interface FormInvoice {
+  patient?: PatientType;
+  positions: Partial<Position>[];
+}
+
 export default function Sheets({ patients, services }: Props) {
-  const initialValues = useMemo<FormProps>(
+  const initialValues = useMemo<FormInvoice>(
     () => ({
-      entries: [
+      positions: [
         {
           date: undefined,
           service: undefined,
@@ -32,8 +38,8 @@ export default function Sheets({ patients, services }: Props) {
 
   return (
     <div>
-      <Form<FormProps>
-        onSubmit={() => {}}
+      <Form<FormInvoice>
+        onSubmit={() => createInvoice()}
         initialValues={initialValues}
         mutators={{
           ...arrayMutators,
@@ -44,6 +50,7 @@ export default function Sheets({ patients, services }: Props) {
             <Patient patients={patients} />
             <div>Leistungen</div>
             <Service services={services} />
+            <input type="submit" value="Submit" />
           </form>
         )}
       </Form>
