@@ -9,11 +9,10 @@ const services: Service[] = [
       "Erstellung des verfahrensspezifischen Berichts an den Gutachter für die Beantragung einer Psychotherapie mit einem wissenschaftlich anerkannten Psychotherapieverfahren unter Einbeziehung vorliegender Befunde und ggf. Abstimmung mit vor- und mitbehandelnden Ärzten und Psychotherapeuten. Je angefangene Stunde Arbeitszeit.",
     note: "Kann anstelle der bisher üblichen Nr. 808 abgerechnet werden",
     points: 500,
-    amounts: [
-      ["1.0", 29.14],
-      ["1.8", undefined],
-      ["2.3", 67.03],
-    ],
+    amounts: {
+      "1.0": 29.14,
+      "2.3": 67.03,
+    },
   },
   {
     short: "801 analog",
@@ -23,11 +22,10 @@ const services: Service[] = [
     note:
       "Kann bei der Psychotherapeutischen Sprechstunde (812 analog) nicht zugesetzt werden",
     points: 250,
-    amounts: [
-      ["1.0", 14.57],
-      ["1.8", undefined],
-      ["2.3", 33.52],
-    ],
+    amounts: {
+      "1.0": 14.57,
+      "2.3": 33.52,
+    },
   },
   {
     short: "804 analog",
@@ -36,11 +34,10 @@ const services: Service[] = [
       "Psychotherapeutische Behandlung durch eingehendes therapeutisches Gespräch – auch mit gezielter Exploration",
     note: "Ohne Mindestdauer",
     points: 150,
-    amounts: [
-      ["1.0", 8.74],
-      ["1.8", undefined],
-      ["2.3", 20.11],
-    ],
+    amounts: {
+      "1.0": 8.74,
+      "2.3": 20.11,
+    },
   },
   {
     short: "807 analog (Kinder/Jugendliche)",
@@ -48,11 +45,10 @@ const services: Service[] = [
     description:
       "Vertiefte Exploration in Fortführung einer biographischen psychotherapeutischen Anamnese bei Kindern oder Jugendlichen unter Einschaltung der Bezugs- und Kontaktpersonen mit schriftlicher Aufzeichnung, auch in mehreren Sitzungen",
     points: 400,
-    amounts: [
-      ["1.0", 23.31],
-      ["1.8", undefined],
-      ["2.3", 53.62],
-    ],
+    amounts: {
+      "1.0": 23.31,
+      "2.3": 53.62,
+    },
   },
   {
     short: "807 analog (Erwachsene)",
@@ -60,11 +56,10 @@ const services: Service[] = [
     description:
       "Vertiefte Exploration in Fortführung einer biographischen psychotherapeutischen Anamnese bei Erwachsenen unter Einschaltung der Bezugs- und Kontaktpersonen mit schriftlicher Aufzeichnung",
     points: 400,
-    amounts: [
-      ["1.0", 23.31],
-      ["1.8", undefined],
-      ["2.3", 53.62],
-    ],
+    amounts: {
+      "1.0": 23.31,
+      "2.3": 53.62,
+    },
   },
   {
     short: "812 analog",
@@ -74,11 +69,10 @@ const services: Service[] = [
     note:
       "Höchstens sechsmal im Jahr, bei Kindern und Jugendlichen sowie Patienten mit geistiger Behinderung höchstens zehnmal berechnungsfähig.",
     points: 500,
-    amounts: [
-      ["1.0", 29.14],
-      ["1.8", undefined],
-      ["2.3", 67.03],
-    ],
+    amounts: {
+      "1.0": 29.14,
+      "2.3": 67.03,
+    },
   },
   {
     short: "812 analog (Akutbehandlung)",
@@ -88,11 +82,10 @@ const services: Service[] = [
     note:
       "Bis zu zweimal an einem Kalendertag und bis zu vierundzwanzigmal im Jahr berechnungsfähig.",
     points: 500,
-    amounts: [
-      ["1.0", 29.14],
-      ["1.8", undefined],
-      ["2.3", 67.03],
-    ],
+    amounts: {
+      "1.0": 29.14,
+      "2.3": 67.03,
+    },
   },
   {
     short: "812 analog (Kurzzeittherapie)",
@@ -102,11 +95,10 @@ const services: Service[] = [
     note:
       "Bis zu zweimal an einem Kalendertag und bis zu achtundvierzigmal im Jahr berechnungsfähig.",
     points: 500,
-    amounts: [
-      ["1.0", 29.14],
-      ["1.8", undefined],
-      ["2.3", 67.03],
-    ],
+    amounts: {
+      "1.0": 29.14,
+      "2.3": 67.03,
+    },
   },
   {
     short: "812 analog (Gruppentherapie)",
@@ -116,11 +108,10 @@ const services: Service[] = [
     note:
       "Bis zu zweimal an einem Kalendertag und bis zu achtundvierzigmal im Jahr berechnungsfähig.",
     points: 500,
-    amounts: [
-      ["1.0", 29.14],
-      ["1.8", undefined],
-      ["2.3", 67.03],
-    ],
+    amounts: {
+      "1.0": 29.14,
+      "2.3": 67.03,
+    },
   },
   {
     short: "817 analog (Kinder/Jugendliche)",
@@ -128,11 +119,10 @@ const services: Service[] = [
     description:
       "Eingehende psychotherapeutische Beratung der Bezugsperson von Kindern oder Jugendlichen anhand erhobener Befunde und Erläuterung geplanter therapeutischer Maßnahmen.",
     points: 180,
-    amounts: [
-      ["1.0", 10.49],
-      ["1.8", undefined],
-      ["2.3", 24.13],
-    ],
+    amounts: {
+      "1.0": 10.49,
+      "2.3": 24.13,
+    },
   },
   {
     short: "817 analog (Erwachsene)",
@@ -140,11 +130,10 @@ const services: Service[] = [
     description:
       "Eingehende psychotherapeutische Beratung der Bezugsperson von Erwachsenen anhand erhobener Befunde und Erläuterung geplanter therapeutischer Maßnahmen.",
     points: 180,
-    amounts: [
-      ["1.0", 10.49],
-      ["1.8", undefined],
-      ["2.3", 24.13],
-    ],
+    amounts: {
+      "1.0": 10.49,
+      "2.3": 24.13,
+    },
   },
   {
     short: "855 analog (Testbatterie)",
@@ -152,11 +141,10 @@ const services: Service[] = [
     description:
       "Durchführung, Auswertung und Besprechung einer psychologischen – auch neuropsychologischen – Testbatterie zum umfassenden Assessment (mindestens 3 Testverfahren, z.B. PHQ-D, BDI, PSSI, ISR, HAQ).",
     points: 722,
-    amounts: [
-      ["1.0", 42.08],
-      ["1.8", 75.75],
-      ["2.3", undefined],
-    ],
+    amounts: {
+      "1.0": 42.08,
+      "1.8": 75.75,
+    },
   },
   {
     short: "855 analog (Klinisch-diagnostisches Interview)",
@@ -164,11 +152,10 @@ const services: Service[] = [
     description:
       "Anwendung eines validierten, standardisierten, strukturierten klinisch-diagnostischen Interviews (z.B. SIAB-EX, Module des SCID-5-CV, PANSS-Interview) mit schriftlicher Aufzeichnung.",
     points: 722,
-    amounts: [
-      ["1.0", 42.08],
-      ["1.8", 75.75],
-      ["2.3", undefined],
-    ],
+    amounts: {
+      "1.0": 42.08,
+      "1.8": 75.75,
+    },
   },
   {
     short: "860 analog",
@@ -176,11 +163,10 @@ const services: Service[] = [
     description:
       "Erhebung einer biographischen Anamnese mit schriftlicher Aufzeichnung zur Einleitung und Indikationsstellung eines wissenschaftlich anerkannten Psychotherapieverfahrens.",
     points: 920,
-    amounts: [
-      ["1.0", 53.62],
-      ["1.8", undefined],
-      ["2.3", 123.34],
-    ],
+    amounts: {
+      "1.0": 53.62,
+      "2.3": 123.34,
+    },
   },
   {
     short: "870 analog",
@@ -189,11 +175,10 @@ const services: Service[] = [
       "Systemische Therapie sowie Neuropsychologische Psychotherapie oder EMDR als psychotherapeutische Methode in den Anwendungsbereichen der Psychotherapie.",
     note: "Einzelbehandlung, Dauer mindestens 50 Minuten.",
     points: 750,
-    amounts: [
-      ["1.0", 43.72],
-      ["1.8", undefined],
-      ["2.3", 100.55],
-    ],
+    amounts: {
+      "1.0": 43.72,
+      "2.3": 100.55,
+    },
   },
 ];
 

@@ -9,7 +9,6 @@ export interface Position {
 }
 
 export interface Invoice {
-  id: string;
   patient: Patient;
   positions: Position[];
 }

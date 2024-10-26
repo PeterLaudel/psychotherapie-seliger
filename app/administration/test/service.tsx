@@ -157,13 +157,13 @@ export default function Service({ services }: Props) {
                           disabled={!service}
                           className="p-2 border border-gray-300 rounded"
                         >
-                          {service?.amounts
-                            .filter((amount) => amount[1])
-                            .map((amount) => (
+                          {Object.entries(service?.amounts || {}).map(
+                            (amount) => (
                               <option key={amount[0]} value={amount[0]}>
                                 {amount[0]}
                               </option>
-                            ))}
+                            )
+                          )}
                         </select>
                       </div>
                     )}
