@@ -5,7 +5,7 @@ export default function Therapie() {
     <div className="text-image">
       <div className="image w-full h-auto md:h-full md:w-auto">
         <Image
-          src="/filler.png"
+          src="/filler.jpeg"
           alt="Füllbild was den Verlauf der Therapie darstellt"
           width={0}
           height={0}
