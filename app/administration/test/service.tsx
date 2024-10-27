@@ -139,10 +139,11 @@ export default function Service({ services }: Props) {
                 name={`${name}.service`}
               >
                 {(service) => (
-                  <Field<number>
+                  <Field<string>
                     key={`${name}.factor`}
                     name={`${name}.factor`}
                     type="select"
+                    initialValue={Object.keys(service?.amounts || []).at(-1)}
                   >
                     {({ input }) => (
                       <div className="flex flex-col">
@@ -157,13 +158,11 @@ export default function Service({ services }: Props) {
                           disabled={!service}
                           className="p-2 border border-gray-300 rounded"
                         >
-                          {Object.entries(service?.amounts || {}).map(
-                            (amount) => (
-                              <option key={amount[0]} value={amount[0]}>
-                                {amount[0]}
-                              </option>
-                            )
-                          )}
+                          {Object.keys(service?.amounts || {}).map((factor) => (
+                            <option key={factor} value={factor}>
+                              {factor}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     )}

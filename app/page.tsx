@@ -3,10 +3,14 @@ import AboutMe from "../components/aboutMe";
 import Therapie from "../components/therapie";
 import TreatmentSpectrum from "../components/treatmentSpectrum";
 import Costs from "../components/costs";
+import Footer from "../components/footer";
+import Navbar from "../components/navbar";
 
 export default function Home() {
   return (
     <main>
+      <Navbar />
+
       <div className="flex h-[30vh] md:h-[80vh] bg-[url('/raum.jpeg')] bg-cover bg-center md:bg-fixed text-white">
         <div className="m-auto grid-flow-row">
           <h1 className="text-2xl md:text-7xl [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
@@ -34,6 +38,8 @@ export default function Home() {
       <section id="kontakt">
         <Contact />
       </section>
+
+      <Footer />
     </main>
   );
 }
