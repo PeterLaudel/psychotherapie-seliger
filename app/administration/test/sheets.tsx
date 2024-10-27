@@ -4,7 +4,7 @@ import type { Patient as PatientType } from "../../../models/patient";
 import type { Service as ServiceType, Factor } from "../../../models/service";
 import { Form } from "react-final-form";
 import arrayMutators from "final-form-arrays";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Patient from "./patient";
 import Service from "./service";
@@ -28,6 +28,8 @@ interface FormInvoice {
 }
 
 export default function Sheets({ patients, services }: Props) {
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
+
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
       positions: [
@@ -42,31 +44,43 @@ export default function Sheets({ patients, services }: Props) {
     []
   );
 
-  const onSubmit = (formValues: FormInvoice) => {
-    createInvoice(
+  const onSubmit = async (formValues: FormInvoice) => {
+    const invoiceId = await createInvoice(
       formValues.patient,
       formValues.positions as Required<Position>[]
     );
+    setInvoiceId(invoiceId);
   };
 
   return (
     <div>
-      <Form<FormInvoice>
-        onSubmit={onSubmit}
-        initialValues={initialValues}
-        mutators={{
-          ...arrayMutators,
-        }}
-      >
-        {({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
-            <Patient patients={patients} />
-            <div>Leistungen</div>
-            <Service services={services} />
-            <input type="submit" value="Submit" />
-          </form>
-        )}
-      </Form>
+      {!invoiceId && (
+        <Form<FormInvoice>
+          onSubmit={onSubmit}
+          initialValues={initialValues}
+          mutators={{
+            ...arrayMutators,
+          }}
+        >
+          {({ handleSubmit }) => (
+            <form onSubmit={handleSubmit}>
+              <Patient patients={patients} />
+              <div>Leistungen</div>
+              <Service services={services} />
+              <input type="submit" value="Submit" />
+            </form>
+          )}
+        </Form>
+      )}
+      {invoiceId && (
+        <div className="h-[100vh] w-[100vw]">
+          <iframe
+            src={`https://drive.google.com/file/d/${invoiceId}/preview`}
+            height={"100%"}
+            width={"100%"}
+          />
+        </div>
+      )}
     </div>
   );
 }
