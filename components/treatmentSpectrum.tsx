@@ -5,7 +5,7 @@ export default function TreatmentSpectrum() {
     <div className="image-text">
       <div className="image w-full h-auto md:h-full md:w-auto">
         <Image
-          src="/brain.png"
+          src="/brain.jpeg"
           alt="Füllbild was das Behandlungsspektrum darstellt"
           width={0}
           height={0}
