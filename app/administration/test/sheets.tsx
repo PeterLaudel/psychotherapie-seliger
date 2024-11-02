@@ -8,6 +8,8 @@ import { useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Patient from "./patient";
 import Service from "./service";
+import { Invoice } from "./invoice";
+import { Position as InvoicePosition } from "./invoice";
 import { createInvoice } from "./action";
 
 interface Props {
@@ -15,20 +17,14 @@ interface Props {
   services: ServiceType[];
 }
 
-export interface Position {
-  date?: Date;
-  service?: ServiceType;
-  number: number;
-  factor?: Factor;
-}
-
 interface FormInvoice {
+  invoiceId: string;
   patient: PatientType;
-  positions: Position[];
+  positions: Partial<InvoicePosition>[];
 }
 
 export default function Sheets({ patients, services }: Props) {
-  const [invoiceId, setInvoiceId] = useState<string | null>(null);
+  const [invoiceId, setInvoiceId] = useState<FormInvoice | null>(null);
 
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
@@ -44,12 +40,18 @@ export default function Sheets({ patients, services }: Props) {
     []
   );
 
-  const onSubmit = async (formValues: FormInvoice) => {
+  const onSubmit = async ({ patient, positions }: FormInvoice) => {
     const invoiceId = await createInvoice(
-      formValues.patient,
-      formValues.positions as Required<Position>[]
+      patient,
+      positions as InvoicePosition[]
     );
-    setInvoiceId(invoiceId);
+    console.log("HUHU2");
+    console.log(invoiceId);
+    setInvoiceId({
+      invoiceId,
+      patient,
+      positions,
+    });
   };
 
   return (
@@ -73,13 +75,11 @@ export default function Sheets({ patients, services }: Props) {
         </Form>
       )}
       {invoiceId && (
-        <div className="h-[100vh] w-[100vw]">
-          <iframe
-            src={`https://drive.google.com/file/d/${invoiceId}/preview`}
-            height={"100%"}
-            width={"100%"}
-          />
-        </div>
+        <Invoice
+          invoiceId={invoiceId.invoiceId}
+          patient={invoiceId.patient}
+          positions={invoiceId.positions as InvoicePosition[]}
+        />
       )}
     </div>
   );

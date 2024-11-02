@@ -7,7 +7,8 @@ import { OAuth2Client } from "google-auth-library";
 import { Readable } from "stream";
 import { Factor } from "../../../models/service";
 import { Patient } from "../../../models/patient";
-import { Position as FormPosition } from "./sheets";
+import { gmail_v1 } from "@googleapis/gmail";
+import { Position as FormPosition } from "./invoice";
 
 class DocumentManager {
   private drive: drive_v3.Drive;
@@ -138,7 +139,7 @@ class DocumentToPdfConverter {
 
 export async function createInvoice(
   patient: Patient,
-  positions: Required<FormPosition>[]
+  positions: FormPosition[]
 ) {
   const auth = await getAuthClient();
   const newTemplate = new InvoiceTemplate(auth);
@@ -153,42 +154,56 @@ export async function createInvoice(
   }));
 
   return newTemplate.fill("invoice", { ...patient }, invoicePositions);
+}
 
-  // const email = [
-  //   'From: "Sender Name" <sender@example.com>',
-  //   `To: peter.laudel@gmail.com`,
-  //   "Subject: Your Invoice",
-  //   "MIME-Version: 1.0",
-  //   'Content-Type: multipart/mixed; boundary="boundary"',
-  //   "",
-  //   "--boundary",
-  //   'Content-Type: text/plain; charset="UTF-8"',
-  //   "Content-Transfer-Encoding: 7bit",
-  //   "",
-  //   "Please find attached your invoice.",
-  //   "",
-  //   "--boundary",
-  //   "Content-Type: application/pdf",
-  //   "Content-Transfer-Encoding: base64",
-  //   'Content-Disposition: attachment; filename="invoice.pdf"',
-  //   "",
-  //   buffer.toString("base64"),
-  //   "",
-  //   "--boundary--",
-  // ].join("\r\n");
+export async function sendInvoice(invoiceId: string, patient: Patient) {
+  const auth = await getAuthClient();
+  const drive = new drive_v3.Drive({ auth });
 
-  // const encodedEmail = Buffer.from(email)
-  //   .toString("base64")
-  //   .replace(/\+/g, "-")
-  //   .replace(/\//g, "_")
-  //   .replace(/=+$/, "");
+  const { data } = await drive.files.get(
+    {
+      fileId: invoiceId,
+      alt: "media",
+    },
+    { responseType: "arraybuffer" }
+  );
 
-  // const gmail = new gmail_v1.Gmail({ auth });
+  if (!data) throw new Error("Failed to get file");
 
-  // await gmail.users.messages.send({
-  //   userId: "me",
-  //   requestBody: {
-  //     raw: encodedEmail,
-  //   },
-  // });
+  const buffer = Buffer.from(data as ArrayBuffer);
+
+  const email = [
+    'From: "Sender Name" <sender@example.com>',
+    `To: peter.laudel@gmail.com`,
+    "Subject: Your Invoice",
+    "MIME-Version: 1.0",
+    'Content-Type: multipart/mixed; boundary="boundary"',
+    "",
+    "--boundary",
+    'Content-Type: text/plain; charset="UTF-8"',
+    "Content-Transfer-Encoding: 7bit",
+    "",
+    "Please find attached your invoice.",
+    "",
+    "--boundary",
+    "Content-Type: application/pdf",
+    "Content-Transfer-Encoding: base64",
+    'Content-Disposition: attachment; filename="invoice.pdf"',
+    "",
+    buffer.toString("base64"),
+    "",
+    "--boundary--",
+  ].join("\r\n");
+  const encodedEmail = Buffer.from(email)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+  const gmail = new gmail_v1.Gmail({ auth });
+  await gmail.users.messages.send({
+    userId: "me",
+    requestBody: {
+      raw: encodedEmail,
+    },
+  });
 }
