@@ -21,7 +21,8 @@
     "react-datepicker": "^7.5.0",
     "react-dom": "^18",
     "react-final-form": "^6.5.9",
-    "react-final-form-arrays": "^3.1.4"
+    "react-final-form-arrays": "^3.1.4",
+    "react-pdf-tailwind": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^20",

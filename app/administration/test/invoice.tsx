@@ -16,6 +16,8 @@ import {
 import { Patient } from "../../../models/patient";
 import { Factor, Service } from "../../../models/service";
 import { sendInvoice } from "./action";
+import { createTw } from "react-pdf-tailwind";
+import Address from "../../../components/contact/address";
 
 export interface Position {
   date: Date;
@@ -30,6 +32,7 @@ interface Props {
 }
 
 const CompleteDocument = () => {
+  const tw = createTw({});
   const styles = StyleSheet.create({
     page: {
       flexDirection: "row",
@@ -44,13 +47,37 @@ const CompleteDocument = () => {
   });
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        <Image src="/logo.png" />
-        <View style={styles.section}>
-          <Text>Section #1</Text>
+      <Page size="A4" style={tw("flex-col p-10")}>
+        <View style={tw("flex-row h-[8vh]")}>
+          <Image src="/logo.png" />
         </View>
-        <View style={styles.section}>
-          <Text>Section #2</Text>
+        <View style={tw("flex-row justify-between")}>
+          <View style={tw("flex-row")}>
+            <View>
+              <Text style={tw("text-sm border-b")}>
+                Ute Seliger - Friedrich-Ebert-Straße 98 - 04105 Leipzig
+              </Text>
+            </View>
+          </View>
+          <View style={tw("flex-col border-l-2 text-sm pl-2 pt-2 pb-2")}>
+            <View>
+              <Text style={tw("font-bold")}>M.Sc. A.Ute Seliger</Text>
+              <Text>Psychologische Psychotherapeutin</Text>
+              <Text style={tw("mb-3")}>ENR.: 9660750</Text>
+              <Text>Friedrich-Eber-Str. 98</Text>
+              <Text style={tw("mb-3")}>04105 Leipzig</Text>
+              <Text>psychotherapie@praxis-seliger.com</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={tw("flex-row justify-between")}>
+          <View style={tw("flex-col")}>
+            <Text style={tw("font-black text-lg")}>Rechnung Nr. L030724</Text>
+          </View>
+          <View style={tw("flex-col")}>
+            <Text style={tw("text-sm")}>Leipzig, 01.01.2021</Text>
+          </View>
         </View>
       </Page>
     </Document>
@@ -60,7 +87,7 @@ const CompleteDocument = () => {
 export function Invoice({ patient, positions }: Props) {
   const completeDocument = <CompleteDocument />;
   return (
-    <div>
+    <div className="flex-row h-[80vh]">
       <PDFViewer showToolbar={false} width={"100%"} height={"100%"}>
         {completeDocument}
       </PDFViewer>
