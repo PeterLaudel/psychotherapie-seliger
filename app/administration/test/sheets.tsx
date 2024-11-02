@@ -10,7 +10,6 @@ import Patient from "./patient";
 import Service from "./service";
 import { Invoice } from "./invoice";
 import { Position as InvoicePosition } from "./invoice";
-import { createInvoice } from "./action";
 
 interface Props {
   patients: PatientType[];
@@ -18,7 +17,6 @@ interface Props {
 }
 
 interface FormInvoice {
-  invoiceId: string;
   patient: PatientType;
   positions: Partial<InvoicePosition>[];
 }
@@ -41,14 +39,7 @@ export default function Sheets({ patients, services }: Props) {
   );
 
   const onSubmit = async ({ patient, positions }: FormInvoice) => {
-    const invoiceId = await createInvoice(
-      patient,
-      positions as InvoicePosition[]
-    );
-    console.log("HUHU2");
-    console.log(invoiceId);
     setInvoiceId({
-      invoiceId,
       patient,
       positions,
     });
@@ -76,7 +67,6 @@ export default function Sheets({ patients, services }: Props) {
       )}
       {invoiceId && (
         <Invoice
-          invoiceId={invoiceId.invoiceId}
           patient={invoiceId.patient}
           positions={invoiceId.positions as InvoicePosition[]}
         />
