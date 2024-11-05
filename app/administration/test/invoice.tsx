@@ -59,13 +59,34 @@ const CompleteDocument = () => {
             <Text>psychotherapie@praxis-seliger.com</Text>
           </View>
         </View>
-
         <View style={tw("flex-row justify-between pt-8")}>
           <View style={tw("flex-col")}>
             <Text style={tw("font-black text-lg")}>Rechnung Nr. L030724</Text>
           </View>
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>Leipzig, 01.01.2021</Text>
+          </View>
+        </View>
+        <View style={tw("flex-row justify-between pt-8")}>
+          <View style={tw("flex-col")}>
+            <Text style={tw("text-sm")}>
+              Behandlet wurde: Ich und du, geb.: 01.01.2025
+            </Text>
+          </View>
+        </View>
+        <View style={tw("flex-row justify-between pt-4")}>
+          <View style={tw("flex-col")}>
+            <Text style={tw("text-sm")}>Diagnose</Text>
+          </View>
+        </View>
+
+        <View style={tw("flex-row justify-between pt-4")}>
+          <View style={tw("flex-col")}>
+            <Text style={tw("text-sm")}>Sehr geehrte Damen und Herren,</Text>
+            <Text style={tw("text-sm pt-2")}>
+              vielen Dank für Ihr Vertrauen. Für meine Leistungen berechne ich
+              den folgenden Betrag:
+            </Text>
           </View>
         </View>
 
