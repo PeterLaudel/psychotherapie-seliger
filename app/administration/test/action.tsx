@@ -1,7 +1,33 @@
 "use server";
 
+import { renderToBuffer, renderToStream } from "@react-pdf/renderer";
 import { getAuthClient } from "../../../server";
 import { gmail_v1 } from "@googleapis/gmail";
+import { drive_v3 } from "@googleapis/drive";
+import CompleteDocument, { Position } from "./invoiceTemplate";
+import { Patient } from "../../../models/patient";
+import { redirect } from "next/navigation";
+
+export async function createInvoice(patient: Patient, positions: Position[]) {
+  const pdf = await renderToStream(
+    <CompleteDocument patient={patient} positions={positions} />
+  );
+  const auth = await getAuthClient();
+  const drive = new drive_v3.Drive({ auth });
+  const {
+    data: { id },
+  } = await drive.files.create({
+    requestBody: {
+      name: "nice",
+      mimeType: "application/pdf",
+    },
+    media: {
+      mimeType: "application/pdf",
+      body: pdf,
+    },
+  });
+  redirect(`/administration/test/${id}`);
+}
 
 export async function sendInvoice(params: FormData) {
   const file = params.get("file") as File;

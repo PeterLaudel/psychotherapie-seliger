@@ -8,8 +8,8 @@ import { useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Patient from "./patient";
 import Service from "./service";
-import { Invoice } from "./invoice";
-import { Position as InvoicePosition } from "./invoice";
+import { Position as InvoicePosition } from "./invoiceTemplate";
+import { createInvoice } from "./action";
 
 interface Props {
   patients: PatientType[];
@@ -22,8 +22,6 @@ interface FormInvoice {
 }
 
 export default function Sheets({ patients, services }: Props) {
-  const [invoiceId, setInvoiceId] = useState<FormInvoice | null>(null);
-
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
       positions: [
@@ -39,38 +37,27 @@ export default function Sheets({ patients, services }: Props) {
   );
 
   const onSubmit = async ({ patient, positions }: FormInvoice) => {
-    setInvoiceId({
-      patient,
-      positions,
-    });
+    createInvoice(patient, positions as InvoicePosition[]);
   };
 
   return (
     <div>
-      {!invoiceId && (
-        <Form<FormInvoice>
-          onSubmit={onSubmit}
-          initialValues={initialValues}
-          mutators={{
-            ...arrayMutators,
-          }}
-        >
-          {({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <Patient patients={patients} />
-              <div>Leistungen</div>
-              <Service services={services} />
-              <input type="submit" value="Submit" />
-            </form>
-          )}
-        </Form>
-      )}
-      {invoiceId && (
-        <Invoice
-          patient={invoiceId.patient}
-          positions={invoiceId.positions as InvoicePosition[]}
-        />
-      )}
+      <Form<FormInvoice>
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+        mutators={{
+          ...arrayMutators,
+        }}
+      >
+        {({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <Patient patients={patients} />
+            <div>Leistungen</div>
+            <Service services={services} />
+            <input type="submit" value="Submit" />
+          </form>
+        )}
+      </Form>
     </div>
   );
 }

@@ -1,23 +1,13 @@
-"use client";
-
-import dynamic from "next/dynamic";
-const PDFViewer = dynamic(() => import("./pdfViewer"), { ssr: false });
-const BlobProvider = dynamic(() => import("./blobProvider"), {
-  ssr: false,
-});
+import { createTw } from "react-pdf-tailwind";
 import {
   Page,
   Document,
   View,
   Text,
-  StyleSheet,
   Image,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { Patient } from "../../../models/patient";
 import { Factor, Service } from "../../../models/service";
-import { sendInvoice } from "./action";
-import { createTw } from "react-pdf-tailwind";
-import Address from "../../../components/contact/address";
 
 export interface Position {
   date: Date;
@@ -31,13 +21,29 @@ interface Props {
   positions: Position[];
 }
 
-const CompleteDocument = () => {
+export default function CompleteDocument({ patient, positions }: Props) {
   const tw = createTw({});
+  const filePath = process.cwd() + "/public/logo.png";
+  const total = positions.reduce(
+    (acc, position) =>
+      acc + (position.service.amounts[position.factor] || 0) * position.number,
+    0
+  );
+  const dateFormatter = new Intl.DateTimeFormat("de-DE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const currencyFormatter = new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  });
+
   return (
     <Document>
       <Page size="A4" style={tw("p-12")} wrap>
         <View style={tw("flex-row h-[8vh]")}>
-          <Image src="/logo.png" />
+          <Image src={filePath} />
         </View>
         <View style={tw("flex-row justify-between pt-20")}>
           <View style={tw("flex-row")}>
@@ -45,9 +51,13 @@ const CompleteDocument = () => {
               <Text style={tw("text-xs border-b")}>
                 Ute Seliger - Friedrich-Ebert-Straße 98 - 04105 Leipzig
               </Text>
-              <Text style={tw("text-sm mt-8")}>Spaß Mann</Text>
-              <Text style={tw("text-sm")}>Spaßstraße 1</Text>
-              <Text style={tw("text-sm")}>04105 Leipzig</Text>
+              <Text
+                style={tw("text-sm mt-8")}
+              >{`${patient.name} ${patient.surname}`}</Text>
+              <Text style={tw("text-sm")}>{patient.street}</Text>
+              <Text style={tw("text-sm")}>
+                {`${patient.zip} ${patient.city}`}
+              </Text>
             </View>
           </View>
           <View style={tw("flex-col border-l-2 text-sm pl-2 pt-2 pb-2")}>
@@ -64,7 +74,9 @@ const CompleteDocument = () => {
             <Text style={tw("font-black text-lg")}>Rechnung Nr. L030724</Text>
           </View>
           <View style={tw("flex-col")}>
-            <Text style={tw("text-sm")}>Leipzig, 01.01.2021</Text>
+            <Text style={tw("text-sm")}>
+              Leipzig, {dateFormatter.format(new Date())}
+            </Text>
           </View>
         </View>
         <View style={tw("flex-row justify-between pt-8")}>
@@ -111,29 +123,39 @@ const CompleteDocument = () => {
               <Text style={tw("text-sm font-bold self-end")}>Betrag</Text>
             </View>
           </View>
-          <View style={tw("flex-row p-auto py-2")}>
-            <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm self-center")}>01.01.2021</Text>
+          {positions.map((position) => (
+            <View style={tw("flex-row py-2")}>
+              <View style={tw("w-[10vw]")}>
+                <Text style={tw("text-sm self-center")}>
+                  {dateFormatter.format(position.date)}
+                </Text>
+              </View>
+              <View style={tw("w-[10vw]")}>
+                <Text style={tw("text-sm self-center")}>
+                  {position.service.originalGopNr}
+                </Text>
+              </View>
+              <View style={tw("w-[50vw]")}>
+                <Text style={tw("text-sm self-left")}>
+                  {position.service.description}
+                </Text>
+              </View>
+              <View style={tw("w-[10vw]")}>
+                <Text style={tw("text-sm self-center")}>{position.factor}</Text>
+              </View>
+              <View style={tw("w-[10vw]")}>
+                <Text style={tw("text-sm self-center")}>{position.number}</Text>
+              </View>
+              <View style={tw("w-[10vw]")}>
+                <Text style={tw("text-sm self-end")}>
+                  {currencyFormatter.format(
+                    (position.service.amounts[position.factor] || 0) *
+                      position.number
+                  )}
+                </Text>
+              </View>
             </View>
-            <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm self-center")}>G908</Text>
-            </View>
-            <View style={tw("w-[50vw]")}>
-              <Text style={tw("text-sm self-center")}>
-                Das ist ein ziemlich langer text der hoffently über das hinaus
-                geht was an Platz ist
-              </Text>
-            </View>
-            <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm self-center")}>3,5</Text>
-            </View>
-            <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm self-center")}>1</Text>
-            </View>
-            <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm self-end")}>100,00 €</Text>
-            </View>
-          </View>
+          ))}
         </View>
         <View style={tw("flex-col pt-4")}>
           <View style={tw("flex-row justify-end")}>
@@ -141,7 +163,9 @@ const CompleteDocument = () => {
               <Text style={tw("text-sm")}>Gesamtsumme</Text>
             </View>
             <View style={tw("flex-col")}>
-              <Text style={tw("text-sm")}>100,00 €</Text>
+              <Text style={tw("text-sm")}>
+                {currencyFormatter.format(total)}
+              </Text>
             </View>
           </View>
         </View>
@@ -169,30 +193,5 @@ const CompleteDocument = () => {
         </View>
       </Page>
     </Document>
-  );
-};
-
-export function Invoice({ patient, positions }: Props) {
-  const completeDocument = <CompleteDocument />;
-  return (
-    <div className="flex-row h-[80vh]">
-      <PDFViewer showToolbar={false} width={"100%"} height={"100%"}>
-        {completeDocument}
-      </PDFViewer>
-      <BlobProvider document={completeDocument}>
-        {({ blob }) => (
-          <input
-            type="button"
-            value="Print"
-            onClick={async () => {
-              if (!blob) return;
-              const formInput = new FormData();
-              formInput.append("file", blob);
-              const response = await sendInvoice(formInput);
-            }}
-          />
-        )}
-      </BlobProvider>
-    </div>
   );
 }
