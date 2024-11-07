@@ -1,30 +1,20 @@
 "use server";
 
-import { renderToBuffer, renderToStream } from "@react-pdf/renderer";
-import { getAuthClient } from "../../../server";
+import { renderToBuffer } from "@react-pdf/renderer";
+import { getAuthClient, getInvoicesRepository } from "../../../server";
 import { gmail_v1 } from "@googleapis/gmail";
-import { drive_v3 } from "@googleapis/drive";
 import CompleteDocument, { Position } from "./invoiceTemplate";
 import { Patient } from "../../../models/patient";
 import { redirect } from "next/navigation";
 
 export async function createInvoice(patient: Patient, positions: Position[]) {
-  const pdf = await renderToStream(
+  const pdf = await renderToBuffer(
     <CompleteDocument patient={patient} positions={positions} />
   );
-  const auth = await getAuthClient();
-  const drive = new drive_v3.Drive({ auth });
-  const {
-    data: { id },
-  } = await drive.files.create({
-    requestBody: {
-      name: "nice",
-      mimeType: "application/pdf",
-    },
-    media: {
-      mimeType: "application/pdf",
-      body: pdf,
-    },
+  const invoiceRepository = await getInvoicesRepository();
+  const { id } = await invoiceRepository.create({
+    base64: pdf.toString("base64"),
+    name: "invoice",
   });
   redirect(`/administration/test/${id}`);
 }

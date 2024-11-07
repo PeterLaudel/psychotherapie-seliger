@@ -1,5 +1,5 @@
 import { drive_v3 } from "@googleapis/drive";
-import { getAuthClient } from "../../../../server";
+import { getAuthClient, getInvoicesRepository } from "../../../../server";
 import dynamic from "next/dynamic";
 
 const PDFViewer = dynamic(() => import("./pdfViewer"), { ssr: false });
@@ -13,22 +13,8 @@ interface Props {
 export default async function InvoiceReview({
   params: { invoiceReviewId },
 }: Props) {
-  const auth = await getAuthClient();
-  const drive = new drive_v3.Drive({
-    auth: auth,
-  });
-  const { data } = await drive.files.get(
-    {
-      fileId: invoiceReviewId,
-      alt: "media",
-    },
-    {
-      responseType: "arraybuffer",
-    }
-  );
-  const buffer = Buffer.from(data as ArrayBuffer);
-  const base64 = buffer.toString("base64");
-
+  const invoiceRepository = await getInvoicesRepository();
+  const { base64 } = await invoiceRepository.get(invoiceReviewId);
   return (
     <div className="w-full h-[100vh]">
       <PDFViewer data={base64} />

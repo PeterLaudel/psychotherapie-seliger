@@ -10,6 +10,7 @@ import IRead from "../interfaces/read";
 import { Service } from "../models/service";
 import { Invoice } from "../models/invoice";
 import { drive_v3 } from "@googleapis/drive";
+import { InvoicesRepository } from "../repositories/invoices";
 
 const getToken = async () => {
   const session = await getServerSession(authOptions);
@@ -32,6 +33,12 @@ export async function getPatientRepository(): Promise<IRead<Patient>> {
   const auth = await getAuthClient();
   const peopleClient = new people_v1.People({ auth });
   return new PatientRepository(peopleClient);
+}
+
+export async function getInvoicesRepository(): Promise<InvoicesRepository> {
+  const auth = await getAuthClient();
+  const drive = new drive_v3.Drive({ auth });
+  return new InvoicesRepository(drive);
 }
 
 export async function getServicesRepository(): Promise<IRead<Service>> {
