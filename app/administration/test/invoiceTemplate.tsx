@@ -124,7 +124,10 @@ export default function CompleteDocument({ patient, positions }: Props) {
             </View>
           </View>
           {positions.map((position) => (
-            <View style={tw("flex-row py-2")}>
+            <View
+              style={tw("flex-row py-2")}
+              key={position.service.originalGopNr}
+            >
               <View style={tw("w-[10vw]")}>
                 <Text style={tw("text-sm self-center")}>
                   {dateFormatter.format(position.date)}
@@ -136,7 +139,7 @@ export default function CompleteDocument({ patient, positions }: Props) {
                 </Text>
               </View>
               <View style={tw("w-[50vw]")}>
-                <Text style={tw("text-sm self-left")}>
+                <Text style={tw("text-sm self-start")}>
                   {position.service.description}
                 </Text>
               </View>
