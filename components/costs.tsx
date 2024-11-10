@@ -11,7 +11,7 @@ export default function Costs() {
             rel="noopener noreferrer"
             className="text-blue-500 underline"
           >
-            Abrechnungsempfehlungen der Bundespsychotherapeutenkammer fürg
+            Abrechnungsempfehlungen der Bundespsychotherapeutenkammer für
             Privatversicherte und Beihilfeberechtigte (Stand: 01.07.2024)
           </a>
           . Die genauen Kosten hängen von der jeweiligen Therapieleistung ab und

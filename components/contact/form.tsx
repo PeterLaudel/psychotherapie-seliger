@@ -75,7 +75,7 @@ export default function Form() {
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h1 className="text-2xl font-bold">Termin anfragen</h1>
             <div className="my-5">
-              Bitte beschrieben Sie kurz Ihr Anliegen. Geben Sie uns bitte
+              Bitte beschreiben Sie kurz Ihr Anliegen. Geben Sie uns bitte
               außerdem an, in welchen Zeiträumen Therapiesitzungen stattfinden
               könnten.
             </div>
