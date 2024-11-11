@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { Patient } from "../../../models/patient";
 import { Factor, Service } from "../../../models/service";
+import path from "path";
 
 export interface Position {
   date: Date;
@@ -23,7 +24,7 @@ interface Props {
 
 export default function CompleteDocument({ patient, positions }: Props) {
   const tw = createTw({});
-  const filePath = process.cwd() + "/public/logo.png";
+  const filePath = path.join(process.cwd(), "public/logo.png");
   const total = positions.reduce(
     (acc, position) =>
       acc + (position.service.amounts[position.factor] || 0) * position.number,
