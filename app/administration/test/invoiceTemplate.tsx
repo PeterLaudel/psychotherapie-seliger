@@ -4,12 +4,11 @@ import {
   Document,
   View,
   Text,
-  Image,
+  Image as ReactPdfImage,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { Patient } from "../../../models/patient";
 import { Factor, Service } from "../../../models/service";
-import path from "path";
-
+import logoBuffer from "./logo";
 export interface Position {
   date: Date;
   service: Service;
@@ -24,7 +23,6 @@ interface Props {
 
 export default function CompleteDocument({ patient, positions }: Props) {
   const tw = createTw({});
-  const filePath = path.join(process.cwd(), "public/logo.png");
   const total = positions.reduce(
     (acc, position) =>
       acc + (position.service.amounts[position.factor] || 0) * position.number,
@@ -44,7 +42,7 @@ export default function CompleteDocument({ patient, positions }: Props) {
     <Document>
       <Page size="A4" style={tw("p-12")} wrap>
         <View style={tw("flex-row h-[8vh]")}>
-          <Image src={filePath} />
+          <ReactPdfImage src={{ data: logoBuffer, format: "png" }} />
         </View>
         <View style={tw("flex-row justify-between pt-20")}>
           <View style={tw("flex-row")}>
