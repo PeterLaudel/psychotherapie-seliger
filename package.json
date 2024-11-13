@@ -9,15 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": ">=14.2.10",
+    "@googleapis/drive": "^8.14.0",
+    "@googleapis/gmail": "^12.0.0",
+    "@googleapis/people": "^3.0.9",
+    "@googleapis/sheets": "^9.3.1",
+    "@react-pdf/renderer": "^4.0.0",
+    "google-auth-library": "^9.14.2",
+    "next": "^14.2.10",
+    "next-auth": "^4.24.8",
     "react": "^18",
+    "react-datepicker": "^7.5.0",
     "react-dom": "^18",
-    "react-final-form": "^6.5.9"
+    "react-final-form": "^6.5.9",
+    "react-final-form-arrays": "^3.1.4",
+    "react-pdf-tailwind": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-select": "^5.0.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",

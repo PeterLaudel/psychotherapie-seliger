@@ -2,11 +2,13 @@
 
 import Address from "../../components/contact/address";
 import Email from "../../components/contact/email";
+import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
 
 export default function Datenschutz() {
   return (
     <div>
+      <Navbar />
       <div className="section md:w-[50%]">
         <p>
           <strong>Datenschutzerklärung</strong>
@@ -223,6 +225,7 @@ export default function Datenschutz() {
           </a>
         </p>
       </div>
+      <Footer />
     </div>
   );
 }

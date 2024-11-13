@@ -4,10 +4,12 @@ import Address from "../../components/contact//address";
 import Email from "../../components/contact//email";
 import Navbar from "../../components/navbar";
 import PhoneNumber from "../../components/contact//phonenumber";
+import Footer from "../../components/footer";
 
 export default function Impressum() {
   return (
     <main>
+      <Navbar />
       <div className="section">
         <div>
           <div>
@@ -98,6 +100,7 @@ export default function Impressum() {
           </div>
         </div>
       </div>
+      <Footer />
     </main>
   );
 }
