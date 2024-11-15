@@ -1,5 +1,5 @@
 import { getPatientRepository, getServicesRepository } from "../../../server";
-import Sheets from "./sheets";
+import InvoiceForm from "./invoiceForm";
 
 export default async function Administration() {
   const patientRepository = await getPatientRepository();
@@ -8,5 +8,5 @@ export default async function Administration() {
   const servicesRepository = await getServicesRepository();
   const services = await servicesRepository.get();
 
-  return <Sheets patients={patients} services={services} />;
+  return <InvoiceForm patients={patients} services={services} />;
 }
