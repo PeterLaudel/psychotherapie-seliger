@@ -63,7 +63,7 @@ export default function CompleteDocument({ patient, positions }: Props) {
             <Text style={tw("font-bold")}>M.Sc. A.Ute Seliger</Text>
             <Text>Psychologische Psychotherapeutin</Text>
             <Text style={tw("mb-3")}>ENR.: 9660750</Text>
-            <Text>Friedrich-Eber-Str. 98</Text>
+            <Text>Friedrich-Ebert-Str. 98</Text>
             <Text style={tw("mb-3")}>04105 Leipzig</Text>
             <Text>psychotherapie@praxis-seliger.com</Text>
           </View>

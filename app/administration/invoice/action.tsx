@@ -16,7 +16,7 @@ export async function createInvoice(patient: Patient, positions: Position[]) {
     base64: pdf.toString("base64"),
     name: "invoice",
   });
-  redirect(`/administration/test/${id}`);
+  redirect(`/administration/invoice/${id}`);
 }
 
 export async function sendInvoice(params: FormData) {

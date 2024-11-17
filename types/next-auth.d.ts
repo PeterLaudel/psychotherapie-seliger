@@ -7,6 +7,8 @@ declare module "next-auth" {
 
   interface Account {
     access_token: string;
+    refresh_token: string;
+    expires_at: number;
   }
 }
 
@@ -15,5 +17,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     /** OpenID ID Token */
     accessToken: string;
+    refreshToken: string;
+    expiresAt: number;
   }
 }

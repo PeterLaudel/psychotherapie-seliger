@@ -21,7 +21,7 @@ interface FormInvoice {
   positions: Partial<InvoicePosition>[];
 }
 
-export default function Sheets({ patients, services }: Props) {
+export default function InvoiceForm({ patients, services }: Props) {
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
       positions: [
