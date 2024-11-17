@@ -157,13 +157,14 @@ export default function Service({ services }: Props) {
                   </Field>
                 )}
               </ValueSubscription>
-              <IconButton
-                onClick={() => fields.remove(index)}
-                disabled={fields.length === 1}
-                size="large"
-              >
-                <DeleteIcon />
-              </IconButton>
+              <div className="flex min-h-14 items-center">
+                <IconButton
+                  onClick={() => fields.remove(index)}
+                  disabled={fields.length === 1}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
               {index === (fields.length || 0) - 1 && (
                 <div className="justify-self-start">
                   <IconButton

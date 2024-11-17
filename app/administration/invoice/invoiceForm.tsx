@@ -13,6 +13,7 @@ import Section from "../../../components/section";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
+import { Button } from "@mui/material";
 
 interface Props {
   patients: PatientType[];
@@ -59,13 +60,24 @@ export default function InvoiceForm({ patients, services }: Props) {
             deDE.components.MuiLocalizationProvider.defaultProps.localeText
           }
         >
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            className="grid m-4 grid-flow-row gap-4"
+          >
+            <h1>Rechnung erstellen</h1>
             <Section>
+              <h2 className="mb-4">Patient</h2>
               <Patient patients={patients} />
-              <div>Leistungen</div>
+            </Section>
+            <Section>
+              <h2 className="mb-4">Leistungen</h2>
               <Service services={services} />
             </Section>
-            <input type="submit" value="Submit" />
+            <div className="justify-self-start">
+              <Button type="submit" variant="contained">
+                Rechnung erstellen
+              </Button>
+            </div>
           </form>
         </LocalizationProvider>
       )}
