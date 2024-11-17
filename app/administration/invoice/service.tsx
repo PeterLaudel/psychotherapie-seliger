@@ -90,7 +90,7 @@ export default function Service({ services }: Props) {
                 name={`${name}.service`}
                 type="select"
                 validate={(value) =>
-                  value ? undefined : "Eine Leistun wird benötigt"
+                  value ? undefined : "Eine Leistung wird benötigt"
                 }
               >
                 {({ input, meta: { touched, error } }) => (
@@ -106,6 +106,7 @@ export default function Service({ services }: Props) {
                         error={touched && error}
                         helperText={touched && error ? error : undefined}
                         label="Leistung"
+                        onBlur={input.onBlur}
                       />
                     )}
                   />

@@ -13,7 +13,7 @@ import Section from "../../../components/section";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 interface Props {
   patients: PatientType[];
@@ -41,7 +41,7 @@ export default function InvoiceForm({ patients, services }: Props) {
   );
 
   const onSubmit = async ({ patient, positions }: FormInvoice) => {
-    createInvoice(patient, positions as InvoicePosition[]);
+    await createInvoice(patient, positions as InvoicePosition[]);
   };
 
   return (
@@ -52,7 +52,7 @@ export default function InvoiceForm({ patients, services }: Props) {
         ...arrayMutators,
       }}
     >
-      {({ handleSubmit }) => (
+      {({ handleSubmit, submitting, submitSucceeded }) => (
         <LocalizationProvider
           dateAdapter={AdapterDayjs}
           adapterLocale="de"
@@ -74,7 +74,14 @@ export default function InvoiceForm({ patients, services }: Props) {
               <Service services={services} />
             </Section>
             <div className="justify-self-start">
-              <Button type="submit" variant="contained">
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={submitting || submitSucceeded}
+              >
+                {(submitting || submitSucceeded) && (
+                  <CircularProgress size={18} />
+                )}
                 Rechnung erstellen
               </Button>
             </div>
