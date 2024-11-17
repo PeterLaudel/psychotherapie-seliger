@@ -55,7 +55,7 @@ export default function Service({ services }: Props) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 items-center lg:grid-cols-[repeat(4,1fr)_auto]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-[repeat(4,1fr)_auto] items-start">
       <FieldArray<Partial<Position>> name="positions">
         {({ fields }) =>
           fields.map((name, index) => (
@@ -64,12 +64,24 @@ export default function Service({ services }: Props) {
                 key={`${name}.date`}
                 name={`${name}.date`}
                 type="input"
+                validate={(value) =>
+                  value ? undefined : "Leistungs Datum wird benötigt"
+                }
+                s
               >
-                {({ input }) => (
+                {({ input, meta: { error, touched } }) => (
                   <DatePicker
                     label="Leistungs Datum"
                     value={input.value ? dayjs(input.value) : null}
                     onChange={(newValue) => input.onChange(newValue?.toDate())}
+                    minDate={dayjs.unix(0)}
+                    slotProps={{
+                      textField: {
+                        helperText: error && touched ? error : undefined,
+                        error: error && touched,
+                        onBlur: input.onBlur,
+                      },
+                    }}
                   />
                 )}
               </Field>
@@ -77,17 +89,24 @@ export default function Service({ services }: Props) {
                 key={`${name}.service`}
                 name={`${name}.service`}
                 type="select"
-                validate={(value) => (value ? undefined : "Required")}
+                validate={(value) =>
+                  value ? undefined : "Eine Leistun wird benötigt"
+                }
               >
-                {({ input }) => (
+                {({ input, meta: { touched, error } }) => (
                   <Autocomplete
                     options={services}
+                    onChange={(_, value) => input.onChange(value)}
                     getOptionLabel={(option) => option.short}
                     getOptionKey={(option) => option.short}
-                    onChange={(_, value) => input.onChange(value)}
                     value={input.value || null}
                     renderInput={(params) => (
-                      <TextField {...params} label="Leistung" />
+                      <TextField
+                        {...params}
+                        error={touched && error}
+                        helperText={touched && error ? error : undefined}
+                        label="Leistung"
+                      />
                     )}
                   />
                 )}
@@ -105,6 +124,7 @@ export default function Service({ services }: Props) {
                         type="number"
                         disabled={invalid}
                         label={"Anzahl"}
+                        InputProps={{ inputProps: { min: 1 } }}
                       />
                     )}
                   </InvalidSubscription>

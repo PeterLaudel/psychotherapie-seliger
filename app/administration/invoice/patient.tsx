@@ -24,6 +24,7 @@ export default function Patient({ patients }: Props) {
           onChange={(_, value) => input.onChange(value)}
           getOptionLabel={(patient) => `${patient.name} ${patient.surname}`}
           getOptionKey={(patient) => patient.id}
+          value={input.value || null}
           renderInput={(params) => (
             <TextField
               {...params}
