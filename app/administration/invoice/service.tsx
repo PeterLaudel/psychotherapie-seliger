@@ -55,11 +55,11 @@ export default function Service({ services }: Props) {
   };
 
   return (
-    <FieldArray<Partial<Position>> name="positions">
-      {({ fields }) =>
-        fields.map((name, index) => (
-          <Fragment key={name}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center lg:grid-cols-[repeat(4,1fr)_auto]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 items-center lg:grid-cols-[repeat(4,1fr)_auto]">
+      <FieldArray<Partial<Position>> name="positions">
+        {({ fields }) =>
+          fields.map((name, index) => (
+            <Fragment key={name}>
               <Field<Date>
                 key={`${name}.date`}
                 name={`${name}.date`}
@@ -110,7 +110,6 @@ export default function Service({ services }: Props) {
                   </InvalidSubscription>
                 )}
               </Field>
-
               <ValueSubscription<ServiceType | undefined>
                 name={`${name}.service`}
               >
@@ -122,20 +121,18 @@ export default function Service({ services }: Props) {
                     initialValue={Object.keys(service?.amounts || []).at(-1)}
                   >
                     {({ input }) => (
-                      <>
-                        <TextField
-                          select
-                          label="Faktor"
-                          disabled={!service}
-                          {...input}
-                        >
-                          {Object.keys(service?.amounts || []).map((factor) => (
-                            <MenuItem key={factor} value={factor}>
-                              {factor}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </>
+                      <TextField
+                        select
+                        label="Faktor"
+                        disabled={!service}
+                        {...input}
+                      >
+                        {Object.keys(service?.amounts || []).map((factor) => (
+                          <MenuItem key={factor} value={factor}>
+                            {factor}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                     )}
                   </Field>
                 )}
@@ -147,15 +144,20 @@ export default function Service({ services }: Props) {
               >
                 <DeleteIcon />
               </IconButton>
-            </div>
-            {index === (fields.length || 0) - 1 && (
-              <IconButton onClick={() => addEntry(fields.push)} size="large">
-                <Add />
-              </IconButton>
-            )}
-          </Fragment>
-        ))
-      }
-    </FieldArray>
+              {index === (fields.length || 0) - 1 && (
+                <div className="justify-self-start">
+                  <IconButton
+                    onClick={() => addEntry(fields.push)}
+                    size="large"
+                  >
+                    <Add />
+                  </IconButton>
+                </div>
+              )}
+            </Fragment>
+          ))
+        }
+      </FieldArray>
+    </div>
   );
 }
