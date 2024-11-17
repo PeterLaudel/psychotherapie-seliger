@@ -1,11 +1,17 @@
 import { FieldArray } from "react-final-form-arrays";
-import Image from "next/image";
 import { Service as ServiceType } from "../../../models/service";
 import { Field, useField } from "react-final-form";
-import DatePicker from "react-datepicker";
-import CreatableSelect from "react-select/creatable";
 import { Fragment } from "react";
 import { Position } from "../../../models/invoice";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import dayjs from "dayjs";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Add } from "@mui/icons-material";
+import { IconButton, MenuItem } from "@mui/material";
+
+import "dayjs/locale/de";
 
 interface Props {
   services: ServiceType[];
@@ -39,12 +45,6 @@ function ValueSubscription<T>({
 }
 
 export default function Service({ services }: Props) {
-  const serviceOptions = services.map((service, index) => ({
-    label: service.short,
-    value: index,
-    ...service,
-  }));
-
   const addEntry = (push: (value: Partial<Position>) => void) => {
     push({
       date: undefined,
@@ -59,28 +59,18 @@ export default function Service({ services }: Props) {
       {({ fields }) =>
         fields.map((name, index) => (
           <Fragment key={name}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center lg:grid-cols-[repeat(4,1fr)_auto]">
               <Field<Date>
                 key={`${name}.date`}
                 name={`${name}.date`}
                 type="input"
-                validate={(value) => (value ? undefined : "Required")}
               >
-                {({ input: { onChange, value } }) => (
-                  <div className="flex flex-col">
-                    <label
-                      htmlFor={`${name}.date`}
-                      className="mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Datum
-                    </label>
-                    <DatePicker
-                      id={`${name}.date`}
-                      selected={value}
-                      onChange={onChange}
-                      className="p-2 border border-gray-300 rounded"
-                    />
-                  </div>
+                {({ input }) => (
+                  <DatePicker
+                    label="Leistungs Datum"
+                    value={input.value ? dayjs(input.value) : null}
+                    onChange={(newValue) => input.onChange(newValue?.toDate())}
+                  />
                 )}
               </Field>
               <Field<ServiceType>
@@ -90,51 +80,37 @@ export default function Service({ services }: Props) {
                 validate={(value) => (value ? undefined : "Required")}
               >
                 {({ input }) => (
-                  <div className="flex flex-col">
-                    <label
-                      htmlFor={`${name}.service`}
-                      className="mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Leistung
-                    </label>
-                    <CreatableSelect<ServiceType>
-                      instanceId={input.name}
-                      {...input}
-                      options={serviceOptions}
-                      isClearable={true}
-                      isValidNewOption={() => false}
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                  </div>
+                  <Autocomplete
+                    options={services}
+                    getOptionLabel={(option) => option.short}
+                    getOptionKey={(option) => option.short}
+                    onChange={(_, value) => input.onChange(value)}
+                    value={input.value || null}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Leistung" />
+                    )}
+                  />
                 )}
               </Field>
-              <InvalidSubscription name={`${name}.service`}>
-                {(invalid: boolean) => (
-                  <Field<number>
-                    key={`${name}.number`}
-                    name={`${name}.number`}
-                    type="number"
-                  >
-                    {({ input }) => (
-                      <div className="flex flex-col">
-                        <label
-                          htmlFor={`${name}.number`}
-                          className="mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Anzahl
-                        </label>
-                        <input
-                          {...input}
-                          min={1}
-                          disabled={invalid}
-                          className="p-2 border border-gray-300 rounded"
-                        />
-                      </div>
+              <Field<number>
+                key={`${name}.number`}
+                name={`${name}.number`}
+                type="number"
+              >
+                {({ input }) => (
+                  <InvalidSubscription name={`${name}.service`}>
+                    {(invalid: boolean) => (
+                      <TextField
+                        {...input}
+                        type="number"
+                        disabled={invalid}
+                        label={"Anzahl"}
+                      />
                     )}
-                  </Field>
+                  </InvalidSubscription>
                 )}
-              </InvalidSubscription>
+              </Field>
+
               <ValueSubscription<ServiceType | undefined>
                 name={`${name}.service`}
               >
@@ -146,58 +122,37 @@ export default function Service({ services }: Props) {
                     initialValue={Object.keys(service?.amounts || []).at(-1)}
                   >
                     {({ input }) => (
-                      <div className="flex flex-col">
-                        <label
-                          htmlFor={`${name}.factor`}
-                          className="mb-1 text-sm font-medium text-gray-700"
-                        >
-                          Faktor
-                        </label>
-                        <select
-                          {...input}
+                      <>
+                        <TextField
+                          select
+                          label="Faktor"
                           disabled={!service}
-                          className="p-2 border border-gray-300 rounded"
+                          {...input}
                         >
-                          {Object.keys(service?.amounts || {}).map((factor) => (
-                            <option key={factor} value={factor}>
+                          {Object.keys(service?.amounts || []).map((factor) => (
+                            <MenuItem key={factor} value={factor}>
                               {factor}
-                            </option>
+                            </MenuItem>
                           ))}
-                        </select>
-                      </div>
+                        </TextField>
+                      </>
                     )}
                   </Field>
                 )}
               </ValueSubscription>
-              {(fields.length || 0) > 1 && (
-                <button
-                  type="button"
-                  onClick={() => fields.remove(index)}
-                  className="mt-4 p-2 flex items-center space-x-2 border border-gray-300 rounded hover:bg-gray-100"
-                >
-                  <Image
-                    src="/trash.svg"
-                    width={16}
-                    height={16}
-                    alt="Entfernen"
-                  />
-                </button>
-              )}
-              {index === (fields.length || 0) - 1 && (
-                <button
-                  type="button"
-                  onClick={() => addEntry(fields.push)}
-                  className="mt-4 p-2 flex items-center space-x-2 border border-gray-300 rounded hover:bg-gray-100"
-                >
-                  <Image
-                    src="/plus.svg"
-                    width={16}
-                    height={16}
-                    alt="Hinzufügen"
-                  />
-                </button>
-              )}
+              <IconButton
+                onClick={() => fields.remove(index)}
+                disabled={fields.length === 1}
+                size="large"
+              >
+                <DeleteIcon />
+              </IconButton>
             </div>
+            {index === (fields.length || 0) - 1 && (
+              <IconButton onClick={() => addEntry(fields.push)} size="large">
+                <Add />
+              </IconButton>
+            )}
           </Fragment>
         ))
       }

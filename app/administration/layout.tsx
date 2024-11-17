@@ -12,8 +12,10 @@ export default async function Layout({
 
   return (
     <Provider>
-      <Test />
-      {session && children}
+      <div className="bg-gray-100 h-[100vh]">
+        <Test />
+        {session && children}
+      </div>
     </Provider>
   );
 }
