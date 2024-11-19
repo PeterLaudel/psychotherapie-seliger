@@ -22,12 +22,14 @@ interface Props {
 
 interface FormInvoice {
   patient: PatientType;
+  diagnosis: string;
   positions: Partial<InvoicePosition>[];
 }
 
 export default function InvoiceForm({ patients, services }: Props) {
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
+      diagnosis: "",
       positions: [
         {
           date: undefined,
@@ -40,8 +42,8 @@ export default function InvoiceForm({ patients, services }: Props) {
     []
   );
 
-  const onSubmit = async ({ patient, positions }: FormInvoice) => {
-    await createInvoice(patient, positions as InvoicePosition[]);
+  const onSubmit = async ({ patient, diagnosis, positions }: FormInvoice) => {
+    await createInvoice(patient, diagnosis, positions as InvoicePosition[]);
   };
 
   return (

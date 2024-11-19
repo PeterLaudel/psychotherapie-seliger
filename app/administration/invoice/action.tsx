@@ -7,9 +7,17 @@ import CompleteDocument, { Position } from "./invoiceTemplate";
 import { Patient } from "../../../models/patient";
 import { redirect } from "next/navigation";
 
-export async function createInvoice(patient: Patient, positions: Position[]) {
+export async function createInvoice(
+  patient: Patient,
+  diagnosis: string,
+  positions: Position[]
+) {
   const pdf = await renderToBuffer(
-    <CompleteDocument patient={patient} positions={positions} />
+    <CompleteDocument
+      patient={patient}
+      diagnoses={diagnosis}
+      positions={positions}
+    />
   );
   const invoiceRepository = await getInvoicesRepository();
   const { id } = await invoiceRepository.create({
