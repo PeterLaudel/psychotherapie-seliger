@@ -55,7 +55,7 @@ export default function Service({ services }: Props) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-[repeat(4,1fr)_auto] items-start">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
       <FieldArray<Partial<Position>> name="positions">
         {({ fields }) =>
           fields.map((name, index) => (

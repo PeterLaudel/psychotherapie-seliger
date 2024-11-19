@@ -12,7 +12,7 @@ export default async function Layout({
 
   return (
     <Provider>
-      <div className="bg-gray-100 h-[100vh]">
+      <div className="flex flex-col bg-gray-100 h-screen">
         <Test />
         {session && children}
       </div>

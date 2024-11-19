@@ -14,7 +14,7 @@ const validatePatient = (value?: PatientType) =>
 
 export default function Patient({ patients }: Props) {
   return (
-    <div className="grid lg:grid-flow-col gap-x-4">
+    <div className="grid grid-flow-col gap-x-4">
       <Field<PatientType>
         name="patient"
         type="select"

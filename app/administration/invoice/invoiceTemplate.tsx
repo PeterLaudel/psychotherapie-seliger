@@ -17,7 +17,7 @@ export interface Position {
 }
 
 interface Props {
-  patient: Patient;
+  patient?: Patient;
   diagnoses: string;
   positions: Position[];
 }
@@ -57,10 +57,10 @@ export default function CompleteDocument({
               </Text>
               <Text
                 style={tw("text-sm mt-8")}
-              >{`${patient.name} ${patient.surname}`}</Text>
-              <Text style={tw("text-sm")}>{patient.street}</Text>
+              >{`${patient?.name} ${patient?.surname}`}</Text>
+              <Text style={tw("text-sm")}>{patient?.street}</Text>
               <Text style={tw("text-sm")}>
-                {`${patient.zip} ${patient.city}`}
+                {`${patient?.zip} ${patient?.city}`}
               </Text>
             </View>
           </View>
@@ -86,8 +86,8 @@ export default function CompleteDocument({
         <View style={tw("flex-row justify-between pt-8")}>
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>
-              {`Behandlet wurde: ${patient.surname}, ${
-                patient.name
+              {`Behandlet wurde: ${patient?.surname}, ${
+                patient?.name
               }, geb.: ${dateFormatter.format(new Date())}`}
             </Text>
           </View>
