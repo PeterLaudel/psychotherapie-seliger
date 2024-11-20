@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import Provider from "./provider";
-import Test from "./test";
+import Navbar from "./navbar";
 import { authOptions } from "../api/auth/[...nextauth]/config";
 
 export default async function Layout({
@@ -13,7 +13,7 @@ export default async function Layout({
   return (
     <Provider>
       <div className="flex flex-col bg-gray-100 h-screen">
-        <Test />
+        <Navbar />
         {session && children}
       </div>
     </Provider>

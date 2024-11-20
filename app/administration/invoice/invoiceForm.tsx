@@ -5,7 +5,7 @@ import type { Service as ServiceType } from "../../../models/service";
 import { Form, FormSpy } from "react-final-form";
 import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Patient from "./patient";
 import Service from "./service";
 import CompleteDocument, {
@@ -16,7 +16,7 @@ import Section from "../../../components/section";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import { Button, CircularProgress } from "@mui/material";
+import { Alert, Button, CircularProgress, Snackbar } from "@mui/material";
 import dynamic from "next/dynamic";
 
 const PDFViewer = dynamic(() => import("./pdfViewer"), {
@@ -35,6 +35,7 @@ interface FormInvoice {
 }
 
 export default function InvoiceForm({ patients, services }: Props) {
+  const [open, setOpen] = useState(false);
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
       diagnosis: "",
@@ -56,7 +57,10 @@ export default function InvoiceForm({ patients, services }: Props) {
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
       await createInvoice(patient, diagnosis, positions as InvoicePosition[]);
-      form.restart(initialValues);
+      setOpen(true);
+      setTimeout(() => {
+        form.restart(initialValues);
+      }, 1000);
     },
     [initialValues]
   );
@@ -121,6 +125,20 @@ export default function InvoiceForm({ patients, services }: Props) {
                 </PDFViewer>
               )}
             </FormSpy>
+            <Snackbar
+              open={open}
+              onClose={() => setOpen(false)}
+              autoHideDuration={6000}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <Alert
+                severity="success"
+                variant="filled"
+                onClose={() => setOpen(false)}
+              >
+                Rechnung wurde erstellt
+              </Alert>
+            </Snackbar>
           </div>
         )}
       </Form>
