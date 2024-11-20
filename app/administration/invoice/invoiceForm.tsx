@@ -3,8 +3,9 @@
 import type { Patient as PatientType } from "../../../models/patient";
 import type { Service as ServiceType } from "../../../models/service";
 import { Form, FormSpy } from "react-final-form";
+import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import Patient from "./patient";
 import Service from "./service";
 import CompleteDocument, {
@@ -49,26 +50,33 @@ export default function InvoiceForm({ patients, services }: Props) {
     []
   );
 
-  const onSubmit = async ({ patient, diagnosis, positions }: FormInvoice) => {
-    await createInvoice(patient, diagnosis, positions as InvoicePosition[]);
-  };
+  const onSubmit = useCallback(
+    async (
+      { patient, diagnosis, positions }: FormInvoice,
+      form: FormApi<FormInvoice, Partial<FormInvoice>>
+    ) => {
+      await createInvoice(patient, diagnosis, positions as InvoicePosition[]);
+      form.restart(initialValues);
+    },
+    [initialValues]
+  );
 
   return (
-    <Form<FormInvoice>
-      onSubmit={onSubmit}
-      initialValues={initialValues}
-      mutators={{
-        ...arrayMutators,
-      }}
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      adapterLocale="de"
+      localeText={
+        deDE.components.MuiLocalizationProvider.defaultProps.localeText
+      }
     >
-      {({ handleSubmit, submitting, submitSucceeded }) => (
-        <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          adapterLocale="de"
-          localeText={
-            deDE.components.MuiLocalizationProvider.defaultProps.localeText
-          }
-        >
+      <Form<FormInvoice>
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+        mutators={{
+          ...arrayMutators,
+        }}
+      >
+        {({ handleSubmit, submitting, submitSucceeded }) => (
           <div className="grid grid-cols-2 gap-4 h-full">
             <form
               onSubmit={handleSubmit}
@@ -90,15 +98,17 @@ export default function InvoiceForm({ patients, services }: Props) {
                   disabled={submitting || submitSucceeded}
                 >
                   {(submitting || submitSucceeded) && (
-                    <CircularProgress size={18} />
+                    <div className="mr-2">
+                      <CircularProgress size={18} />
+                    </div>
                   )}
-                  Rechnung erstellen
+                  Rechnung versenden
                 </Button>
               </div>
             </form>
             <FormSpy<FormInvoice> subscription={{ values: true }}>
               {({ values }) => (
-                <PDFViewer className="w-full h-full">
+                <PDFViewer className="w-full h-full" key={values.patient?.id}>
                   <CompleteDocument
                     patient={values.patient}
                     diagnoses={values.diagnosis}
@@ -112,8 +122,8 @@ export default function InvoiceForm({ patients, services }: Props) {
               )}
             </FormSpy>
           </div>
-        </LocalizationProvider>
-      )}
-    </Form>
+        )}
+      </Form>
+    </LocalizationProvider>
   );
 }
