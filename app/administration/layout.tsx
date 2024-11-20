@@ -12,8 +12,10 @@ export default async function Layout({
 
   return (
     <Provider>
-      <Test />
-      {session && children}
+      <div className="flex flex-col bg-gray-100 h-screen">
+        <Test />
+        {session && children}
+      </div>
     </Provider>
   );
 }

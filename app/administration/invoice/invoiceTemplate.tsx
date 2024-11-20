@@ -17,11 +17,16 @@ export interface Position {
 }
 
 interface Props {
-  patient: Patient;
+  patient?: Patient;
+  diagnoses: string;
   positions: Position[];
 }
 
-export default function CompleteDocument({ patient, positions }: Props) {
+export default function CompleteDocument({
+  patient,
+  diagnoses,
+  positions,
+}: Props) {
   const tw = createTw({});
   const total = positions.reduce(
     (acc, position) =>
@@ -50,13 +55,17 @@ export default function CompleteDocument({ patient, positions }: Props) {
               <Text style={tw("text-xs border-b")}>
                 Ute Seliger - Friedrich-Ebert-Straße 98 - 04105 Leipzig
               </Text>
-              <Text
-                style={tw("text-sm mt-8")}
-              >{`${patient.name} ${patient.surname}`}</Text>
-              <Text style={tw("text-sm")}>{patient.street}</Text>
-              <Text style={tw("text-sm")}>
-                {`${patient.zip} ${patient.city}`}
-              </Text>
+              {patient && (
+                <>
+                  <Text
+                    style={tw("text-sm mt-8")}
+                  >{`${patient?.name} ${patient?.surname}`}</Text>
+                  <Text style={tw("text-sm")}>{patient?.street}</Text>
+                  <Text style={tw("text-sm")}>
+                    {`${patient?.zip} ${patient?.city}`}
+                  </Text>
+                </>
+              )}
             </View>
           </View>
           <View style={tw("flex-col border-l-2 text-sm pl-2 pt-2 pb-2")}>
@@ -81,16 +90,20 @@ export default function CompleteDocument({ patient, positions }: Props) {
         <View style={tw("flex-row justify-between pt-8")}>
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>
-              Behandlet wurde: Ich und du, geb.: 01.01.2025
+              {patient &&
+                `Behandelt wurde: ${patient.surname}, ${
+                  patient.name
+                }, geb.: ${dateFormatter.format(new Date())}`}
             </Text>
           </View>
         </View>
-        <View style={tw("flex-row justify-between pt-4")}>
-          <View style={tw("flex-col")}>
-            <Text style={tw("text-sm")}>Diagnose</Text>
+        {diagnoses && (
+          <View style={tw("flex-row justify-between pt-4")}>
+            <View style={tw("flex-col")}>
+              <Text style={tw("text-sm")}>{`${diagnoses}`}</Text>
+            </View>
           </View>
-        </View>
-
+        )}
         <View style={tw("flex-row justify-between pt-4")}>
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>Sehr geehrte Damen und Herren,</Text>
