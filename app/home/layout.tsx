@@ -25,6 +25,9 @@ export const metadata: Metadata = {
     "Therapeut Leipzig",
     "Therapeutin Leipzig",
   ],
+  alternates: {
+    canonical: "https://www.psychotherapie-seliger.de/home",
+  },
 };
 
 export default function Layout({
