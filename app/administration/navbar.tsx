@@ -2,7 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
-export default function Test() {
+export default function Navbar() {
   const { data: session } = useSession();
   if (!session) {
     return (
