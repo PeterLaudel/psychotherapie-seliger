@@ -60,9 +60,9 @@ export default function CompleteDocument({
                   <Text
                     style={tw("text-sm mt-8")}
                   >{`${patient?.name} ${patient?.surname}`}</Text>
-                  <Text style={tw("text-sm")}>{patient?.street}</Text>
+                  <Text style={tw("text-sm")}>{patient.address.street}</Text>
                   <Text style={tw("text-sm")}>
-                    {`${patient?.zip} ${patient?.city}`}
+                    {`${patient.address.zip} ${patient.address.city}`}
                   </Text>
                 </>
               )}

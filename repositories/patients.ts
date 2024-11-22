@@ -23,10 +23,11 @@ export class PatientRepository implements IRead<Patient> {
       name: person?.names?.[0].givenName as string,
       surname: person?.names?.[0].familyName as string,
       email: person?.emailAddresses?.[0].value as string,
-      phone: person?.phoneNumbers?.[0].value as string,
-      street: person?.addresses?.[0].streetAddress as string,
-      zip: person?.addresses?.[0].postalCode as string,
-      city: person?.addresses?.[0].city as string,
+      patientAddress: {
+        street: person?.addresses?.[0].streetAddress as string,
+        zip: person?.addresses?.[0].postalCode as string,
+        city: person?.addresses?.[0].city as string,
+      },
     }));
   }
 }
