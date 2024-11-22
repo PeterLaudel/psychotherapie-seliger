@@ -93,7 +93,7 @@ export default function CompleteDocument({
               {patient &&
                 `Behandelt wurde: ${patient.surname}, ${
                   patient.name
-                }, geb.: ${dateFormatter.format(new Date())}`}
+                }, geb.: ${dateFormatter.format(patient.birthdate)} `}
             </Text>
           </View>
         </View>

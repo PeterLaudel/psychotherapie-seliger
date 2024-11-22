@@ -1,6 +1,7 @@
 import { people_v1 } from "@googleapis/people/";
 import { Patient } from "../models/patient";
 import IRead from "../interfaces/read";
+import Address from "../models/address";
 
 export class PatientRepository implements IRead<Patient> {
   private peopleClient: people_v1.People;
@@ -23,11 +24,33 @@ export class PatientRepository implements IRead<Patient> {
       name: person?.names?.[0].givenName as string,
       surname: person?.names?.[0].familyName as string,
       email: person?.emailAddresses?.[0].value as string,
-      patientAddress: {
-        street: person?.addresses?.[0].streetAddress as string,
-        zip: person?.addresses?.[0].postalCode as string,
-        city: person?.addresses?.[0].city as string,
-      },
+      birthdate: this.convertToDate(person?.birthdays?.[0].date) as Date,
+      address: this.convertToAddress(person?.addresses?.[0]) as Address,
     }));
+  }
+
+  private convertToDate(schemaDate?: people_v1.Schema$Date): Date | undefined {
+    if (!schemaDate || !schemaDate.year || !schemaDate.month || !schemaDate.day)
+      return undefined;
+
+    return new Date(schemaDate.year, schemaDate.month - 1, schemaDate.day);
+  }
+
+  private convertToAddress(
+    schemaAddress?: people_v1.Schema$Address
+  ): Address | undefined {
+    if (
+      !schemaAddress ||
+      !schemaAddress.streetAddress ||
+      !schemaAddress.city ||
+      !schemaAddress.postalCode
+    )
+      return undefined;
+
+    return {
+      street: schemaAddress.streetAddress as string,
+      zip: schemaAddress.postalCode as string,
+      city: schemaAddress.city as string,
+    };
   }
 }
