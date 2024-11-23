@@ -2,40 +2,34 @@
 
 import type { Patient as PatientType } from "../../../models/patient";
 import type { Service as ServiceType } from "../../../models/service";
-import { Form, FormSpy } from "react-final-form";
+import { Form } from "react-final-form";
 import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import Patient from "./patient";
 import Service from "./service";
-import CompleteDocument, {
-  Position as InvoicePosition,
-} from "./invoiceTemplate";
+import { Position as InvoicePosition } from "./invoiceTemplate";
 import { createInvoice } from "./action";
-import Section from "../../../components/section";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import { Alert, Button, CircularProgress, Snackbar } from "@mui/material";
-import dynamic from "next/dynamic";
-
-const PDFViewer = dynamic(() => import("./pdfViewer"), {
-  ssr: false,
-});
+import { Button, CircularProgress } from "@mui/material";
+import InvoiceViewer from "./invoiceViewer";
+import SuccessMessage from "../../../components/successMessage";
 
 interface Props {
   patients: PatientType[];
   services: ServiceType[];
 }
 
-interface FormInvoice {
+export interface FormInvoice {
   patient: PatientType;
   diagnosis: string;
   positions: Partial<InvoicePosition>[];
 }
 
 export default function InvoiceForm({ patients, services }: Props) {
-  const [open, setOpen] = useState(false);
+  const [open, showSuccessMessage] = useState(false);
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
       diagnosis: "",
@@ -57,10 +51,8 @@ export default function InvoiceForm({ patients, services }: Props) {
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
       await createInvoice(patient, diagnosis, positions as InvoicePosition[]);
-      setOpen(true);
-      setTimeout(() => {
-        form.restart(initialValues);
-      }, 1000);
+      showSuccessMessage(true);
+      form.restart(initialValues);
     },
     [initialValues]
   );
@@ -87,61 +79,27 @@ export default function InvoiceForm({ patients, services }: Props) {
               className="grid m-4 grid-flow-row gap-4 h-fit"
             >
               <h1>Rechnung erstellen</h1>
-              <Section>
-                <h2 className="mb-4">Patient</h2>
-                <Patient patients={patients} />
-              </Section>
-              <Section>
-                <h2 className="mb-4">Leistungen</h2>
-                <Service services={services} />
-              </Section>
-              <div className="justify-self-start">
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={submitting || submitSucceeded}
-                >
-                  {(submitting || submitSucceeded) && (
-                    <div className="mr-2">
-                      <CircularProgress size={18} />
-                    </div>
-                  )}
-                  Rechnung versenden
-                </Button>
-              </div>
-            </form>
-            <FormSpy<FormInvoice> subscription={{ values: true }}>
-              {({ values }) => (
-                <PDFViewer className="w-full h-full" key={values.patient?.id}>
-                  <CompleteDocument
-                    patient={values.patient}
-                    diagnoses={values.diagnosis}
-                    positions={
-                      values.positions.filter(
-                        ({ service, date }) => service && date
-                      ) as InvoicePosition[]
-                    }
-                  />
-                </PDFViewer>
-              )}
-            </FormSpy>
-            <Snackbar
-              open={open}
-              onClose={() => setOpen(false)}
-              autoHideDuration={6000}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-              <Alert
-                severity="success"
-                variant="filled"
-                onClose={() => setOpen(false)}
+              <Patient patients={patients} />
+              <Service services={services} />
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={submitting || submitSucceeded}
+                className="justify-self-start self-center"
               >
-                Rechnung wurde erstellt
-              </Alert>
-            </Snackbar>
+                {(submitting || submitSucceeded) && (
+                  <CircularProgress size={18} className="mr-2" />
+                )}
+                Rechnung versenden
+              </Button>
+            </form>
+            <InvoiceViewer />
           </div>
         )}
       </Form>
+      <SuccessMessage open={open} onClose={() => showSuccessMessage(false)}>
+        Rechnung wurde versendet
+      </SuccessMessage>
     </LocalizationProvider>
   );
 }

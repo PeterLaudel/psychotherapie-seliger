@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Add } from "@mui/icons-material";
 import { IconButton, MenuItem } from "@mui/material";
+import Section from "../../../components/section";
 
 import "dayjs/locale/de";
 
@@ -55,131 +56,136 @@ export default function Service({ services }: Props) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
-      <FieldArray<Partial<Position>> name="positions">
-        {({ fields }) =>
-          fields.map((name, index) => (
-            <Fragment key={name}>
-              <Field<Date>
-                key={`${name}.date`}
-                name={`${name}.date`}
-                type="input"
-                validate={(value) =>
-                  value ? undefined : "Leistungs Datum wird benötigt"
-                }
-                s
-              >
-                {({ input, meta: { error, touched } }) => (
-                  <DatePicker
-                    label="Leistungs Datum"
-                    value={input.value ? dayjs(input.value) : null}
-                    onChange={(newValue) => input.onChange(newValue?.toDate())}
-                    minDate={dayjs.unix(0)}
-                    slotProps={{
-                      textField: {
-                        helperText: error && touched ? error : undefined,
-                        error: error && touched,
-                        onBlur: input.onBlur,
-                      },
-                    }}
-                  />
-                )}
-              </Field>
-              <Field<ServiceType>
-                key={`${name}.service`}
-                name={`${name}.service`}
-                type="select"
-                validate={(value) =>
-                  value ? undefined : "Eine Leistung wird benötigt"
-                }
-              >
-                {({ input, meta: { touched, error } }) => (
-                  <Autocomplete
-                    options={services}
-                    onChange={(_, value) => input.onChange(value)}
-                    getOptionLabel={(option) => option.short}
-                    getOptionKey={(option) => option.short}
-                    value={input.value || null}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        error={touched && error}
-                        helperText={touched && error ? error : undefined}
-                        label="Leistung"
-                        onBlur={input.onBlur}
-                      />
-                    )}
-                  />
-                )}
-              </Field>
-              <Field<number>
-                key={`${name}.number`}
-                name={`${name}.number`}
-                type="number"
-              >
-                {({ input }) => (
-                  <InvalidSubscription name={`${name}.service`}>
-                    {(invalid: boolean) => (
-                      <TextField
-                        {...input}
-                        type="number"
-                        disabled={invalid}
-                        label={"Anzahl"}
-                        InputProps={{ inputProps: { min: 1 } }}
-                      />
-                    )}
-                  </InvalidSubscription>
-                )}
-              </Field>
-              <ValueSubscription<ServiceType | undefined>
-                name={`${name}.service`}
-              >
-                {(service) => (
-                  <Field<string>
-                    key={`${name}.factor`}
-                    name={`${name}.factor`}
-                    type="select"
-                    initialValue={Object.keys(service?.amounts || []).at(-1)}
-                  >
-                    {({ input }) => (
-                      <TextField
-                        select
-                        label="Faktor"
-                        disabled={!service}
-                        {...input}
-                      >
-                        {Object.keys(service?.amounts || []).map((factor) => (
-                          <MenuItem key={factor} value={factor}>
-                            {factor}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    )}
-                  </Field>
-                )}
-              </ValueSubscription>
-              <div className="flex min-h-14 items-center">
-                <IconButton
-                  onClick={() => fields.remove(index)}
-                  disabled={fields.length === 1}
+    <Section>
+      <h2 className="mb-4">Leistungen</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
+        <FieldArray<Partial<Position>> name="positions">
+          {({ fields }) =>
+            fields.map((name, index) => (
+              <Fragment key={name}>
+                <Field<Date>
+                  key={`${name}.date`}
+                  name={`${name}.date`}
+                  type="input"
+                  validate={(value) =>
+                    value ? undefined : "Leistungs Datum wird benötigt"
+                  }
+                  s
                 >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
-              {index === (fields.length || 0) - 1 && (
-                <div className="justify-self-start">
+                  {({ input, meta: { error, touched } }) => (
+                    <DatePicker
+                      label="Leistungs Datum"
+                      value={input.value ? dayjs(input.value) : null}
+                      onChange={(newValue) =>
+                        input.onChange(newValue?.toDate())
+                      }
+                      minDate={dayjs.unix(0)}
+                      slotProps={{
+                        textField: {
+                          helperText: error && touched ? error : undefined,
+                          error: error && touched,
+                          onBlur: input.onBlur,
+                        },
+                      }}
+                    />
+                  )}
+                </Field>
+                <Field<ServiceType>
+                  key={`${name}.service`}
+                  name={`${name}.service`}
+                  type="select"
+                  validate={(value) =>
+                    value ? undefined : "Eine Leistung wird benötigt"
+                  }
+                >
+                  {({ input, meta: { touched, error } }) => (
+                    <Autocomplete
+                      options={services}
+                      onChange={(_, value) => input.onChange(value)}
+                      getOptionLabel={(option) => option.short}
+                      getOptionKey={(option) => option.short}
+                      value={input.value || null}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          error={touched && error}
+                          helperText={touched && error ? error : undefined}
+                          label="Leistung"
+                          onBlur={input.onBlur}
+                        />
+                      )}
+                    />
+                  )}
+                </Field>
+                <Field<number>
+                  key={`${name}.number`}
+                  name={`${name}.number`}
+                  type="number"
+                >
+                  {({ input }) => (
+                    <InvalidSubscription name={`${name}.service`}>
+                      {(invalid: boolean) => (
+                        <TextField
+                          {...input}
+                          type="number"
+                          disabled={invalid}
+                          label={"Anzahl"}
+                          InputProps={{ inputProps: { min: 1 } }}
+                        />
+                      )}
+                    </InvalidSubscription>
+                  )}
+                </Field>
+                <ValueSubscription<ServiceType | undefined>
+                  name={`${name}.service`}
+                >
+                  {(service) => (
+                    <Field<string>
+                      key={`${name}.factor`}
+                      name={`${name}.factor`}
+                      type="select"
+                      initialValue={Object.keys(service?.amounts || []).at(-1)}
+                    >
+                      {({ input }) => (
+                        <TextField
+                          select
+                          label="Faktor"
+                          disabled={!service}
+                          {...input}
+                        >
+                          {Object.keys(service?.amounts || []).map((factor) => (
+                            <MenuItem key={factor} value={factor}>
+                              {factor}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      )}
+                    </Field>
+                  )}
+                </ValueSubscription>
+                <div className="flex min-h-14 items-center">
                   <IconButton
-                    onClick={() => addEntry(fields.push)}
-                    size="large"
+                    onClick={() => fields.remove(index)}
+                    disabled={fields.length === 1}
                   >
-                    <Add />
+                    <DeleteIcon />
                   </IconButton>
                 </div>
-              )}
-            </Fragment>
-          ))
-        }
-      </FieldArray>
-    </div>
+                {index === (fields.length || 0) - 1 && (
+                  <div className="justify-self-start">
+                    <IconButton
+                      onClick={() => addEntry(fields.push)}
+                      size="large"
+                    >
+                      <Add />
+                    </IconButton>
+                  </div>
+                )}
+              </Fragment>
+            ))
+          }
+        </FieldArray>
+      </div>
+    </Section>
   );
 }
