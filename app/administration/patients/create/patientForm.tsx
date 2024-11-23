@@ -10,9 +10,9 @@ import { deDE } from "@mui/x-date-pickers/locales";
 import PatientData from "./patientData";
 import AddressData from "./addressData";
 import createPatient from "./action";
-import { Button, CircularProgress } from "@mui/material";
 
 import "dayjs/locale/de";
+import SubmitButton from "../../../../components/submitButton";
 
 export default function PatientForm() {
   const initialValues = useMemo<Partial<Patient>>(() => ({}), []);
@@ -41,15 +41,12 @@ export default function PatientForm() {
             <h1>Patient anlegen</h1>
             <PatientData />
             <AddressData />
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={submitting}
+            <SubmitButton
+              submitting={submitting}
               className="justify-self-start self-center"
             >
-              {submitting && <CircularProgress size={18} className="mr-2" />}
               Patient anlegen
-            </Button>
+            </SubmitButton>
           </form>
         )}
       </Form>
