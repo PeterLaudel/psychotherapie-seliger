@@ -29,7 +29,7 @@ export const getAuthClient = async () => {
   return oAuthClient;
 };
 
-export async function getPatientRepository(): Promise<IRead<Patient>> {
+export async function getPatientRepository(): Promise<PatientRepository> {
   const auth = await getAuthClient();
   const peopleClient = new people_v1.People({ auth });
   return new PatientRepository(peopleClient);

@@ -3,6 +3,10 @@ import { Patient } from "../models/patient";
 import IRead from "../interfaces/read";
 import Address from "../models/address";
 
+export type CreatePatient = Pick<
+  Patient,
+  "name" | "address" | "birthdate" | "email" | "surname"
+>;
 export class PatientRepository implements IRead<Patient> {
   private peopleClient: people_v1.People;
 
@@ -10,10 +14,55 @@ export class PatientRepository implements IRead<Patient> {
     this.peopleClient = peopleClient;
   }
 
+  public async create(patient: CreatePatient): Promise<Patient> {
+    const { data } = await this.peopleClient.people.createContact({
+      requestBody: {
+        names: [
+          {
+            givenName: patient.name,
+            familyName: patient.surname,
+          },
+        ],
+        emailAddresses: [
+          {
+            value: patient.email,
+          },
+        ],
+        birthdays: [
+          {
+            date: {
+              year: patient.birthdate.getFullYear(),
+              month: patient.birthdate.getMonth() + 1,
+              day: patient.birthdate.getDate(),
+            },
+          },
+        ],
+        addresses: [
+          {
+            streetAddress: patient.address.street,
+            postalCode: patient.address.zip,
+            city: patient.address.city,
+          },
+        ],
+      },
+    });
+
+    if (!data.resourceName) throw new Error("No resourceName found");
+
+    return {
+      id: data.resourceName,
+      name: patient.name,
+      surname: patient.surname,
+      email: patient.email,
+      birthdate: patient.birthdate,
+      address: patient.address,
+    };
+  }
+
   public async get(): Promise<Patient[]> {
     const { data } = await this.peopleClient.people.connections.list({
       resourceName: "people/me",
-      personFields: "names,emailAddresses,phoneNumbers,addresses",
+      personFields: "names,emailAddresses,phoneNumbers,addresses,birthdays",
       pageSize: 1000,
     });
 
