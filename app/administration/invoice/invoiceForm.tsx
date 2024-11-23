@@ -13,9 +13,9 @@ import { createInvoice } from "./action";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import { Button, CircularProgress } from "@mui/material";
 import InvoiceViewer from "./invoiceViewer";
 import SuccessMessage from "../../../components/successMessage";
+import SubmitButton from "../../../components/submitButton";
 
 interface Props {
   patients: PatientType[];
@@ -81,17 +81,12 @@ export default function InvoiceForm({ patients, services }: Props) {
               <h1>Rechnung erstellen</h1>
               <Patient patients={patients} />
               <Service services={services} />
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={submitting || submitSucceeded}
+              <SubmitButton
+                submitting={submitting || submitSucceeded}
                 className="justify-self-start self-center"
               >
-                {(submitting || submitSucceeded) && (
-                  <CircularProgress size={18} className="mr-2" />
-                )}
-                Rechnung versenden
-              </Button>
+                Rechnung erstellen
+              </SubmitButton>
             </form>
             <InvoiceViewer />
           </div>
