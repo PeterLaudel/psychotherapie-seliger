@@ -1,6 +1,6 @@
 # Web page
 
-This is a single page application website for a psychotherapy practice. Written in nextjs and deployed with github pages. The page can be accessed with peterlaudel.github.io/psychotherapie-seliger or www.psychotherapie-seliger.de. The website does not use a component library. Only the form uses a third party library with react-final-form.
+This is a single page application website for a psychotherapy practice. Written in nextjs and deployed with vercel. The page can be accessed with www.psychotherapie-seliger.de. The repo contains a public area where the homepage is published. And it does have a private area for administration of patients and invoices.
 
 # Development
 
