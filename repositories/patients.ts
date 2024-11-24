@@ -50,7 +50,7 @@ export class PatientRepository implements IRead<Patient> {
     if (!data.resourceName) throw new Error("No resourceName found");
 
     await this.peopleClient.contactGroups.members.modify({
-      resourceName: `contactGroups/1c812ccd8b6c2231`,
+      resourceName: this.contactGroupResourceName,
       requestBody: {
         resourceNamesToAdd: [data.resourceName],
       },
@@ -68,7 +68,7 @@ export class PatientRepository implements IRead<Patient> {
 
   public async get(): Promise<Patient[]> {
     const { data: contactGroup } = await this.peopleClient.contactGroups.get({
-      resourceName: "contactGroups/1c812ccd8b6c2231",
+      resourceName: this.contactGroupResourceName,
       maxMembers: 1000,
     });
 
@@ -81,7 +81,7 @@ export class PatientRepository implements IRead<Patient> {
 
     if (!people.responses) return [];
 
-    return people.responses?.map(({ person }) => ({
+    return people.responses.map(({ person }) => ({
       id: person?.resourceName as string,
       name: person?.names?.[0].givenName as string,
       surname: person?.names?.[0].familyName as string,
@@ -114,5 +114,13 @@ export class PatientRepository implements IRead<Patient> {
       zip: schemaAddress.postalCode as string,
       city: schemaAddress.city as string,
     };
+  }
+
+  private get contactGroupResourceName(): string {
+    const contactGroupResourceName =
+      process.env.GOOGLE_CONTACT_GROUP_RESOURCE_NAME;
+    if (!contactGroupResourceName)
+      throw new Error("No contact group resource name found");
+    return contactGroupResourceName;
   }
 }
