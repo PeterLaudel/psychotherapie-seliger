@@ -49,6 +49,13 @@ export class PatientRepository implements IRead<Patient> {
 
     if (!data.resourceName) throw new Error("No resourceName found");
 
+    await this.peopleClient.contactGroups.members.modify({
+      resourceName: `contactGroups/1c812ccd8b6c2231`,
+      requestBody: {
+        resourceNamesToAdd: [data.resourceName],
+      },
+    });
+
     return {
       id: data.resourceName,
       name: patient.name,
@@ -60,15 +67,21 @@ export class PatientRepository implements IRead<Patient> {
   }
 
   public async get(): Promise<Patient[]> {
-    const { data } = await this.peopleClient.people.connections.list({
-      resourceName: "people/me",
-      personFields: "names,emailAddresses,phoneNumbers,addresses,birthdays",
-      pageSize: 1000,
+    const { data: contactGroup } = await this.peopleClient.contactGroups.get({
+      resourceName: "contactGroups/1c812ccd8b6c2231",
+      maxMembers: 1000,
     });
 
-    if (!data.connections) return [];
+    if (!contactGroup.memberResourceNames) return [];
 
-    return data.connections?.map((person) => ({
+    const { data: people } = await this.peopleClient.people.getBatchGet({
+      resourceNames: contactGroup.memberResourceNames,
+      personFields: "names,emailAddresses,phoneNumbers,addresses,birthdays",
+    });
+
+    if (!people.responses) return [];
+
+    return people.responses?.map(({ person }) => ({
       id: person?.resourceName as string,
       name: person?.names?.[0].givenName as string,
       surname: person?.names?.[0].familyName as string,
