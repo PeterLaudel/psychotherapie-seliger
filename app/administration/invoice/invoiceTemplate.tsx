@@ -6,10 +6,10 @@ import {
   View,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { createTw } from "react-pdf-tailwind";
-
 import { Patient } from "../../../models/patient";
 import { Factor, Service } from "../../../models/service";
 import logoBuffer from "./logo";
+
 export interface Position {
   date: Date;
   service: Service;

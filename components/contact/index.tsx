@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import Address from "./address";
 import Email from "./email";
 import Form from "./form";

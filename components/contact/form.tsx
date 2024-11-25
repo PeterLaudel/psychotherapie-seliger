@@ -1,9 +1,8 @@
 "use client";
 
 import { FORM_ERROR } from "final-form";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { Field, Form as FinalForm } from "react-final-form";
-
 import Spinner from "./spinner";
 import {
   validateEmail,
@@ -12,15 +11,6 @@ import {
   validatePayment,
   validateSurname,
 } from "./validations";
-
-const paymentMethods = [
-  "privatversichert",
-  "beihilfe",
-  "heilfürsorge",
-  "selbstzahler",
-] as const;
-
-type PaymentMethod = typeof paymentMethods[number];
 
 interface ContactFormValues {
   name?: string;
@@ -32,7 +22,7 @@ interface ContactFormValues {
 
 const contactEndpoint = () => process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || "";
 
-function Error({ children }: { children: React.ReactNode }) {
+function Error({ children }: { children: ReactNode }) {
   return <div className="text-red-500 text-sm">{children}</div>;
 }
 

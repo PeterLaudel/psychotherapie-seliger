@@ -3,7 +3,6 @@
 import { TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Field } from "react-final-form";
-
 import Section from "../../../components/section";
 import { Patient as PatientType } from "../../../models/patient";
 

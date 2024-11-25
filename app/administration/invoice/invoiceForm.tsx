@@ -7,7 +7,6 @@ import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
-
 import SubmitButton from "../../../components/submitButton";
 import SuccessMessage from "../../../components/successMessage";
 import type { Patient as PatientType } from "../../../models/patient";

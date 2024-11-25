@@ -1,9 +1,10 @@
 import { Alert, Snackbar } from "@mui/material";
+import { ReactNode } from "react";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export default function SuccessMessage({ children, open, onClose }: Props) {

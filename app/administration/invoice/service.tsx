@@ -7,10 +7,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Fragment } from "react";
+import { Fragment, JSX } from "react";
 import { Field, useField } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
-
 import Section from "../../../components/section";
 import { Position } from "../../../models/invoice";
 import { Service as ServiceType } from "../../../models/service";
@@ -24,7 +23,7 @@ function InvalidSubscription({
   children,
 }: {
   name: string;
-  children: (invalid: boolean) => JSX.Element;
+  children: (_unused: boolean) => JSX.Element;
 }) {
   const {
     meta: { invalid },

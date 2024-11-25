@@ -8,7 +8,6 @@ import { deDE } from "@mui/x-date-pickers/locales";
 import { FormApi } from "final-form";
 import { useCallback, useMemo } from "react";
 import { Form } from "react-final-form";
-
 import SubmitButton from "../../../../components/submitButton";
 import { Patient } from "../../../../models/patient";
 import createPatient from "./action";
