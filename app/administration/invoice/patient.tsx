@@ -1,10 +1,11 @@
 "use client";
 
-import { Patient as PatientType } from "../../../models/patient";
-import { Field } from "react-final-form";
-import Autocomplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Field } from "react-final-form";
+
 import Section from "../../../components/section";
+import { Patient as PatientType } from "../../../models/patient";
 
 interface Props {
   patients: PatientType[];

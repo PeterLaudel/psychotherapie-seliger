@@ -1,10 +1,11 @@
 "use server";
 
-import { renderToBuffer } from "@react-pdf/renderer";
-import { getAuthClient, getInvoicesRepository } from "../../../server";
 import { gmail_v1 } from "@googleapis/gmail";
-import CompleteDocument, { Position } from "./invoiceTemplate";
+import { renderToBuffer } from "@react-pdf/renderer";
+
 import { Patient } from "../../../models/patient";
+import { getAuthClient, getInvoicesRepository } from "../../../server";
+import CompleteDocument, { Position } from "./invoiceTemplate";
 
 export async function createInvoice(
   patient: Patient,

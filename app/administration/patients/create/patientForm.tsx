@@ -1,18 +1,19 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { Form } from "react-final-form";
-import { FormApi } from "final-form";
-import { Patient } from "../../../../models/patient";
+import "dayjs/locale/de";
+
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import PatientData from "./patientData";
-import AddressData from "./addressData";
-import createPatient from "./action";
+import { FormApi } from "final-form";
+import { useCallback, useMemo } from "react";
+import { Form } from "react-final-form";
 
-import "dayjs/locale/de";
 import SubmitButton from "../../../../components/submitButton";
+import { Patient } from "../../../../models/patient";
+import createPatient from "./action";
+import AddressData from "./addressData";
+import PatientData from "./patientData";
 
 export default function PatientForm() {
   const initialValues = useMemo<Partial<Patient>>(() => ({}), []);
@@ -21,7 +22,7 @@ export default function PatientForm() {
       await createPatient(values);
       form.restart(initialValues);
     },
-    []
+    [initialValues]
   );
 
   return (

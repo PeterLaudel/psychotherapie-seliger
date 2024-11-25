@@ -1,7 +1,7 @@
-import { AuthOptions } from "next-auth";
 import { OAuth2Client } from "google-auth-library";
-import GoogleProvider from "next-auth/providers/google";
+import { AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import GoogleProvider from "next-auth/providers/google";
 
 const refreshToken = async (token: JWT): Promise<JWT> => {
   const oAuthClient = new OAuth2Client();
