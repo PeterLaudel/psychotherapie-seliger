@@ -1,15 +1,11 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../app/api/auth/[...nextauth]/config";
 import { OAuth2Client } from "google-auth-library";
 import { people_v1 } from "@googleapis/people";
-import { sheets_v4 } from "@googleapis/sheets";
-import { PatientRepository } from "../repositories/patients";
-import { ServiceRepository } from "../repositories/services";
-import { Patient } from "../models/patient";
-import IRead from "../interfaces/read";
-import { Service } from "../models/service";
-import { Invoice } from "../models/invoice";
 import { drive_v3 } from "@googleapis/drive";
+
+import { authOptions } from "../app/api/auth/[...nextauth]/config";
+import { PatientsRepository } from "../repositories/patients";
+import { ServicesRepository } from "../repositories/services";
 import { InvoicesRepository } from "../repositories/invoices";
 
 const getToken = async () => {
@@ -29,10 +25,10 @@ export const getAuthClient = async () => {
   return oAuthClient;
 };
 
-export async function getPatientRepository(): Promise<PatientRepository> {
+export async function getPatientsRepository(): Promise<PatientsRepository> {
   const auth = await getAuthClient();
   const peopleClient = new people_v1.People({ auth });
-  return new PatientRepository(peopleClient);
+  return new PatientsRepository(peopleClient);
 }
 
 export async function getInvoicesRepository(): Promise<InvoicesRepository> {
@@ -41,6 +37,6 @@ export async function getInvoicesRepository(): Promise<InvoicesRepository> {
   return new InvoicesRepository(drive);
 }
 
-export async function getServicesRepository(): Promise<IRead<Service>> {
-  return new ServiceRepository();
+export async function getServicesRepository(): Promise<ServicesRepository> {
+  return new ServicesRepository();
 }

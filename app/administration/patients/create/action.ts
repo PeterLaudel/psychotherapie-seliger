@@ -1,9 +1,9 @@
 "use server";
 
 import { CreatePatient } from "../../../../repositories/patients";
-import { getPatientRepository } from "../../../../server";
+import { getPatientsRepository } from "../../../../server";
 
 export default async function createPatient(createPatient: CreatePatient) {
-  const repository = await getPatientRepository();
+  const repository = await getPatientsRepository();
   await repository.create(createPatient);
 }
