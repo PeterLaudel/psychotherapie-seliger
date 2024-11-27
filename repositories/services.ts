@@ -182,7 +182,7 @@ const services: Service[] = [
   },
 ];
 
-export class ServiceRepository implements IRead<Service> {
+export class ServicesRepository implements IRead<Service> {
   constructor() {}
 
   async get(): Promise<Service[]> {

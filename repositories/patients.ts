@@ -7,7 +7,7 @@ export type CreatePatient = Pick<
   Patient,
   "name" | "address" | "birthdate" | "email" | "surname"
 >;
-export class PatientRepository implements IRead<Patient> {
+export class PatientsRepository implements IRead<Patient> {
   private peopleClient: people_v1.People;
 
   constructor(peopleClient: people_v1.People) {

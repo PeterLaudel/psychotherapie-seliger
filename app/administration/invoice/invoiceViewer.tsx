@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 import { FormSpy } from "react-final-form";
+import { FormInvoice } from "./invoiceForm";
 import CompleteDocument from "./invoiceTemplate";
 import { Position as InvoicePosition } from "./invoiceTemplate";
-import { FormInvoice } from "./invoiceForm";
 
 const PDFViewer = dynamic(() => import("./pdfViewer"), {
   ssr: false,

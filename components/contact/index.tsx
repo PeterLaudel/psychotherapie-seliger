@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Address from "./address";
 import Email from "./email";
-import PhoneNumber from "./phonenumber";
 import Form from "./form";
+import PhoneNumber from "./phonenumber";
 
 export default function Contact() {
   return (

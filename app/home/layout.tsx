@@ -1,6 +1,7 @@
+import { ReactNode } from "react";
 import type { Metadata } from "next";
-import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
+import Navbar from "../../components/navbar";
 
 export const dynamic = "force-static";
 
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
 export default function Layout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <>

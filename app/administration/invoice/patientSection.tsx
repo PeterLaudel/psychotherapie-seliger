@@ -1,10 +1,10 @@
 "use client";
 
-import { Patient as PatientType } from "../../../models/patient";
-import { Field } from "react-final-form";
-import Autocomplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Field } from "react-final-form";
 import Section from "../../../components/section";
+import { Patient as PatientType } from "../../../models/patient";
 
 interface Props {
   patients: PatientType[];
@@ -13,7 +13,7 @@ interface Props {
 const validatePatient = (value?: PatientType) =>
   value ? undefined : "Bitte wählen Sie einen Patienten aus";
 
-export default function Patient({ patients }: Props) {
+export default function PatientSection({ patients }: Props) {
   return (
     <Section>
       <h2 className="mb-4">Patient</h2>

@@ -1,8 +1,8 @@
-import Contact from "../../components/contact";
 import AboutMe from "../../components/aboutMe";
+import Contact from "../../components/contact";
+import Costs from "../../components/costs";
 import Therapie from "../../components/therapie";
 import TreatmentSpectrum from "../../components/treatmentSpectrum";
-import Costs from "../../components/costs";
 
 export default function Home() {
   return (

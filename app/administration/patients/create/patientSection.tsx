@@ -1,8 +1,8 @@
-import { Field } from "react-final-form";
-import Section from "../../../../components/section";
 import { TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { Field } from "react-final-form";
+import Section from "../../../../components/section";
 import {
   validateDate,
   validateEmail,
@@ -10,7 +10,7 @@ import {
   validateSurname,
 } from "./validation";
 
-export default function PatientData() {
+export default function PatientSection() {
   return (
     <Section>
       <h2 className="mb-4">Patientendaten</h2>

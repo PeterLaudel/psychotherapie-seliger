@@ -1,12 +1,13 @@
+import { ReactNode } from "react";
 import { getServerSession } from "next-auth";
-import Provider from "./provider";
-import Navbar from "./navbar";
 import { authOptions } from "../api/auth/[...nextauth]/config";
+import Navbar from "./navbar";
+import Provider from "./provider";
 
 export default async function Layout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
 

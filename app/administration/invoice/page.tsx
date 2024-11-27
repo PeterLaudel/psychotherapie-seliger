@@ -1,8 +1,8 @@
-import { getPatientRepository, getServicesRepository } from "../../../server";
+import { getPatientsRepository, getServicesRepository } from "../../../server";
 import InvoiceForm from "./invoiceForm";
 
 export default async function Administration() {
-  const patientRepository = await getPatientRepository();
+  const patientRepository = await getPatientsRepository();
   const patients = await patientRepository.get();
 
   const servicesRepository = await getServicesRepository();
