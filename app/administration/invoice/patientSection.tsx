@@ -13,7 +13,7 @@ interface Props {
 const validatePatient = (value?: PatientType) =>
   value ? undefined : "Bitte wählen Sie einen Patienten aus";
 
-export default function Patient({ patients }: Props) {
+export default function PatientSection({ patients }: Props) {
   return (
     <Section>
       <h2 className="mb-4">Patient</h2>

@@ -11,8 +11,8 @@ import { Form } from "react-final-form";
 import SubmitButton from "../../../../components/submitButton";
 import { Patient } from "../../../../models/patient";
 import createPatient from "./action";
-import AddressData from "./addressData";
-import PatientData from "./patientData";
+import AddressSection from "./addressSection";
+import PatientSection from "./patientSection";
 
 export default function PatientForm() {
   const initialValues = useMemo<Partial<Patient>>(() => ({}), []);
@@ -39,8 +39,8 @@ export default function PatientForm() {
             className="grid grid-flow-row m-4 gap-4 h-fit"
           >
             <h1>Patient anlegen</h1>
-            <PatientData />
-            <AddressData />
+            <PatientSection />
+            <AddressSection />
             <SubmitButton
               submitting={submitting}
               className="justify-self-start self-center"

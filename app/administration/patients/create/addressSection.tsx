@@ -3,7 +3,7 @@ import { Field } from "react-final-form";
 import Section from "../../../../components/section";
 import { validateStreet, validateZip } from "./validation";
 
-export default function AddressData() {
+export default function AddressSection() {
   return (
     <Section>
       <h2 className="mb-4">Addresse</h2>

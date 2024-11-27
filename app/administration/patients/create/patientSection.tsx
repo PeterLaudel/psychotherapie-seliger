@@ -10,7 +10,7 @@ import {
   validateSurname,
 } from "./validation";
 
-export default function PatientData() {
+export default function PatientSection() {
   return (
     <Section>
       <h2 className="mb-4">Patientendaten</h2>

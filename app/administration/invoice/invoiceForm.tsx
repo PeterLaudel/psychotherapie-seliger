@@ -14,8 +14,8 @@ import type { Service as ServiceType } from "../../../models/service";
 import { createInvoice } from "./action";
 import { Position as InvoicePosition } from "./invoiceTemplate";
 import InvoiceViewer from "./invoiceViewer";
-import Patient from "./patient";
-import Service from "./service";
+import PatientSection from "./patientSection";
+import ServiceSection from "./serviceSection";
 
 interface Props {
   patients: PatientType[];
@@ -79,8 +79,8 @@ export default function InvoiceForm({ patients, services }: Props) {
               className="grid m-4 grid-flow-row gap-4 h-fit"
             >
               <h1>Rechnung erstellen</h1>
-              <Patient patients={patients} />
-              <Service services={services} />
+              <PatientSection patients={patients} />
+              <ServiceSection services={services} />
               <SubmitButton
                 submitting={submitting || submitSucceeded}
                 className="justify-self-start self-center"

@@ -45,7 +45,7 @@ function ValueSubscription<T>({
   return children(value);
 }
 
-export default function Service({ services }: Props) {
+export default function ServiceSection({ services }: Props) {
   const addEntry = (push: (value: Partial<Position>) => void) => {
     push({
       date: undefined,
