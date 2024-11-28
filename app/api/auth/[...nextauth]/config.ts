@@ -10,14 +10,18 @@ const refreshToken = async (token: JWT): Promise<JWT> => {
     refresh_token: token.refreshToken,
   });
 
-  const refreshedTokens = await oAuthClient.refreshAccessToken();
-  const credentials = refreshedTokens.credentials;
+  const {
+    credentials: { access_token, expiry_date, refresh_token },
+  } = await oAuthClient.refreshAccessToken();
+
+  if (!access_token || !expiry_date)
+    throw new Error("Failed to refresh access token");
 
   return {
     ...token,
-    accessToken: credentials.access_token as string,
-    expiresAt: credentials.expiry_date as number,
-    refreshToken: credentials.refresh_token ?? token.refreshToken,
+    accessToken: access_token,
+    expiresAt: expiry_date,
+    refreshToken: refresh_token ?? token.refreshToken,
   };
 };
 
@@ -29,6 +33,8 @@ export const authOptions: AuthOptions = {
       authorization: {
         params: {
           scope: `openid email profile https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://mail.google.com/`,
+          access_type: "offline",
+          prompt: "consent",
         },
       },
     }),
