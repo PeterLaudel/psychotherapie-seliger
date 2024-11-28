@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { OAuth2Client } from "google-auth-library";
 import { people_v1 } from "@googleapis/people";
 import { drive_v3 } from "@googleapis/drive";
-
 import { authOptions } from "../app/api/auth/[...nextauth]/config";
 import { PatientsRepository } from "../repositories/patients";
 import { ServicesRepository } from "../repositories/services";
