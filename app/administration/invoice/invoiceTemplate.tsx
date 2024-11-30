@@ -15,6 +15,7 @@ export interface Position {
   service: Service;
   number: number;
   factor: Factor;
+  pageBreak: boolean;
 }
 
 interface Props {
@@ -60,7 +61,7 @@ export default function CompleteDocument({
                 <>
                   <Text
                     style={tw("text-sm mt-8")}
-                  >{`${patient?.name} ${patient?.surname}`}</Text>
+                  >{`${patient.name} ${patient.surname}`}</Text>
                   <Text style={tw("text-sm")}>{patient.address.street}</Text>
                   <Text style={tw("text-sm")}>
                     {`${patient.address.zip} ${patient.address.city}`}
@@ -115,64 +116,64 @@ export default function CompleteDocument({
           </View>
         </View>
 
-        <View style={tw("flex-col pt-12")}>
-          <View style={tw("flex-row border-b py-2")}>
+        <View style={tw("flex-row border-b py-2 pt-12")}>
+          <View style={tw("w-[10vw]")}>
+            <Text style={tw("text-sm font-bold self-center")}>Datum</Text>
+          </View>
+          <View style={tw("w-[10vw]")}>
+            <Text style={tw("text-sm font-bold self-center")}>Code</Text>
+          </View>
+          <View style={tw("w-[50vw]")}>
+            <Text style={tw("text-sm font-bold self-center")}>Leistung</Text>
+          </View>
+          <View style={tw("w-[10vw]")}>
+            <Text style={tw("text-sm font-bold self-center")}>Faktor</Text>
+          </View>
+          <View style={tw("w-[10vw]")}>
+            <Text style={tw("text-sm font-bold self-center")}>Anzahl</Text>
+          </View>
+          <View style={tw("w-[10vw]")}>
+            <Text style={tw("text-sm font-bold self-end")}>Betrag</Text>
+          </View>
+        </View>
+        {positions.map((position) => (
+          <View
+            style={tw("flex-row py-2")}
+            key={position.service.originalGopNr}
+            break={position.pageBreak}
+            wrap={false}
+          >
             <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm font-bold self-center")}>Datum</Text>
+              <Text style={tw("text-sm self-center")}>
+                {dateFormatter.format(position.date)}
+              </Text>
             </View>
             <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm font-bold self-center")}>Code</Text>
+              <Text style={tw("text-sm self-center")}>
+                {position.service.originalGopNr}
+              </Text>
             </View>
             <View style={tw("w-[50vw]")}>
-              <Text style={tw("text-sm font-bold self-center")}>Leistung</Text>
+              <Text style={tw("text-sm self-start")}>
+                {position.service.description}
+              </Text>
             </View>
             <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm font-bold self-center")}>Faktor</Text>
+              <Text style={tw("text-sm self-center")}>{position.factor}</Text>
             </View>
             <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm font-bold self-center")}>Anzahl</Text>
+              <Text style={tw("text-sm self-center")}>{position.number}</Text>
             </View>
             <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm font-bold self-end")}>Betrag</Text>
+              <Text style={tw("text-sm self-end")}>
+                {currencyFormatter.format(
+                  (position.service.amounts[position.factor] || 0) *
+                    position.number
+                )}
+              </Text>
             </View>
           </View>
-          {positions.map((position) => (
-            <View
-              style={tw("flex-row py-2")}
-              key={position.service.originalGopNr}
-            >
-              <View style={tw("w-[10vw]")}>
-                <Text style={tw("text-sm self-center")}>
-                  {dateFormatter.format(position.date)}
-                </Text>
-              </View>
-              <View style={tw("w-[10vw]")}>
-                <Text style={tw("text-sm self-center")}>
-                  {position.service.originalGopNr}
-                </Text>
-              </View>
-              <View style={tw("w-[50vw]")}>
-                <Text style={tw("text-sm self-start")}>
-                  {position.service.description}
-                </Text>
-              </View>
-              <View style={tw("w-[10vw]")}>
-                <Text style={tw("text-sm self-center")}>{position.factor}</Text>
-              </View>
-              <View style={tw("w-[10vw]")}>
-                <Text style={tw("text-sm self-center")}>{position.number}</Text>
-              </View>
-              <View style={tw("w-[10vw]")}>
-                <Text style={tw("text-sm self-end")}>
-                  {currencyFormatter.format(
-                    (position.service.amounts[position.factor] || 0) *
-                      position.number
-                  )}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
+        ))}
         <View style={tw("flex-col pt-4")}>
           <View style={tw("flex-row justify-end")}>
             <View style={tw("flex-col pr-5")}>

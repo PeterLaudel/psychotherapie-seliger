@@ -1,3 +1,5 @@
+"use server";
+
 import { getPatientsRepository, getServicesRepository } from "../../../server";
 import InvoiceForm from "./invoiceForm";
 
