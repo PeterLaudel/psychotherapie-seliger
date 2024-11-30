@@ -1,9 +1,13 @@
+import "./globals.css";
 import { ReactNode } from "react";
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
 
 export const dynamic = "force-static";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Psychologische Psychotherapeutin | Verhaltenstherapie | Ute Seliger",
@@ -37,12 +41,14 @@ export default function Layout({
   children: ReactNode;
 }>) {
   return (
-    <>
-      <div className="sticky top-0 left-0 z-10">
-        <Navbar />
-      </div>
-      {children}
-      <Footer />
-    </>
+    <html lang="de" className="scroll-smooth scroll-pt-12 md:scroll-pt-16">
+      <body className={inter.className}>
+        <div className="sticky top-0 left-0 z-10">
+          <Navbar />
+        </div>
+        {children}
+        <Footer />
+      </body>
+    </html>
   );
 }

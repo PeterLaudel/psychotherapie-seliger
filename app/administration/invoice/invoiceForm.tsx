@@ -73,21 +73,23 @@ export default function InvoiceForm({ patients, services }: Props) {
         }}
       >
         {({ handleSubmit, submitting, submitSucceeded }) => (
-          <div className="grid grid-cols-2 gap-4 h-full">
-            <form
-              onSubmit={handleSubmit}
-              className="grid m-4 grid-flow-row gap-4 h-fit"
-            >
-              <h1>Rechnung erstellen</h1>
-              <PatientSection patients={patients} />
-              <ServiceSection services={services} />
-              <SubmitButton
-                submitting={submitting || submitSucceeded}
-                className="justify-self-start self-center"
+          <div className="grid grid-cols-2 gap-4 h-full overflow-hidden">
+            <div className="overflow-auto h-full">
+              <form
+                onSubmit={handleSubmit}
+                className="grid m-4 grid-flow-row gap-4 h-fit"
               >
-                Rechnung erstellen
-              </SubmitButton>
-            </form>
+                <h1>Rechnung erstellen</h1>
+                <PatientSection patients={patients} />
+                <ServiceSection services={services} />
+                <SubmitButton
+                  submitting={submitting || submitSucceeded}
+                  className="justify-self-start self-center"
+                >
+                  Rechnung erstellen
+                </SubmitButton>
+              </form>
+            </div>
             <InvoiceViewer />
           </div>
         )}
