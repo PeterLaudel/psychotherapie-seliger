@@ -39,6 +39,7 @@ export default function InvoiceForm({ patients, services }: Props) {
           service: undefined,
           number: 1,
           factor: undefined,
+          pageBreak: false,
         },
       ],
     }),

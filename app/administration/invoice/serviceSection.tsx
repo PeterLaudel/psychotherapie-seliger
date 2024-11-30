@@ -11,8 +11,9 @@ import { Fragment, JSX } from "react";
 import { Field, useField } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
 import Section from "../../../components/section";
-import { Position } from "../../../models/invoice";
 import { Service as ServiceType } from "../../../models/service";
+import { Position } from "./invoiceTemplate";
+import { PageBreak } from "./pageBreak";
 
 interface Props {
   services: ServiceType[];
@@ -52,17 +53,23 @@ export default function ServiceSection({ services }: Props) {
       service: undefined,
       number: 1,
       factor: undefined,
+      pageBreak: false,
     });
   };
 
   return (
     <Section>
       <h2 className="mb-4">Leistungen</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
         <FieldArray<Partial<Position>> name="positions">
           {({ fields }) =>
             fields.map((name, index) => (
               <Fragment key={name}>
+                {index > 0 && (
+                  <div className="col-span-5">
+                    <PageBreak name={name} />
+                  </div>
+                )}
                 <Field<Date>
                   key={`${name}.date`}
                   name={`${name}.date`}
