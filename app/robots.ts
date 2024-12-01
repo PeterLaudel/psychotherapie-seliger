@@ -5,7 +5,12 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/home/",
-      disallow: ["/", "/administration/"],
+      disallow: [
+        "/",
+        "/administration/",
+        "/hom/datenschutz/",
+        "/home/impressum/",
+      ],
     },
     sitemap: "https://www.psychotherapie-seliger.de/sitemap.xml",
   };
