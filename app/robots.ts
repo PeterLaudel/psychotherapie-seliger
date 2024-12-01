@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         "/",
         "/administration/",
-        "/hom/datenschutz/",
+        "/home/datenschutz/",
         "/home/impressum/",
       ],
     },
