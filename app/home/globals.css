@@ -18,7 +18,7 @@
   }
 
   section {
-    @apply px-10 py-10 md:px-20 md:py-16;
+    @apply px-10 py-10 lg:px-20 lg:py-16;
   }
 
   footer {
@@ -42,24 +42,24 @@
   .image-text {
     @apply grid;
     @apply gap-8;
-    @apply md:[grid-template-areas:'image''text'];
-    @apply md:[grid-template-areas:'image_text'];
+    @apply lg:[grid-template-areas:'image''text'];
+    @apply lg:[grid-template-areas:'image_text'];
     @apply items-center justify-items-center;
   }
 
   .text-image {
     @apply grid;
     @apply gap-8;
-    @apply md:[grid-template-areas:'image''text'];
-    @apply md:[grid-template-areas:'text_image'];
+    @apply lg:[grid-template-areas:'image''text'];
+    @apply lg:[grid-template-areas:'text_image'];
     @apply items-center justify-items-center;
   }
 
   .image {
-    @apply md:[grid-area:image];
+    @apply lg:[grid-area:image];
   }
 
   .text {
-    @apply md:[grid-area:text];
+    @apply lg:[grid-area:text];
   }
 }

@@ -41,7 +41,7 @@ export default function Layout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="de" className="scroll-smooth scroll-pt-12 md:scroll-pt-16">
+    <html lang="de" className="scroll-smooth scroll-pt-12 lg:scroll-pt-16">
       <body className={inter.className}>
         <div className="sticky top-0 left-0 z-10">
           <Navbar />
