@@ -5,7 +5,16 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { getAuthClient, getInvoicesRepository } from "../../../server";
 import InvoiceTemplate, { Props as InvoiceParameters } from "./invoiceTemplate";
 
-export async function createInvoice(invoiceParameters: InvoiceParameters) {
+interface Message {
+  recipient: string;
+  subject: string;
+  text: string;
+}
+
+export async function createInvoice(
+  invoiceParameters: InvoiceParameters,
+  message: Message
+) {
   const pdf = await renderToBuffer(<InvoiceTemplate {...invoiceParameters} />);
   const invoiceRepository = await getInvoicesRepository();
   const { base64 } = await invoiceRepository.create({
@@ -14,8 +23,8 @@ export async function createInvoice(invoiceParameters: InvoiceParameters) {
   });
   const email = [
     'From: "Sender Name" <sender@example.com>',
-    `To: peter.laudel@gmail.com`,
-    "Subject: Your Invoice",
+    `To: ${message.recipient}`,
+    `Subject: ${message.subject}`,
     "MIME-Version: 1.0",
     'Content-Type: multipart/mixed; boundary="boundary"',
     "",
@@ -23,7 +32,7 @@ export async function createInvoice(invoiceParameters: InvoiceParameters) {
     'Content-Type: text/plain; charset="UTF-8"',
     "Content-Transfer-Encoding: 7bit",
     "",
-    "Please find attached your invoice.",
+    message.text,
     "",
     "--boundary",
     "Content-Type: application/pdf",
