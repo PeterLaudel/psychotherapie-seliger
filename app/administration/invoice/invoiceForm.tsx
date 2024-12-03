@@ -100,7 +100,7 @@ export default function InvoiceForm({ patients, services }: Props) {
                   submitting={submitting || submitSucceeded}
                   className="justify-self-start self-center"
                 >
-                  Rechnung versende
+                  Rechnung versenden
                 </SubmitButton>
               </form>
             </div>
