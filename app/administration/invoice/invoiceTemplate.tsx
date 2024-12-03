@@ -1,5 +1,6 @@
 import {
   Document,
+  //next is confused because of the Image namin clash
   Image as ReactPdfImage,
   Page,
   Text,
@@ -8,33 +9,40 @@ import {
 import { createTw } from "react-pdf-tailwind";
 import { Patient } from "../../../models/patient";
 import { Factor, Service } from "../../../models/service";
+import Address from "../../../models/address";
 import logoBuffer from "./logo";
 
-export interface Position {
+type InvoiceAddress = {
+  name: string;
+  surname: string;
+} & Address;
+
+type InvoicePatient = { diagnosis?: string } & Pick<
+  Patient,
+  "name" | "surname" | "birthdate"
+>;
+
+type Position = {
   date: Date;
-  service: Service;
   number: number;
   factor: Factor;
+  amount: number;
   pageBreak: boolean;
-}
+} & Pick<Service, "originalGopNr" | "description">;
 
-interface Props {
-  patient?: Patient;
-  diagnoses: string;
+export interface Props {
+  invoiceAddress?: InvoiceAddress;
+  patient?: InvoicePatient;
   positions: Position[];
 }
 
-export default function CompleteDocument({
+export default function InvoiceTemplate({
+  invoiceAddress,
   patient,
-  diagnoses,
   positions,
 }: Props) {
   const tw = createTw({});
-  const total = positions.reduce(
-    (acc, position) =>
-      acc + (position.service.amounts[position.factor] || 0) * position.number,
-    0
-  );
+  const total = positions.reduce((acc, position) => acc + position.amount, 0);
   const dateFormatter = new Intl.DateTimeFormat("de-DE", {
     year: "numeric",
     month: "2-digit",
@@ -57,14 +65,14 @@ export default function CompleteDocument({
               <Text style={tw("text-xs border-b")}>
                 Ute Seliger - Friedrich-Ebert-Straße 98 - 04105 Leipzig
               </Text>
-              {patient && (
+              {invoiceAddress && (
                 <>
                   <Text
                     style={tw("text-sm mt-8")}
-                  >{`${patient.name} ${patient.surname}`}</Text>
-                  <Text style={tw("text-sm")}>{patient.address.street}</Text>
+                  >{`${invoiceAddress.name} ${invoiceAddress.surname}`}</Text>
+                  <Text style={tw("text-sm")}>{invoiceAddress.street}</Text>
                   <Text style={tw("text-sm")}>
-                    {`${patient.address.zip} ${patient.address.city}`}
+                    {`${invoiceAddress.zip} ${invoiceAddress.city}`}
                   </Text>
                 </>
               )}
@@ -99,10 +107,10 @@ export default function CompleteDocument({
             </Text>
           </View>
         </View>
-        {diagnoses && (
+        {patient?.diagnosis && (
           <View style={tw("flex-row justify-between pt-4")}>
             <View style={tw("flex-col")}>
-              <Text style={tw("text-sm")}>{`${diagnoses}`}</Text>
+              <Text style={tw("text-sm")}>{`${patient.diagnosis}`}</Text>
             </View>
           </View>
         )}
@@ -139,7 +147,7 @@ export default function CompleteDocument({
         {positions.map((position) => (
           <View
             style={tw("flex-row py-2")}
-            key={position.service.originalGopNr}
+            key={position.originalGopNr}
             break={position.pageBreak}
             wrap={false}
           >
@@ -150,12 +158,12 @@ export default function CompleteDocument({
             </View>
             <View style={tw("w-[10vw]")}>
               <Text style={tw("text-sm self-center")}>
-                {position.service.originalGopNr}
+                {position.originalGopNr}
               </Text>
             </View>
             <View style={tw("w-[50vw]")}>
               <Text style={tw("text-sm self-start")}>
-                {position.service.description}
+                {position.description}
               </Text>
             </View>
             <View style={tw("w-[10vw]")}>
@@ -166,10 +174,7 @@ export default function CompleteDocument({
             </View>
             <View style={tw("w-[10vw]")}>
               <Text style={tw("text-sm self-end")}>
-                {currencyFormatter.format(
-                  (position.service.amounts[position.factor] || 0) *
-                    position.number
-                )}
+                {currencyFormatter.format(position.amount)}
               </Text>
             </View>
           </View>

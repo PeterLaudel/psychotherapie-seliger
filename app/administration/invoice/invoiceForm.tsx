@@ -10,22 +10,34 @@ import { Form } from "react-final-form";
 import SubmitButton from "../../../components/submitButton";
 import SuccessMessage from "../../../components/successMessage";
 import type { Patient as PatientType } from "../../../models/patient";
-import type { Service as ServiceType } from "../../../models/service";
+import type {
+  Factor,
+  Service,
+  Service as ServiceType,
+} from "../../../models/service";
 import { createInvoice } from "./action";
-import { Position as InvoicePosition } from "./invoiceTemplate";
 import InvoiceViewer from "./invoiceViewer";
 import PatientSection from "./patientSection";
 import ServiceSection from "./serviceSection";
+import { toInvoiceParameters } from "./toInvoiceParameters";
 
 interface Props {
   patients: PatientType[];
   services: ServiceType[];
 }
 
+export interface Position {
+  date: Date;
+  service: Service;
+  number: number;
+  factor: Factor;
+  pageBreak: boolean;
+}
+
 export interface FormInvoice {
   patient: PatientType;
   diagnosis: string;
-  positions: Partial<InvoicePosition>[];
+  positions: Partial<Position>[];
 }
 
 export default function InvoiceForm({ patients, services }: Props) {
@@ -48,10 +60,11 @@ export default function InvoiceForm({ patients, services }: Props) {
 
   const onSubmit = useCallback(
     async (
-      { patient, diagnosis, positions }: FormInvoice,
+      values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      await createInvoice(patient, diagnosis, positions as InvoicePosition[]);
+      const invoiceParameters = toInvoiceParameters(values);
+      await createInvoice(invoiceParameters);
       showSuccessMessage(true);
       form.restart(initialValues);
     },
@@ -87,7 +100,7 @@ export default function InvoiceForm({ patients, services }: Props) {
                   submitting={submitting || submitSucceeded}
                   className="justify-self-start self-center"
                 >
-                  Rechnung erstellen
+                  Rechnung versende
                 </SubmitButton>
               </form>
             </div>

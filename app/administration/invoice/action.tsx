@@ -2,22 +2,11 @@
 
 import { gmail_v1 } from "@googleapis/gmail";
 import { renderToBuffer } from "@react-pdf/renderer";
-import { Patient } from "../../../models/patient";
 import { getAuthClient, getInvoicesRepository } from "../../../server";
-import CompleteDocument, { Position } from "./invoiceTemplate";
+import InvoiceTemplate, { Props as InvoiceParameters } from "./invoiceTemplate";
 
-export async function createInvoice(
-  patient: Patient,
-  diagnosis: string,
-  positions: Position[]
-) {
-  const pdf = await renderToBuffer(
-    <CompleteDocument
-      patient={patient}
-      diagnoses={diagnosis}
-      positions={positions}
-    />
-  );
+export async function createInvoice(invoiceParameters: InvoiceParameters) {
+  const pdf = await renderToBuffer(<InvoiceTemplate {...invoiceParameters} />);
   const invoiceRepository = await getInvoicesRepository();
   const { base64 } = await invoiceRepository.create({
     base64: pdf.toString("base64"),
