@@ -12,8 +12,8 @@ import { Field, useField } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
 import Section from "../../../components/section";
 import { Service as ServiceType } from "../../../models/service";
-import { Position } from "./invoiceTemplate";
 import { PageBreak } from "./pageBreak";
+import { Position } from "./invoiceForm";
 
 interface Props {
   services: ServiceType[];
