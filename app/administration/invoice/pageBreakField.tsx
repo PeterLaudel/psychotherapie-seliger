@@ -6,7 +6,7 @@ interface Props {
   name: string;
 }
 
-export function PageBreak({ name }: Props) {
+export function PageBreakField({ name }: Props) {
   const {
     input: { value: isPageBreak, onChange },
   } = useField<boolean>(`${name}.pageBreak`, {
@@ -17,7 +17,7 @@ export function PageBreak({ name }: Props) {
     return (
       <div className="grid grid-cols-[1fr_auto_1fr]">
         <div className="border-[1px] border-gray-300 self-center min-w-full" />
-        <Tooltip title="Seitenumbruch entfernen">
+        <Tooltip title="Seitenumbruch entfernen" placement="right">
           <IconButton onClick={() => onChange(!isPageBreak)}>
             <Close fontSize="small" />
           </IconButton>
@@ -27,14 +27,12 @@ export function PageBreak({ name }: Props) {
     );
 
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr]">
-      <div className="min-w-full" />
-      <Tooltip title="Seitenumbruch hinzufügen">
+    <div className="flex justify-center">
+      <Tooltip title="Seitenumbruch hinzufügen" placement="right">
         <IconButton onClick={() => onChange(!isPageBreak)}>
           <Add fontSize="small" />
         </IconButton>
       </Tooltip>
-      <div className="min-w-full" />
     </div>
   );
 }

@@ -12,7 +12,7 @@ import { Field, useField } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
 import Section from "../../../components/section";
 import { Service as ServiceType } from "../../../models/service";
-import { PageBreak } from "./pageBreak";
+import { PageBreakField } from "./pageBreakField";
 import { Position } from "./invoiceForm";
 
 interface Props {
@@ -67,7 +67,7 @@ export default function ServiceSection({ services }: Props) {
               <Fragment key={name}>
                 {index > 0 && (
                   <div className="col-span-5">
-                    <PageBreak name={name} />
+                    <PageBreakField name={name} />
                   </div>
                 )}
                 <Field<Date>
@@ -180,10 +180,7 @@ export default function ServiceSection({ services }: Props) {
                 </div>
                 {index === (fields.length || 0) - 1 && (
                   <div className="justify-self-start">
-                    <IconButton
-                      onClick={() => addEntry(fields.push)}
-                      size="large"
-                    >
+                    <IconButton onClick={() => addEntry(fields.push)}>
                       <Add />
                     </IconButton>
                   </div>

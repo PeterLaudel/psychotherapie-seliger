@@ -16,9 +16,10 @@ import type {
   Service as ServiceType,
 } from "../../../models/service";
 import { createInvoice } from "./action";
-import InvoiceViewer from "./invoiceViewer";
 import PatientSection from "./patientSection";
 import ServiceSection from "./serviceSection";
+import MessageSection from "./messageSection";
+import InvoiceViewer from "./invoiceViewer";
 import { toInvoiceParameters } from "./toInvoiceParameters";
 
 interface Props {
@@ -38,6 +39,7 @@ export interface FormInvoice {
   patient: PatientType;
   diagnosis: string;
   positions: Partial<Position>[];
+  message: { subject: string; text: string };
 }
 
 export default function InvoiceForm({ patients, services }: Props) {
@@ -64,7 +66,12 @@ export default function InvoiceForm({ patients, services }: Props) {
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
       const invoiceParameters = toInvoiceParameters(values);
-      await createInvoice(invoiceParameters);
+
+      const message = {
+        recipient: "peter.laudel@gmail.com",
+        ...values.message,
+      };
+      await createInvoice(invoiceParameters, message);
       showSuccessMessage(true);
       form.restart(initialValues);
     },
@@ -96,6 +103,7 @@ export default function InvoiceForm({ patients, services }: Props) {
                 <h1>Rechnung erstellen</h1>
                 <PatientSection patients={patients} />
                 <ServiceSection services={services} />
+                <MessageSection />
                 <SubmitButton
                   submitting={submitting || submitSucceeded}
                   className="justify-self-start self-center"
