@@ -17,9 +17,9 @@ export async function createInvoice(
 ) {
   const pdf = await renderToBuffer(<InvoiceTemplate {...invoiceParameters} />);
   const invoiceRepository = await getInvoicesRepository();
-  const { base64 } = await invoiceRepository.create({
+  const { base64, number } = await invoiceRepository.create({
     base64: pdf.toString("base64"),
-    name: "invoice",
+    number: invoiceParameters.invoiceNumber,
   });
   const email = [
     'From: "Sender Name" <sender@example.com>',
@@ -37,7 +37,7 @@ export async function createInvoice(
     "--boundary",
     "Content-Type: application/pdf",
     "Content-Transfer-Encoding: base64",
-    'Content-Disposition: attachment; filename="invoice.pdf"',
+    `Content-Disposition: attachment; filename="Rechnung_${number}.pdf"`,
     "",
     base64,
     "",

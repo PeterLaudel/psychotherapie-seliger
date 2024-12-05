@@ -31,12 +31,14 @@ type Position = {
 } & Pick<Service, "originalGopNr" | "description">;
 
 export interface Props {
+  invoiceNumber: string;
   invoiceAddress?: InvoiceAddress;
   patient?: InvoicePatient;
   positions: Position[];
 }
 
 export default function InvoiceTemplate({
+  invoiceNumber,
   invoiceAddress,
   patient,
   positions,
@@ -89,7 +91,9 @@ export default function InvoiceTemplate({
         </View>
         <View style={tw("flex-row justify-between pt-8")}>
           <View style={tw("flex-col")}>
-            <Text style={tw("font-black text-lg")}>Rechnung Nr. L030724</Text>
+            <Text
+              style={tw("font-black text-lg")}
+            >{`Rechnung Nr. ${invoiceNumber}`}</Text>
           </View>
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>
