@@ -49,8 +49,9 @@ export class PatientsRepository implements IRead<Patient> {
 
     if (!data.resourceName) throw new Error("No resourceName found");
 
+    const patientContactGroup = await this.patientsContactGroup();
     await this.peopleClient.contactGroups.members.modify({
-      resourceName: this.contactGroupResourceName,
+      resourceName: patientContactGroup,
       requestBody: {
         resourceNamesToAdd: [data.resourceName],
       },
@@ -67,8 +68,9 @@ export class PatientsRepository implements IRead<Patient> {
   }
 
   public async get(): Promise<Patient[]> {
+    const patientContactGroup = await this.patientsContactGroup();
     const { data: contactGroup } = await this.peopleClient.contactGroups.get({
-      resourceName: this.contactGroupResourceName,
+      resourceName: patientContactGroup,
       maxMembers: 1000,
     });
 
@@ -110,17 +112,32 @@ export class PatientsRepository implements IRead<Patient> {
       return undefined;
 
     return {
-      street: schemaAddress.streetAddress as string,
-      zip: schemaAddress.postalCode as string,
-      city: schemaAddress.city as string,
+      street: schemaAddress.streetAddress,
+      zip: schemaAddress.postalCode,
+      city: schemaAddress.city,
     };
   }
 
-  private get contactGroupResourceName(): string {
-    const contactGroupResourceName =
-      process.env.GOOGLE_CONTACT_GROUP_RESOURCE_NAME;
-    if (!contactGroupResourceName)
-      throw new Error("No contact group resource name found");
-    return contactGroupResourceName;
+  private async patientsContactGroup() {
+    return await findOrCreateByName(this.peopleClient, "Patienten");
   }
+}
+
+async function findOrCreateByName(people: people_v1.People, name: string) {
+  const {
+    data: { contactGroups },
+  } = await people.contactGroups.list({});
+
+  const contactGroup = contactGroups?.find((group) => group.name === name);
+  if (contactGroup && contactGroup.resourceName)
+    return contactGroup.resourceName;
+
+  const {
+    data: { resourceName },
+  } = await people.contactGroups.create({
+    requestBody: { contactGroup: { name } },
+  });
+
+  if (!resourceName) throw new Error("Could not create contactgroup");
+  return resourceName;
 }
