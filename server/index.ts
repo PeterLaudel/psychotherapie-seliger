@@ -36,6 +36,6 @@ export async function getInvoicesRepository(): Promise<InvoicesRepository> {
   return new InvoicesRepository(drive);
 }
 
-export async function getServicesRepository(): Promise<ServicesRepository> {
+export function getServicesRepository(): ServicesRepository {
   return new ServicesRepository();
 }

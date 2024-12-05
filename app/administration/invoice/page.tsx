@@ -11,8 +11,8 @@ export default async function Administration() {
   const patientRepository = await getPatientsRepository();
   const patients = await patientRepository.get();
 
-  const servicesRepository = await getServicesRepository();
-  const services = await servicesRepository.get();
+  const servicesRepository = getServicesRepository();
+  const services = servicesRepository.get();
 
   const invoiceRepository = await getInvoicesRepository();
   const invoiceName = await invoiceRepository.generateInvoiceNumber();
