@@ -1,6 +1,10 @@
 "use server";
 
-import { getPatientsRepository, getServicesRepository } from "../../../server";
+import {
+  getInvoicesRepository,
+  getPatientsRepository,
+  getServicesRepository,
+} from "../../../server";
 import InvoiceForm from "./invoiceForm";
 
 export default async function Administration() {
@@ -10,5 +14,14 @@ export default async function Administration() {
   const servicesRepository = await getServicesRepository();
   const services = await servicesRepository.get();
 
-  return <InvoiceForm patients={patients} services={services} />;
+  const invoiceRepository = await getInvoicesRepository();
+  const invoiceName = await invoiceRepository.generateInvoiceNumber();
+
+  return (
+    <InvoiceForm
+      patients={patients}
+      services={services}
+      invoiceNumber={invoiceName}
+    />
+  );
 }

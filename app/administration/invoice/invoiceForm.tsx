@@ -25,6 +25,7 @@ import { toInvoiceParameters } from "./toInvoiceParameters";
 interface Props {
   patients: PatientType[];
   services: ServiceType[];
+  invoiceNumber: string;
 }
 
 export interface Position {
@@ -36,16 +37,22 @@ export interface Position {
 }
 
 export interface FormInvoice {
+  invoiceNumber: string;
   patient: PatientType;
   diagnosis: string;
   positions: Partial<Position>[];
   message: { subject: string; text: string };
 }
 
-export default function InvoiceForm({ patients, services }: Props) {
+export default function InvoiceForm({
+  patients,
+  services,
+  invoiceNumber,
+}: Props) {
   const [open, showSuccessMessage] = useState(false);
   const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
+      invoiceNumber,
       diagnosis: "",
       positions: [
         {

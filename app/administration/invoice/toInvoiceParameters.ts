@@ -46,6 +46,7 @@ function toPositions(values: FormInvoice) {
 
 export function toInvoiceParameters(values: FormInvoice): InvoiceParameters {
   return {
+    invoiceNumber: values.invoiceNumber,
     invoiceAddress: toInvoiceAddress(values),
     patient: toPatient(values),
     positions: toPositions(values),
