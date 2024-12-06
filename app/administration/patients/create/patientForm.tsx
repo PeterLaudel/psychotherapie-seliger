@@ -11,13 +11,20 @@ import { Form } from "react-final-form";
 import SubmitButton from "../../../../components/submitButton";
 import { Patient } from "../../../../models/patient";
 import createPatient from "./action";
-import AddressSection from "./addressSection";
 import PatientSection from "./patientSection";
+import BillingSection from "./billingSection";
+
+type FormData = Patient & { billingInfoIsPatient: boolean };
 
 export default function PatientForm() {
-  const initialValues = useMemo<Partial<Patient>>(() => ({}), []);
+  const initialValues = useMemo<Partial<FormData>>(
+    () => ({
+      billingInfoIsPatient: true,
+    }),
+    []
+  );
   const onSubmit = useCallback(
-    async (values: Patient, form: FormApi<Patient, Partial<Patient>>) => {
+    async (values: FormData, form: FormApi<FormData, Partial<FormData>>) => {
       await createPatient(values);
       form.restart(initialValues);
     },
@@ -32,7 +39,7 @@ export default function PatientForm() {
         deDE.components.MuiLocalizationProvider.defaultProps.localeText
       }
     >
-      <Form<Patient> onSubmit={onSubmit} initialValues={initialValues}>
+      <Form<FormData> onSubmit={onSubmit} initialValues={initialValues}>
         {({ handleSubmit, submitting }) => (
           <form
             onSubmit={handleSubmit}
@@ -40,7 +47,7 @@ export default function PatientForm() {
           >
             <h1>Patient anlegen</h1>
             <PatientSection />
-            <AddressSection />
+            <BillingSection />
             <SubmitButton
               submitting={submitting}
               className="justify-self-start self-center"
