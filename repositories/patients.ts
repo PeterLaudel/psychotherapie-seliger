@@ -3,10 +3,7 @@ import { Patient } from "../models/patient";
 import IRead from "../interfaces/read";
 import Address from "../models/address";
 
-export type CreatePatient = Pick<
-  Patient,
-  "name" | "address" | "birthdate" | "email" | "surname"
->;
+export type CreatePatient = Omit<Patient, "id">;
 export class PatientsRepository implements IRead<Patient> {
   private peopleClient: people_v1.People;
 
