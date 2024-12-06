@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Field } from "react-final-form";
 import Section from "../../../../components/section";
 import {
+  validateCity,
   validateDate,
   validateEmail,
   validateName,
@@ -86,7 +87,7 @@ export default function PatientSection() {
             />
           )}
         </Field>
-        <Field name="address.city" validate={validateStreet}>
+        <Field name="address.city" validate={validateCity}>
           {({ input, meta: { touched, error } }) => (
             <TextField
               {...input}

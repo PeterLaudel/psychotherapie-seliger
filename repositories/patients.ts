@@ -61,6 +61,12 @@ export class PatientsRepository implements IRead<Patient> {
       email: patient.email,
       birthdate: patient.birthdate,
       address: patient.address,
+      billingInfo: {
+        name: patient.name,
+        surname: patient.surname,
+        email: patient.email,
+        address: patient.address,
+      },
     };
   }
 
@@ -87,6 +93,12 @@ export class PatientsRepository implements IRead<Patient> {
       email: person?.emailAddresses?.[0].value as string,
       birthdate: this.convertToDate(person?.birthdays?.[0].date) as Date,
       address: this.convertToAddress(person?.addresses?.[0]) as Address,
+      billingInfo: {
+        name: person?.names?.[0].givenName as string,
+        surname: person?.names?.[0].familyName as string,
+        email: person?.emailAddresses?.[0].value as string,
+        address: this.convertToAddress(person?.addresses?.[0]) as Address,
+      },
     }));
   }
 
