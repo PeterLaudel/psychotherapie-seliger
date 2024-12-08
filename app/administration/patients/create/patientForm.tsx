@@ -11,11 +11,16 @@ import { Form } from "react-final-form";
 import SubmitButton from "../../../../components/submitButton";
 import { Patient } from "../../../../models/patient";
 import createPatient from "./action";
-import AddressSection from "./addressSection";
 import PatientSection from "./patientSection";
+import BillingSection from "./billingSection";
 
 export default function PatientForm() {
-  const initialValues = useMemo<Partial<Patient>>(() => ({}), []);
+  const initialValues = useMemo<Partial<Patient>>(
+    () => ({
+      billingInfoIsPatient: true,
+    }),
+    []
+  );
   const onSubmit = useCallback(
     async (values: Patient, form: FormApi<Patient, Partial<Patient>>) => {
       await createPatient(values);
@@ -40,7 +45,7 @@ export default function PatientForm() {
           >
             <h1>Patient anlegen</h1>
             <PatientSection />
-            <AddressSection />
+            <BillingSection />
             <SubmitButton
               submitting={submitting}
               className="justify-self-start self-center"

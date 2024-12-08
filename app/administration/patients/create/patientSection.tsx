@@ -4,10 +4,13 @@ import dayjs from "dayjs";
 import { Field } from "react-final-form";
 import Section from "../../../../components/section";
 import {
+  validateCity,
   validateDate,
   validateEmail,
   validateName,
+  validateStreet,
   validateSurname,
+  validateZip,
 } from "./validation";
 
 export default function PatientSection() {
@@ -60,6 +63,37 @@ export default function PatientSection() {
                   onBlur: input.onBlur,
                 },
               }}
+            />
+          )}
+        </Field>
+        <Field name="address.street" validate={validateStreet}>
+          {({ input, meta: { touched, error } }) => (
+            <TextField
+              {...input}
+              label="Straße"
+              className="col-span-2"
+              helperText={touched && error}
+              error={touched && !!error}
+            />
+          )}
+        </Field>
+        <Field name="address.zip" validate={validateZip}>
+          {({ input, meta: { error, touched } }) => (
+            <TextField
+              {...input}
+              label="PLZ"
+              helperText={touched && error}
+              error={touched && !!error}
+            />
+          )}
+        </Field>
+        <Field name="address.city" validate={validateCity}>
+          {({ input, meta: { touched, error } }) => (
+            <TextField
+              {...input}
+              label="Stadt"
+              helperText={touched && error}
+              error={touched && !!error}
             />
           )}
         </Field>

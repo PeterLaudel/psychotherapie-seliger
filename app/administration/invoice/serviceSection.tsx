@@ -7,43 +7,20 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Fragment, JSX } from "react";
-import { Field, useField } from "react-final-form";
+import { Fragment } from "react";
+import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
 import Section from "../../../components/section";
 import { Service as ServiceType } from "../../../models/service";
+import {
+  InvalidSubscription,
+  ValueSubscription,
+} from "../../../components/forms";
 import { PageBreakField } from "./pageBreakField";
 import { Position } from "./invoiceForm";
 
 interface Props {
   services: ServiceType[];
-}
-
-function InvalidSubscription({
-  name,
-  children,
-}: {
-  name: string;
-  children: (_unused: boolean) => JSX.Element;
-}) {
-  const {
-    meta: { invalid },
-  } = useField(name, { subscription: { invalid: true } });
-  return children(!!invalid);
-}
-
-function ValueSubscription<T>({
-  name,
-  children,
-}: {
-  name: string;
-  children: (value: T | undefined) => JSX.Element;
-}) {
-  const {
-    input: { value },
-  } = useField<T>(name, { subscription: { value: true } });
-  if (!value) return children(undefined);
-  return children(value);
 }
 
 export default function ServiceSection({ services }: Props) {
