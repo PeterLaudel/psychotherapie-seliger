@@ -1,7 +1,10 @@
 import { people_v1 } from "@googleapis/people/";
-import { Patient } from "../models/patient";
+import { BillingInfo, Patient } from "../models/patient";
 import IRead from "../interfaces/read";
 import Address from "../models/address";
+
+const PATIENT_GROUP = "Patienten";
+const BILLING_GROUP = "Rechnungen";
 
 export type CreatePatient = Omit<Patient, "id">;
 export class PatientsRepository implements IRead<Patient> {
@@ -12,93 +15,130 @@ export class PatientsRepository implements IRead<Patient> {
   }
 
   public async create(patient: CreatePatient): Promise<Patient> {
-    const { data } = await this.peopleClient.people.createContact({
-      requestBody: {
-        names: [
-          {
-            givenName: patient.name,
-            familyName: patient.surname,
+    const invoiceTo = patient.billingInfoIsPatient
+      ? "Patient"
+      : await this.createBillingContact(patient.billingInfo);
+
+    const patientContact = await this.addContact({
+      names: [
+        {
+          givenName: patient.name,
+          familyName: patient.surname,
+        },
+      ],
+      emailAddresses: [
+        {
+          value: patient.email,
+        },
+      ],
+      birthdays: [
+        {
+          date: {
+            year: patient.birthdate.getFullYear(),
+            month: patient.birthdate.getMonth() + 1,
+            day: patient.birthdate.getDate(),
           },
-        ],
-        emailAddresses: [
-          {
-            value: patient.email,
-          },
-        ],
-        birthdays: [
-          {
-            date: {
-              year: patient.birthdate.getFullYear(),
-              month: patient.birthdate.getMonth() + 1,
-              day: patient.birthdate.getDate(),
-            },
-          },
-        ],
-        addresses: [
-          {
-            streetAddress: patient.address.street,
-            postalCode: patient.address.zip,
-            city: patient.address.city,
-          },
-        ],
-      },
+        },
+      ],
+      addresses: [
+        {
+          streetAddress: patient.address.street,
+          postalCode: patient.address.zip,
+          city: patient.address.city,
+        },
+      ],
+      userDefined: [
+        {
+          key: "Rechnung",
+          value: invoiceTo,
+        },
+      ],
     });
 
-    if (!data.resourceName) throw new Error("No resourceName found");
-
-    const patientContactGroup = await this.patientsContactGroup();
-    await this.peopleClient.contactGroups.members.modify({
-      resourceName: patientContactGroup,
-      requestBody: {
-        resourceNamesToAdd: [data.resourceName],
-      },
-    });
+    await this.addContactToContactGroup(patientContact, PATIENT_GROUP);
 
     return {
-      id: data.resourceName,
+      id: patientContact,
       name: patient.name,
       surname: patient.surname,
       email: patient.email,
       birthdate: patient.birthdate,
       address: patient.address,
+      billingInfoIsPatient: false,
       billingInfo: {
-        name: patient.name,
-        surname: patient.surname,
-        email: patient.email,
-        address: patient.address,
+        name: patient.billingInfo.name,
+        surname: patient.billingInfo.surname,
+        email: patient.billingInfo.email,
+        address: patient.billingInfo.address,
       },
     };
   }
 
   public async get(): Promise<Patient[]> {
-    const patientContactGroup = await this.patientsContactGroup();
-    const { data: contactGroup } = await this.peopleClient.contactGroups.get({
-      resourceName: patientContactGroup,
+    const patientContactGroup = await findOrCreateByName(
+      this.peopleClient,
+      PATIENT_GROUP
+    );
+    const billingContactGroup = await findOrCreateByName(
+      this.peopleClient,
+      BILLING_GROUP
+    );
+    const {
+      data: { responses },
+    } = await this.peopleClient.contactGroups.batchGet({
+      resourceNames: [patientContactGroup, billingContactGroup],
       maxMembers: 1000,
     });
 
-    if (!contactGroup.memberResourceNames) return [];
+    if (!responses) return [];
 
-    const { data: people } = await this.peopleClient.people.getBatchGet({
-      resourceNames: contactGroup.memberResourceNames,
-      personFields: "names,emailAddresses,phoneNumbers,addresses,birthdays",
+    const [patientResources, billingResources] = responses.map(
+      (response) => response.contactGroup?.memberResourceNames || []
+    );
+
+    const { data: patients } = await this.peopleClient.people.getBatchGet({
+      resourceNames: patientResources,
+      personFields: "names,emailAddresses,birthdays,addresses,userDefined",
     });
 
-    if (!people.responses) return [];
+    if (!patients?.responses) return [];
 
-    return people.responses.map(({ person }) => ({
+    const {
+      data: billingContacts,
+    } = await this.peopleClient.people.getBatchGet({
+      resourceNames: billingResources,
+      personFields: "names,emailAddresses,addresses",
+    });
+
+    const incompletePatients = patients.responses.map(({ person }) => ({
       id: person?.resourceName as string,
       name: person?.names?.[0].givenName as string,
       surname: person?.names?.[0].familyName as string,
       email: person?.emailAddresses?.[0].value as string,
       birthdate: this.convertToDate(person?.birthdays?.[0].date) as Date,
       address: this.convertToAddress(person?.addresses?.[0]) as Address,
-      billingInfo: {
+      billing: person?.userDefined?.find((ud) => ud.key === "Rechnung")?.value,
+    }));
+    const billingPersons = (billingContacts.responses || []).map(
+      ({ person }) => ({
+        id: person?.resourceName as string,
         name: person?.names?.[0].givenName as string,
         surname: person?.names?.[0].familyName as string,
         email: person?.emailAddresses?.[0].value as string,
         address: this.convertToAddress(person?.addresses?.[0]) as Address,
-      },
+      })
+    );
+    return incompletePatients.map((patient) => ({
+      ...patient,
+      billingInfoIsPatient: patient.billing === "Patient",
+      billingInfo:
+        patient.billing === "Patient"
+          ? {
+              ...patient,
+            }
+          : billingPersons.find((p) => p.id === patient.billing) || {
+              ...patient,
+            },
     }));
   }
 
@@ -127,8 +167,51 @@ export class PatientsRepository implements IRead<Patient> {
     };
   }
 
-  private async patientsContactGroup() {
-    return await findOrCreateByName(this.peopleClient, "Patienten");
+  private async createBillingContact(billingInfo: BillingInfo) {
+    const billingContact = await this.addContact({
+      names: [
+        {
+          givenName: billingInfo.name,
+          familyName: billingInfo.surname,
+        },
+      ],
+      addresses: [
+        {
+          city: billingInfo.address.city,
+          streetAddress: billingInfo.address.street,
+          postalCode: billingInfo.address.zip,
+        },
+      ],
+      emailAddresses: [
+        {
+          value: billingInfo.email,
+        },
+      ],
+    });
+
+    await this.addContactToContactGroup(billingContact, BILLING_GROUP);
+    return billingContact;
+  }
+
+  private async addContact(person: people_v1.Schema$Person) {
+    const { data } = await this.peopleClient.people.createContact({
+      requestBody: { ...person },
+    });
+    if (!data.resourceName) throw Error("Contact could not be created");
+    return data.resourceName;
+  }
+
+  private async addContactToContactGroup(
+    contact: string,
+    contactGroup: string
+  ) {
+    const groupId = await findOrCreateByName(this.peopleClient, contactGroup);
+    await this.peopleClient.contactGroups.members.modify({
+      resourceName: groupId,
+      requestBody: {
+        resourceNamesToAdd: [contact],
+      },
+    });
   }
 }
 

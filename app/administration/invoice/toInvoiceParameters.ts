@@ -5,9 +5,9 @@ const toInvoiceAddress = (values: FormInvoice) => {
   if (!values.patient) return undefined;
 
   return {
-    name: values.patient.name,
-    surname: values.patient.surname,
-    ...values.patient.address,
+    name: values.patient.billingInfo.name,
+    surname: values.patient.billingInfo.surname,
+    ...values.patient.billingInfo.address,
   };
 };
 
