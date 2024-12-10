@@ -3,10 +3,6 @@ import { people_v1 } from "@googleapis/people";
 export const BILLING_GROUP = "Rechnungen";
 export const PATIENT_GROUP = "Patienten";
 
-export class Repository {
-  constructor(protected readonly peopleClient: people_v1.People) {}
-}
-
 export async function findOrCreateByName(
   people: people_v1.People,
   name: string

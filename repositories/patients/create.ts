@@ -1,28 +1,14 @@
 import { people_v1 } from "@googleapis/people";
-import { BillingInfo, Patient } from "../../models/patient";
-import {
-  BILLING_GROUP,
-  findOrCreateByName,
-  PATIENT_GROUP,
-  Repository,
-} from "./shared";
+import { Patient } from "../../models/patient";
+import { BILLING_GROUP, findOrCreateByName, PATIENT_GROUP } from "./shared";
 
 export type CreatePatient = Omit<Patient, "id">;
 
-export default function createPatient(
-  this: Repository,
-  patient: CreatePatient
-) {
-  return new Create(this.peopleClient).create(patient);
-}
-
-class Create {
+export default class Create {
   constructor(private readonly peopleClient: people_v1.People) {}
 
   public async create(patient: CreatePatient): Promise<Patient> {
-    const invoiceTo = patient.billingInfoIsPatient
-      ? "Patient"
-      : await this.createBillingContact(patient.billingInfo);
+    const invoiceTo = await this.createBillingContact(patient);
 
     const patientContact = await this.addContact({
       names: [
@@ -52,12 +38,14 @@ class Create {
           city: patient.address.city,
         },
       ],
-      userDefined: [
-        {
-          key: "Rechnung",
-          value: invoiceTo,
-        },
-      ],
+      userDefined: invoiceTo
+        ? [
+            {
+              key: "Rechnung",
+              value: invoiceTo,
+            },
+          ]
+        : undefined,
     });
 
     const patientGroup = await findOrCreateByName(
@@ -83,9 +71,12 @@ class Create {
     };
   }
 
-  private async createBillingContact(
-    billingInfo: BillingInfo
-  ): Promise<string> {
+  private async createBillingContact({
+    billingInfo,
+    billingInfoIsPatient,
+  }: CreatePatient): Promise<string | undefined> {
+    if (billingInfoIsPatient) return undefined;
+
     const contact = await this.addContact({
       names: [
         {

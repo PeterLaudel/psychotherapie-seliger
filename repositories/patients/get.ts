@@ -1,18 +1,9 @@
 import { people_v1 } from "@googleapis/people";
 import { Patient } from "../../models/patient";
 import Address from "../../models/address";
-import {
-  BILLING_GROUP,
-  findOrCreateByName,
-  PATIENT_GROUP,
-  Repository,
-} from "./shared";
+import { BILLING_GROUP, findOrCreateByName, PATIENT_GROUP } from "./shared";
 
-export default function getPatients(this: Repository): Promise<Patient[]> {
-  return new Get(this.peopleClient).get();
-}
-
-class Get {
+export default class Get {
   constructor(private readonly peopleClient: people_v1.People) {}
 
   public async get(): Promise<Patient[]> {
@@ -37,6 +28,8 @@ class Get {
       (response) => response.contactGroup?.memberResourceNames || []
     );
 
+    if (patientResources.length === 0) return [];
+
     const { data: patients } = await this.peopleClient.people.getBatchGet({
       resourceNames: patientResources,
       personFields: "names,emailAddresses,birthdays,addresses,userDefined",
@@ -56,8 +49,8 @@ class Get {
       name: person?.names?.[0].givenName as string,
       surname: person?.names?.[0].familyName as string,
       email: person?.emailAddresses?.[0].value as string,
-      birthdate: this.convertToDate(person?.birthdays?.[0].date) as Date,
-      address: this.convertToAddress(person?.addresses?.[0]) as Address,
+      birthdate: this.convertToDate(person?.birthdays?.[0].date),
+      address: this.convertToAddress(person?.addresses?.[0]),
       billing: person?.userDefined?.find((ud) => ud.key === "Rechnung")?.value,
     }));
     const billingPersons = (billingContacts.responses || []).map(
@@ -66,40 +59,36 @@ class Get {
         name: person?.names?.[0].givenName as string,
         surname: person?.names?.[0].familyName as string,
         email: person?.emailAddresses?.[0].value as string,
-        address: this.convertToAddress(person?.addresses?.[0]) as Address,
+        address: this.convertToAddress(person?.addresses?.[0]),
       })
     );
-    return incompletePatients.map((patient) => ({
-      ...patient,
-      billingInfoIsPatient: patient.billing === "Patient",
-      billingInfo:
-        patient.billing === "Patient"
-          ? {
-              ...patient,
-            }
-          : billingPersons.find((p) => p.id === patient.billing) || {
-              ...patient,
-            },
-    }));
+    return incompletePatients.map((patient) => {
+      const billingPerson = billingPersons.find(
+        (p) => p.id === patient.billing
+      );
+      return {
+        ...patient,
+        billingInfoIsPatient: patient.billing === "Patient",
+        billingInfo: billingPerson || { ...patient },
+      };
+    });
   }
 
-  private convertToDate(schemaDate?: people_v1.Schema$Date): Date | undefined {
+  private convertToDate(schemaDate?: people_v1.Schema$Date): Date {
     if (!schemaDate || !schemaDate.year || !schemaDate.month || !schemaDate.day)
-      return undefined;
+      throw new Error("Invalid date");
 
     return new Date(schemaDate.year, schemaDate.month - 1, schemaDate.day);
   }
 
-  private convertToAddress(
-    schemaAddress?: people_v1.Schema$Address
-  ): Address | undefined {
+  private convertToAddress(schemaAddress?: people_v1.Schema$Address): Address {
     if (
       !schemaAddress ||
       !schemaAddress.streetAddress ||
       !schemaAddress.city ||
       !schemaAddress.postalCode
     )
-      return undefined;
+      throw new Error("Invalid address");
 
     return {
       street: schemaAddress.streetAddress,
