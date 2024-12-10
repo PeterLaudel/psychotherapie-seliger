@@ -26,11 +26,10 @@ function toPositions(values: FormInvoice) {
   return values.positions
     .filter(
       (position): position is Position =>
-        position.service !== undefined &&
-        position.number !== undefined &&
-        position.date !== undefined &&
-        position.factor !== undefined &&
-        position.pageBreak !== undefined
+        !!position.service &&
+        !!position.date &&
+        !!position.factor &&
+        !!position.number
     )
     .map((position) => ({
       date: position.date,
