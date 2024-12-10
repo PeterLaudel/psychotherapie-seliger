@@ -64,7 +64,7 @@ export default function InvoiceForm({
         },
       ],
     }),
-    []
+    [invoiceNumber]
   );
 
   const onSubmit = useCallback(

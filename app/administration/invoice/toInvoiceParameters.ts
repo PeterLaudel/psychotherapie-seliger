@@ -5,9 +5,9 @@ const toInvoiceAddress = (values: FormInvoice) => {
   if (!values.patient) return undefined;
 
   return {
-    name: values.patient.name,
-    surname: values.patient.surname,
-    ...values.patient.address,
+    name: values.patient.billingInfo.name,
+    surname: values.patient.billingInfo.surname,
+    ...values.patient.billingInfo.address,
   };
 };
 
@@ -26,11 +26,10 @@ function toPositions(values: FormInvoice) {
   return values.positions
     .filter(
       (position): position is Position =>
-        position.service !== undefined &&
-        position.number !== undefined &&
-        position.date !== undefined &&
-        position.factor !== undefined &&
-        position.pageBreak !== undefined
+        !!position.service &&
+        !!position.date &&
+        !!position.factor &&
+        !!position.number
     )
     .map((position) => ({
       date: position.date,
