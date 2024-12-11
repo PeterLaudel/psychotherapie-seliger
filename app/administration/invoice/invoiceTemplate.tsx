@@ -37,6 +37,12 @@ export interface Props {
   positions: Position[];
 }
 
+function toKey(position: Position) {
+  return `${position.originalGopNr}${position.date.toISOString()}${
+    position.number
+  }${position.factor}`;
+}
+
 export default function InvoiceTemplate({
   invoiceNumber,
   invoiceAddress,
@@ -151,7 +157,7 @@ export default function InvoiceTemplate({
         {positions.map((position) => (
           <View
             style={tw("flex-row py-2")}
-            key={position.originalGopNr}
+            key={toKey(position)}
             break={position.pageBreak}
             wrap={false}
           >
