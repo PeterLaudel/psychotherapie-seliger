@@ -10,25 +10,23 @@ export const dynamic = "force-static";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Psychologische Psychotherapeutin | Verhaltenstherapie | Ute Seliger",
+  title:
+    "Psychotherapie Seliger | Psychotherapie in Leipzig | Verhaltenstherapie",
   description:
-    "Psychotherapie (Verhaltenstherapie) in Leipzig/Waldstraßenviertel für Selbstzahler und Privatversicherte",
+    "Lernen Sie meine Praxis für Psychotherapie in Leipzig kennen. Ich biete Verhaltenstherapie und psychologische Beratung für Ihre psychische Gesundheit.",
   keywords: [
-    "Psychotherapie",
-    "Psychotherapeut",
-    "Psychologischer Psychotherapeut",
-    "Einzeltherapie",
+    "Psychotherapie Leipzig",
+    "Psychologe Leipzig",
+    "Therapeut Leipzig",
+    "Privatpraxis Psychotherapie",
     "Praxis für Psychotherapie",
     "Verhaltenstherapie",
-    "Psychotherapie Praxis",
+    "Psychologin Leipzig",
     "Psychologische Beratung",
     "Psychische Gesundheit",
-    "Psychotherapie Leipzig",
     "Psychotherapeut Leipzig",
-    "Psychologe Leipzig",
-    "Psychologin Leipzig",
-    "Therapeut Leipzig",
-    "Therapeutin Leipzig",
+    "Selbstzahler",
+    "Privatpatient",
   ],
   alternates: {
     canonical: "https://www.psychotherapie-seliger.de/home",
