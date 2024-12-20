@@ -1,0 +1,10 @@
+#
+steps:
+  - name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - 'echo "Hello World"'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
