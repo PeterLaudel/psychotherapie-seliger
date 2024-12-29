@@ -23,7 +23,7 @@ export default function Therapie() {
                 1 Kennlernenphase - Diagnostik und Zielsetzung
               </div>
               <div>
-                In den ersten 5 Gesprächen (Probatorik) werden wir uns
+                In den ersten 4 Gesprächen (Probatorik) werden wir uns
                 kennenlernen. Wir betrachten dabei gemeinsam die Einflüsse, die
                 ihre Probleme verursachen und aufrechterhalten. Zudem werden wir
                 konkrete Therapieziele festlegen.
