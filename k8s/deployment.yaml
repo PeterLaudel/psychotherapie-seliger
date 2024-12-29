@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-local-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-local-app
+  template:
+    metadata:
+      labels:
+        app: my-local-app
+    spec:
+      containers:
+        - name: my-local-container
+          image: psychotherapie-seliger:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "250m"
+            limits:
+              memory: "600Mi"
+              cpu: "500m"
