@@ -16,7 +16,22 @@ export default function AboutMe() {
       <div className="text">
         <div className="pb-4">
           <h1>Ute Seliger</h1>
-          <h4>Psychologische Psychotherapeutin in Verhaltenstherapie</h4>
+        </div>
+        <div>
+          <h5 className="pb-4">
+            Ich bin Psychologische Psychotherapeutin mit dem Schwerpunkt
+            Verhaltenstherapie.
+          </h5>
+          <div className="pb-4">
+            In meiner Privatpraxis für Psychotherapie im Waldstraßenviertel in
+            Leipzig möchte ich Ihnen einen sicheren Raum für Ihre Gedanken und
+            Gefühle geben. Es ist mir wichtig, dass Sie sich gut aufgehoben und
+            als Person mit Ihren Bedürfnissen ernst genommen fühlen.
+          </div>
+          <div className="pb-4">
+            Meine Erfahrungen liegen im stationären als auch im ambulanten
+            Bereich:
+          </div>
         </div>
         <ul className="list-disc space-y-2 pl-5">
           <li>Studium der Psychologie (M.Sc.) </li>

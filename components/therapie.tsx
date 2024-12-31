@@ -14,8 +14,14 @@ export default function Therapie() {
         />
       </div>
       <div className="text">
+        <h2>Mein Angebot</h2>
+        <div className="pb-4">
+          Ich biete Verhaltenstherapie für Erwachsene im Einzelgespräch an.
+        </div>
+        <div className="pb-4">
+          Die typische Sitzungsfrequenz liegt bei einmal pro Woche à 50 Minuten.
+        </div>
         <h3 className="pb-2">Ablauf der Therapie</h3>
-        <div className="py-4">Einzeltherapie: 50 Minuten</div>
         <div>
           <ul className="space-y-4">
             <li className="space-y-2">
@@ -25,8 +31,10 @@ export default function Therapie() {
               <div>
                 In den ersten 4 Gesprächen (Probatorik) werden wir uns
                 kennenlernen. Wir betrachten dabei gemeinsam die Einflüsse, die
-                ihre Probleme verursachen und aufrechterhalten. Zudem werden wir
-                konkrete Therapieziele festlegen.
+                Ihre Probleme verursachen und aufrechterhalten. Der Fokus liegt
+                dabei auf Denk- und Verhaltensmustern, auf Ihre Lebensumstände
+                und auf Ihre Biographie. Zudem werden wir konkrete Therapieziele
+                festlegen.
               </div>
             </li>
             <li className="space-y-2">
@@ -41,14 +49,21 @@ export default function Therapie() {
                 umgesetzt werden. Im engen Austausch beleuchten wir, was für Sie
                 funktioniert und was nicht.
               </div>
+              <div>
+                Ich verwende ausschließlich wissenschaftlich fundierte Methoden.
+                Neben verhaltenstherapeutischen Techniken, verwende ich Elemente
+                aus der Schematherapie und der Akzeptanz- und
+                Commitment-Therapie (ACT).
+              </div>
             </li>
             <li className="space-y-2">
               <div className="font-bold">3 Abschlussphase - Abschied</div>
               <div>
                 Immer mehr schaffen Sie es, die gewünschte Veränderung
                 aufrechtzuerhalten und die Erkenntnisse aus der Therapie in
-                ihren Alltag zu integrieren. Es wird nun Zeit, die
-                Sitzungsfrequenz zu reduzieren.
+                ihren Alltag zu integrieren. Nun ist es Zeit,die
+                Sitzungsfrequenz zu reduzieren und dem Abschied
+                entgegenzutreten.
               </div>
             </li>
           </ul>
