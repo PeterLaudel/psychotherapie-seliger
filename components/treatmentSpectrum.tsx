@@ -16,18 +16,20 @@ export default function TreatmentSpectrum() {
       <div className="text">
         <h3 className="pb-2 underline">Behandlungsspektrum</h3>
         <ul className="list-disc space-y-2 pl-5">
+          <li>ADHS/ADS im Erwachsenenalter</li>
           <li>Beziehungs- und Interaktionsstörungen</li>
-          <li>Anpassungsstörung</li>
+          <li>
+            Lebenskrise (Trauerbewältigung, Trennung, Geburt, Berufsanfang,
+            Studienbeginn etc.)
+          </li>
           <li>Depression</li>
           <li>Bipolare Störung</li>
           <li>Zwangsstörung</li>
-          <li>Panik und Agoraphobie</li>
-          <li>Soziale Phobie</li>
-          <li>Generalisierte</li>
-          <li>Angststörung</li>
-          <li>Somatoforme</li>
-          <li>Störungen</li>
-          <li>Essstörung</li>
+          <li>
+            Angststörung: Panik, Agoraphobie, soziale Phobie, generalisierte
+            Angststörung
+          </li>
+          <li>Essstörung (Magersucht, Bulimie, Binge-eating)</li>
         </ul>
       </div>
     </div>

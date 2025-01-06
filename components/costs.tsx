@@ -26,7 +26,6 @@ export default function Costs() {
           <li>Beihilfefähige</li>
           <li>Heilfürsorgeberechtigte</li>
           <li>Selbstzahler*innen</li>
-          <li>Kostenübernahme</li>
         </ul>
       </div>
     </div>
