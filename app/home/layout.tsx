@@ -11,9 +11,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title:
-    "Psychotherapie Seliger | Psychotherapie in Leipzig | Verhaltenstherapie",
+    "Psychotherapie Seliger | Verhaltenstherapie in Leipzig – Freie Termine",
   description:
-    "Lernen Sie meine Praxis für Psychotherapie in Leipzig kennen. Ich biete Verhaltenstherapie und psychologische Beratung für Ihre psychische Gesundheit.",
+    "Privatpraxis für Psychotherapie in Leipzig: Hilfe bei Stress, Ängsten & Depressionen. Einfühlsame Unterstützung – jetzt freie Termine, kontaktieren Sie mich!",
   keywords: [
     "Psychotherapie Leipzig",
     "Psychologe Leipzig",
@@ -22,11 +22,14 @@ export const metadata: Metadata = {
     "Praxis für Psychotherapie",
     "Verhaltenstherapie",
     "Psychologin Leipzig",
-    "Psychologische Beratung",
-    "Psychische Gesundheit",
+    "Psychologische Beratung Leipzig",
+    "Psychische Gesundheit Leipzig",
     "Psychotherapeut Leipzig",
-    "Selbstzahler",
-    "Privatpatient",
+    "Selbstzahler Psychotherapie",
+    "Privatpatient Psychotherapie",
+    "Hilfe bei Depressionen Leipzig",
+    "Angsttherapie Leipzig",
+    "Burnout-Therapie Leipzig",
   ],
   alternates: {
     canonical: "https://www.psychotherapie-seliger.de/home",
