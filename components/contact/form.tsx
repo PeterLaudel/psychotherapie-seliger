@@ -65,6 +65,9 @@ export default function Form() {
         }) => (
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <h1 className="text-2xl font-bold">Termin anfragen</h1>
+            <h2 className="text-lg font-bold my-3 text-red-600">
+              Freie Termine verfübar ab Februar 2025.
+            </h2>
             <div className="my-5">
               Bitte beschreiben Sie kurz Ihr Anliegen. Geben Sie uns bitte
               außerdem an, in welchen Zeiträumen Therapiesitzungen stattfinden
