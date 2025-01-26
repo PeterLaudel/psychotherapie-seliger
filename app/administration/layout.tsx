@@ -8,6 +8,8 @@ import Provider from "./provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const dynamic = "force-dynamic";
+
 export default async function Layout({
   children,
 }: Readonly<{
