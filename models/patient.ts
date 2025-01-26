@@ -1,6 +1,6 @@
 import Address from "./address";
 
-interface BillingInfo {
+export interface BillingInfo {
   name: string;
   surname: string;
   email: string;

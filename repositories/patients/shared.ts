@@ -1,4 +1,5 @@
 import { people_v1 } from "@googleapis/people";
+import Address from "../../models/address";
 
 export const BILLING_GROUP = "Rechnungen";
 export const PATIENT_GROUP = "Patienten";
@@ -23,4 +24,22 @@ export async function findOrCreateByName(
 
   if (!resourceName) throw new Error("Could not create contactgroup");
   return resourceName;
+}
+
+export function convertToAddress(
+  schemaAddress?: people_v1.Schema$Address
+): Address {
+  if (
+    !schemaAddress ||
+    !schemaAddress.streetAddress ||
+    !schemaAddress.city ||
+    !schemaAddress.postalCode
+  )
+    throw new Error("Invalid address");
+
+  return {
+    street: schemaAddress.streetAddress,
+    zip: schemaAddress.postalCode,
+    city: schemaAddress.city,
+  };
 }
