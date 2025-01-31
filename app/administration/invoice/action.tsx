@@ -2,7 +2,7 @@
 
 import { gmail_v1 } from "@googleapis/gmail";
 import { renderToBuffer } from "@react-pdf/renderer";
-import { getAuthClient, getInvoicesRepository } from "../../../server";
+import { getAuthClient, getInvoicesRepository, getUser } from "../../../server";
 import InvoiceTemplate, { Props as InvoiceParameters } from "./invoiceTemplate";
 
 interface Message {
@@ -16,13 +16,15 @@ export async function createInvoice(
   message: Message
 ) {
   const pdf = await renderToBuffer(<InvoiceTemplate {...invoiceParameters} />);
+
+  const user = await getUser();
   const invoiceRepository = await getInvoicesRepository();
   const { base64, number } = await invoiceRepository.create({
     base64: pdf.toString("base64"),
     number: invoiceParameters.invoiceNumber,
   });
   const email = [
-    'From: "Sender Name" <sender@example.com>',
+    `From: "${user.name}" <${user.email}>`,
     `To: ${message.recipient}`,
     `Subject: ${message.subject}`,
     "MIME-Version: 1.0",

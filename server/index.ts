@@ -15,6 +15,17 @@ const getToken = async () => {
   return session.accessToken;
 };
 
+export async function getUser() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("No session found");
+  }
+  if (!session.user) {
+    throw new Error("No user found");
+  }
+  return session?.user;
+}
+
 export const getAuthClient = async () => {
   const token = await getToken();
   const oAuthClient = new OAuth2Client();
