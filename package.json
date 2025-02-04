@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint --ignore-path=.gitignore --max-warnings=0 .",
+    "typecheck": "tsc --incremental false "
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
