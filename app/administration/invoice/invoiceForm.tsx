@@ -75,7 +75,7 @@ export default function InvoiceForm({
       const invoiceParameters = toInvoiceParameters(values);
 
       const message = {
-        recipient: "peter.laudel@gmail.com",
+        recipient: values.patient.billingInfo.email,
         ...values.message,
       };
       await createInvoice(invoiceParameters, message);
