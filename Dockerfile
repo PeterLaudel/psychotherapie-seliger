@@ -15,6 +15,9 @@ RUN npm install
 # Copy files. Use dockerignore to avoid copying node_modules
 COPY --chown=node:node . .
 
+# Test the build
+RUN npm run ci
+
 # Build
 RUN npm run build
 
