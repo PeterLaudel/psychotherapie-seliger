@@ -15,6 +15,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # 🏗️ Build the 'builder' stage (cached for later)
+      - name: Build builder stage
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          target: builder
+          tags: my-app:builder
+
+      - name: Run tests
+        run: IMAGE=my-app:builder docker compose up --abort-on-container-exit --exit-code-from app
+
       # Authenticate with Google Cloud
       - id: auth
         name: Authenticate with Google Cloud
@@ -38,23 +49,12 @@ jobs:
         id: get-tag
         run: echo "short_ref=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-      # 🏗️ Build the 'builder' stage (cached for later)
-      - name: Build builder stage
-        uses: docker/build-push-action@v6
-        with:
-          push: false
-          target: builder
-          tags: my-app:builder
-
-      - name: Run tests
-        run: IMAGE=my-app:builder docker compose up --abort-on-container-exit --exit-code-from app
-
       # 🚀 If tests pass, build & push final image (reuses builder)
       - name: Build & Push Final Image
-        if: success()
+        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
-            europe-west10-docker.pkg.dev/psychotherapie-seliger-adm/images/psychotherapie-seliger:${{ env.short_ref }}
+            europe-west10-docker.pkg.dev/psychotherapie-seliger-adm/images/psychotherapie-seliger:${{ steps.get-tag.outputs.short_ref }}
             europe-west10-docker.pkg.dev/psychotherapie-seliger-adm/images/psychotherapie-seliger:latest
