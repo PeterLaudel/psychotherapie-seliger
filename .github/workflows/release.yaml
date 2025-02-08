@@ -6,6 +6,8 @@ jobs:
   build:
     name: Build, Test & Release Docker image
     runs-on: ubuntu-latest
+    environment:
+      name: build
 
     permissions:
       contents: "read"
@@ -14,6 +16,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      # Authenticate with Google Cloud
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+          access_token_lifetime: 300s
 
       # 🏗️ Build the 'builder' stage (cached for later)
       - name: Build builder stage
@@ -25,16 +37,6 @@ jobs:
 
       - name: Run tests
         run: IMAGE=my-app:builder docker compose up --abort-on-container-exit --exit-code-from app
-
-      # Authenticate with Google Cloud
-      - id: auth
-        name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          token_format: access_token
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT }}
-          access_token_lifetime: 300s
 
       # Login to Google Artifact Registry
       - name: Login to Artifact Registry
