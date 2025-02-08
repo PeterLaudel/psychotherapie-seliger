@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  docker-release:
+  build:
     name: Build, Test & Release Docker image
     runs-on: ubuntu-latest
 
@@ -28,13 +28,12 @@ jobs:
 
       # Authenticate with Google Cloud
       - id: auth
-        if: github.ref == 'refs/heads/main'
         name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
           token_format: access_token
-          workload_identity_provider: projects/1031060506763/locations/global/workloadIdentityPools/github-action-pool/providers/github-action-provider
-          service_account: githubactions@psychotherapie-seliger-adm.iam.gserviceaccount.com
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
           access_token_lifetime: 300s
 
       # Login to Google Artifact Registry
