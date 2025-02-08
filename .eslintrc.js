@@ -4,7 +4,7 @@ module.exports = {
   extends: ["eslint:recommended", "next/core-web-vitals"],
   plugins: ["import"],
   root: true,
-  ignorePatterns: ["!.*"],
+  ignorePatterns: ["*.d.ts"],
   reportUnusedDisableDirectives: true,
   rules: {
     "no-console": ["warn", { allow: ["warn", "error"] }],
