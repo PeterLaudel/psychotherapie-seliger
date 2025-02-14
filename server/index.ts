@@ -1,30 +1,13 @@
-import { getServerSession } from "next-auth";
 import { OAuth2Client } from "google-auth-library";
 import { people_v1 } from "@googleapis/people";
 import { drive_v3 } from "@googleapis/drive";
-import { authOptions } from "../app/api/auth/[...nextauth]/config";
 import { ServicesRepository } from "../repositories/services";
 import { InvoicesRepository } from "../repositories/invoices";
 import PatientsRepository from "../repositories/patients";
+import { getToken } from "./getToken";
+import { getUser } from "./getUser";
 
-const getToken = async () => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("No session found");
-  }
-  return session.accessToken;
-};
-
-export async function getUser() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("No session found");
-  }
-  if (!session.user) {
-    throw new Error("No user found");
-  }
-  return session?.user;
-}
+export { getUser };
 
 export const getAuthClient = async () => {
   const token = await getToken();
