@@ -40,10 +40,13 @@ jobs:
       - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: /root/.npm
           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-${{ runner.os }}-
+
+      - name: Check if cache exists
+        run: ls -la /root/.npm || echo "No cache found"
 
       # 🏗️ Build the 'builder' stage
       - name: Build builder stage
