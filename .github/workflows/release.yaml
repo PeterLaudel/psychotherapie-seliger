@@ -136,7 +136,7 @@ jobs:
         run: |
           docker load -i ${{ runner.temp }}/${{ env.IMAGE_TAG }}.tar
 
-      - name: Run lint
+      - name: Run typecheck
         run: docker run --rm builder:${{ env.IMAGE_TAG }} npm run typecheck
 
   push-image:
