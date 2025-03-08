@@ -43,7 +43,7 @@ jobs:
             npm-cache-
 
       - name: Check if cache exists
-        run: ls -la /root/.npm || echo "No cache found"
+        run: ls -la ~/.npm || echo "No cache found"
 
       # 🏗️ Build the 'builder' stage
       - name: Build builder stage
