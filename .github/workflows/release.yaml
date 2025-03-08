@@ -34,13 +34,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Show npm cache location
-        run: npm config get cache
+      - name: Get npm cache location
+        id: npm-cache-path # This ID is used to reference the output
+        run: echo "CACHE_DIR=$(npm config get cache)" >> $GITHUB_ENV
 
       - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.npm # Fix: Use home directory instead of /root/.npm
+          path: ${{ env.CACHE_DIR }} # Use the saved variable
           key: npm-cache-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             npm-cache-
