@@ -10,7 +10,7 @@ COPY --chown=node:node package*.json ./
 
 # Install node modules
 # Note: We also install dev deps as TypeScript may be needed
-RUN --mount=type=cache,target=/root/.npm npm ci
+RUN --mount=type=secret,id=npmrc,target=.npmrc npm ci
 
 # Copy files. Use dockerignore to avoid copying node_modules
 COPY --chown=node:node . .
@@ -28,8 +28,8 @@ ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy from build
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nonroot:nonroot /app/next.config.mjs ./
+COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/.next ./.next
 COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
 

@@ -188,7 +188,6 @@ jobs:
       IMAGE_TAG: ${{ needs.create-image-tag.outputs.image-tag }}
     steps:
       - name: Checkout deploy repository
-        if: github.ref == 'refs/heads/main'
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}-deploy
@@ -196,12 +195,10 @@ jobs:
           path: deploy-repo
 
       - name: Update values.yaml
-        if: github.ref == 'refs/heads/main'
         run: |
           sed -i "s|tag: .*|tag: ${IMAGE_TAG}|" deploy-repo/values.yaml
 
       - name: Commit and push changes
-        if: github.ref == 'refs/heads/main'
         run: |
           cd deploy-repo
           git config --global user.name "github-actions"
