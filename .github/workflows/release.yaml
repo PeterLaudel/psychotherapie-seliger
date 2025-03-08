@@ -194,6 +194,8 @@ jobs:
     name: Deploy
     # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment:
+      name: build
 
     permissions:
       contents: "read"
