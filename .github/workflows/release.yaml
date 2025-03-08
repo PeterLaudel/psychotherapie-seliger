@@ -37,7 +37,7 @@ jobs:
       - name: Get npm cache location
         id: npm-cache-path
         run: |
-          echo "::set-output name=cache_dir::$(npm config get cache)"  # Set the npm cache path as an output
+          echo "cache_dir=$(npm config get cache)" >> $GITHUB_OUTPUT  # Set the npm cache path as an output
 
       - name: Cache npm dependencies
         uses: actions/cache@v4
