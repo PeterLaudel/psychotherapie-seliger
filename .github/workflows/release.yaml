@@ -34,6 +34,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Show npm cache location
+        run: npm config get cache
+
       - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
@@ -54,7 +57,7 @@ jobs:
           target: builder
           tags: builder:${{ env.IMAGE_TAG }}
           outputs: type=docker,dest=${{ runner.temp }}/${{ env.IMAGE_TAG }}.tar
-          cache-from: type=gha,mode=max
+          cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Upload artifact
