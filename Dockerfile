@@ -10,7 +10,7 @@ COPY --chown=node:node package*.json ./
 
 # Install node modules
 # Note: We also install dev deps as TypeScript may be needed
-RUN --mount=type=cache,target=/home/node/.npm npm ci
+RUN --mount=type=cache,source=/home/runner/.npm,target=/home/node/.npm npm ci
 
 # Copy files. Use dockerignore to avoid copying node_modules
 COPY --chown=node:node . .
