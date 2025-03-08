@@ -128,7 +128,7 @@ jobs:
 
   push-image:
     name: Push Image
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     permissions:
       contents: "read"
       id-token: "write"
@@ -179,7 +179,7 @@ jobs:
 
   deploy:
     name: Deploy
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs:
       - push-image
