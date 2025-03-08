@@ -2,9 +2,6 @@ name: Release
 on:
   push:
 
-env:
-  IMAGE_TAG: ${{ github.run_number }}-$(echo ${{ github.sha }} | cut -c1-7)
-
 jobs:
   create-image-tag:
     name: Create image tag
@@ -40,10 +37,10 @@ jobs:
       - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
-          path: /root/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm # Fix: Use home directory instead of /root/.npm
+          key: npm-cache-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            npm-${{ runner.os }}-
+            npm-cache-
 
       - name: Check if cache exists
         run: ls -la /root/.npm || echo "No cache found"
@@ -192,6 +189,10 @@ jobs:
     name: Deploy
     # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: "read"
+      id-token: "write"
     needs:
       - push-image
       - create-image-tag
