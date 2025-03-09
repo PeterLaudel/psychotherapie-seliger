@@ -2,4 +2,4 @@ services:
   app:
     build: .
     image: "${IMAGE:-psychotherapie-seliger:dev}"
-    command: ["npm", "run", "ci"]
+    command: ["npm", "run", "test"]
