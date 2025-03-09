@@ -34,22 +34,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Get npm cache location
-        id: npm-cache-path
-        run: |
-          echo "cache_dir=$(npm config get cache)" >> $GITHUB_OUTPUT  # Set the npm cache path as an output
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache-path.outputs.cache_dir }} # Use the saved variable
-          key: npm-cache-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            npm-cache-
-
-      - name: Check if cache exists
-        run: ls -la ${{ steps.npm-cache-path.outputs.cache_dir }} || echo "No cache found"
-
       # 🏗️ Build the 'builder' stage
       - name: Build builder stage
         uses: docker/build-push-action@v6
