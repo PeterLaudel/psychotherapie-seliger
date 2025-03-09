@@ -1,7 +1,14 @@
-# Don't copy node_modules
-node_modules
 # Ignore common folders that we do not need
 .next
 .idea
 .github
 .vscode
+
+**/node_modules/
+**/dist
+.git
+npm-debug.log
+.coverage
+.coverage.*
+.env
+.aws
