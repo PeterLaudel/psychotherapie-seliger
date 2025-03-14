@@ -8,11 +8,11 @@ import { deDE } from "@mui/x-date-pickers/locales";
 import { FormApi } from "final-form";
 import { useCallback, useMemo } from "react";
 import { Form } from "react-final-form";
-import SubmitButton from "../../../../components/submitButton";
-import { Patient } from "../../../../models/patient";
 import createPatient from "./action";
 import PatientSection from "./patientSection";
 import BillingSection from "./billingSection";
+import { Patient } from "@/models/patient";
+import SubmitButton from "@/components/submitButton";
 
 export default function PatientForm() {
   const initialValues = useMemo<Partial<Patient>>(

@@ -1,11 +1,11 @@
 "use server";
 
+import InvoiceForm from "./invoiceForm";
 import {
   getInvoicesRepository,
   getPatientsRepository,
   getServicesRepository,
-} from "../../../server";
-import InvoiceForm from "./invoiceForm";
+} from "@/server";
 
 export default async function Administration() {
   const patientRepository = await getPatientsRepository();

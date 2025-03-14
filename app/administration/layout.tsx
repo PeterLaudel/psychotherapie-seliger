@@ -2,9 +2,9 @@ import "./globals.css";
 import { ReactNode } from "react";
 import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
-import { authOptions } from "../api/auth/[...nextauth]/config";
 import Navbar from "./navbar";
 import Provider from "./provider";
+import { authOptions } from "@/app/api/auth/[...nextauth]/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
