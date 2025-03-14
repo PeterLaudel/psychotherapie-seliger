@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { Field, useField } from "react-final-form";
-import Section from "../../../components/section";
-import { Patient } from "../../../models/patient";
+import Section from "@/components/section";
+import { Patient } from "@/models/patient";
 
 export default function MessageSection() {
   const {

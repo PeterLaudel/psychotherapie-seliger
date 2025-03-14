@@ -1,10 +1,5 @@
 import { Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { Field } from "react-final-form";
-import Section from "../../../../components/section";
-import {
-  SynchronizedField,
-  ValueSubscription,
-} from "../../../../components/forms";
 import {
   validateCity,
   validateEmail,
@@ -13,6 +8,8 @@ import {
   validateSurname,
   validateZip,
 } from "./validation";
+import { SynchronizedField, ValueSubscription } from "@/components/forms";
+import Section from "@/components/section";
 
 export default function BillingSection() {
   return (

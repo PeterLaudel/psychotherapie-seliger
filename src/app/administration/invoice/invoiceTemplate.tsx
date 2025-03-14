@@ -7,10 +7,10 @@ import {
   View,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { createTw } from "react-pdf-tailwind";
-import { Patient } from "../../../models/patient";
-import { Factor, Service } from "../../../models/service";
-import Address from "../../../models/address";
 import logoBuffer from "./logo";
+import Address from "@/models/address";
+import { Factor, Service } from "@/models/service";
+import { Patient } from "@/models/patient";
 
 type InvoiceAddress = {
   name: string;

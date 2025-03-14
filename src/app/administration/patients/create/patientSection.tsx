@@ -2,7 +2,6 @@ import { TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { Field } from "react-final-form";
-import Section from "../../../../components/section";
 import {
   validateCity,
   validateDate,
@@ -12,6 +11,7 @@ import {
   validateSurname,
   validateZip,
 } from "./validation";
+import Section from "@/components/section";
 
 export default function PatientSection() {
   return (

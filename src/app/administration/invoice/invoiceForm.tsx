@@ -7,20 +7,16 @@ import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
-import SubmitButton from "../../../components/submitButton";
-import SuccessMessage from "../../../components/successMessage";
-import type { Patient as PatientType } from "../../../models/patient";
-import type {
-  Factor,
-  Service,
-  Service as ServiceType,
-} from "../../../models/service";
 import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection from "./serviceSection";
 import MessageSection from "./messageSection";
 import InvoiceViewer from "./invoiceViewer";
 import { toInvoiceParameters } from "./toInvoiceParameters";
+import type { Factor, Service, Service as ServiceType } from "@/models/service";
+import type { Patient as PatientType } from "@/models/patient";
+import SuccessMessage from "@/components/successMessage";
+import SubmitButton from "@/components/submitButton";
 
 interface Props {
   patients: PatientType[];

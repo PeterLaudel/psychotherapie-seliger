@@ -2,8 +2,8 @@
 
 import { gmail_v1 } from "@googleapis/gmail";
 import { renderToBuffer } from "@react-pdf/renderer";
-import { getAuthClient, getInvoicesRepository, getUser } from "../../../server";
 import InvoiceTemplate, { Props as InvoiceParameters } from "./invoiceTemplate";
+import { getAuthClient, getInvoicesRepository, getUser } from "@/server";
 
 interface Message {
   recipient: string;

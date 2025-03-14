@@ -10,14 +10,11 @@ import dayjs from "dayjs";
 import { Fragment } from "react";
 import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
-import Section from "../../../components/section";
-import { Service as ServiceType } from "../../../models/service";
-import {
-  InvalidSubscription,
-  ValueSubscription,
-} from "../../../components/forms";
 import { PageBreakField } from "./pageBreakField";
 import { Position } from "./invoiceForm";
+import { Service as ServiceType } from "@/models/service";
+import Section from "@/components/section";
+import { InvalidSubscription, ValueSubscription } from "@/components/forms";
 
 interface Props {
   services: ServiceType[];
