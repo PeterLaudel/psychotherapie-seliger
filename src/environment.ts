@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 
-dotenv.config({ path: [`.env.${process.env.ENV}`] });
+dotenv.config({ path: [`.env.${process.env.NODE_ENV}`] });
 
 function getOrCrash(key: string) {
   const result = process.env[key];

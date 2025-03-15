@@ -8,6 +8,15 @@ export async function up(kysely: Kysely<unknown>): Promise<void> {
     .addColumn("surname", "text")
     .addColumn("email", "text")
     .addColumn("birthdate", "date")
+    .addColumn("street", "text")
+    .addColumn("city", "text")
+    .addColumn("zip", "text")
+    .addColumn("billingName", "text")
+    .addColumn("billingSurname", "text")
+    .addColumn("billingEmail", "text")
+    .addColumn("billingStreet", "text")
+    .addColumn("billingCity", "text")
+    .addColumn("billingZip", "text")
     .execute();
 }
 
