@@ -13,9 +13,9 @@ export class PatientsRepository {
     return await this.database
       .selectFrom("patients")
       .select(["id", "name", "surname", "email", "birthdate"])
-      .select(({ ref }) => [
-        this.address(ref("patients.id")).as("address"),
-        this.billingInfo(ref("patients.id")).as("billingInfo"),
+      .select((eb) => [
+        this.address(eb.ref("patients.id")).as("address"),
+        this.billingInfo(eb.ref("patients.id")).as("billingInfo"),
       ])
       .execute();
   }
@@ -39,9 +39,9 @@ export class PatientsRepository {
     return await this.database
       .selectFrom("patients")
       .select(["id", "name", "surname", "email", "birthdate"])
-      .select(({ ref }) => [
-        this.address(ref("patients.id")).as("address"),
-        this.billingInfo(ref("patients.id")).as("billingInfo"),
+      .select((eb) => [
+        this.address(eb.ref("patients.id")).as("address"),
+        this.billingInfo(eb.ref("patients.id")).as("billingInfo"),
       ])
       .where("id", "=", id)
       .executeTakeFirstOrThrow();
@@ -59,27 +59,29 @@ export class PatientsRepository {
   private billingInfo(patientId: Expression<number>) {
     return jsonObjectFrom(
       this.database
-        .selectFrom("patients")
+        .selectFrom("patients as billing")
         .select([
           "billingName as name",
           "billingSurname as surname",
           "billingEmail as email",
         ])
-        .select(() => [this.billingAddress(patientId).as("address")])
-        .whereRef(patientId, "=", "id")
+        .select((eb) => [
+          this.billingAddress(eb.ref("billing.id")).as("address"),
+        ])
+        .whereRef(patientId, "=", "billing.id")
     );
   }
 
   private billingAddress(patientId: Expression<number>) {
     return jsonObjectFrom(
       this.database
-        .selectFrom("patients")
+        .selectFrom("patients as billingAddress")
         .select([
           "billingStreet as street",
           "billingZip as zip",
           "billingCity as city",
         ])
-        .whereRef(patientId, "=", "id")
+        .whereRef(patientId, "=", "billingAddress.id")
     );
   }
 }

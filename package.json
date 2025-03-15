@@ -9,11 +9,12 @@
     "lint": "eslint --ignore-path=.gitignore --max-warnings=0 .",
     "typecheck": "tsc --incremental false",
     "test": "jest",
-    "test:ci": "export NODE_ENV=test && npm run db:create && npm run db:migrate && npm run test && npm run db:drop",
+    "test:ci": "NODE_ENV=test npm run db:seed && npm run test",
     "ci": "npm run typecheck && npm run lint && npm run test",
     "db:create": "ts-node ./src/tasks/dbCreate.ts",
     "db:drop": "ts-node ./src/tasks/dbDrop.ts",
-    "db:migrate": "ts-node ./src/tasks/dbMigrate.ts"
+    "db:migrate": "ts-node ./src/tasks/dbMigrate.ts",
+    "db:seed": "npm run db:drop && npm run  db:create && npm run db:migrate"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

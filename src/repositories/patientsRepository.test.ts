@@ -10,7 +10,7 @@ describe("PatientsRepository", () => {
 
       const patients = await patientRepository.get();
 
-      expect(patients).toEqual(createdPatients);
+      expect(new Set(patients)).toEqual(new Set(createdPatients));
     });
   });
 
