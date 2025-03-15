@@ -14,15 +14,22 @@ import BillingSection from "./billingSection";
 import { Patient } from "@/models/patient";
 import SubmitButton from "@/components/submitButton";
 
+type PatientFormData = Patient & {
+  billingInfoIsPatient: boolean;
+};
+
 export default function PatientForm() {
-  const initialValues = useMemo<Partial<Patient>>(
+  const initialValues = useMemo<Partial<PatientFormData>>(
     () => ({
       billingInfoIsPatient: true,
     }),
     []
   );
   const onSubmit = useCallback(
-    async (values: Patient, form: FormApi<Patient, Partial<Patient>>) => {
+    async (
+      values: PatientFormData,
+      form: FormApi<PatientFormData, Partial<PatientFormData>>
+    ) => {
       await createPatient(values);
       form.restart(initialValues);
     },
@@ -37,7 +44,7 @@ export default function PatientForm() {
         deDE.components.MuiLocalizationProvider.defaultProps.localeText
       }
     >
-      <Form<Patient> onSubmit={onSubmit} initialValues={initialValues}>
+      <Form<PatientFormData> onSubmit={onSubmit} initialValues={initialValues}>
         {({ handleSubmit, submitting }) => (
           <form
             onSubmit={handleSubmit}
