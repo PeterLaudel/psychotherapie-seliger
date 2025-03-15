@@ -6,6 +6,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      - POSTGRES_URL=postgres://postgres:postgres@postgres:5432/psychotherapie_seliger_test
 
   postgres:
     image: postgres
