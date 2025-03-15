@@ -2,7 +2,7 @@ services:
   app:
     build: .
     image: "${IMAGE:-psychotherapie-seliger:dev}"
-    command: ["npm", "run", "test"]
+    command: ["npm", "run", "test:ci"]
     depends_on:
       postgres:
         condition: service_healthy
