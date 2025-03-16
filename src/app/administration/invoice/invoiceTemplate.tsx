@@ -113,7 +113,9 @@ export default function InvoiceTemplate({
               {patient &&
                 `Behandelt wurde: ${patient.surname}, ${
                   patient.name
-                }, geb.: ${dateFormatter.format(patient.birthdate)} `}
+                }, geb.: ${dateFormatter.format(
+                  Date.parse(patient.birthdate)
+                )} `}
             </Text>
           </View>
         </View>

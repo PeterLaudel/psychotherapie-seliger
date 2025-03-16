@@ -8,12 +8,11 @@ export interface BillingInfo {
 }
 
 export interface Patient {
-  id: string;
+  id: number;
   name: string;
   surname: string;
   email: string;
-  birthdate: Date;
+  birthdate: string;
   address: Address;
-  billingInfoIsPatient: boolean;
   billingInfo: BillingInfo;
 }

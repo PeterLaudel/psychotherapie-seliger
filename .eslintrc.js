@@ -4,7 +4,7 @@ module.exports = {
   extends: ["eslint:recommended", "next/core-web-vitals"],
   plugins: ["import"],
   root: true,
-  ignorePatterns: ["*.d.ts"],
+  ignorePatterns: ["*.d.ts", "./src/task/**"],
   reportUnusedDisableDirectives: true,
   rules: {
     "no-console": ["warn", { allow: ["warn", "error"] }],
@@ -40,6 +40,20 @@ module.exports = {
           "error",
           { ignoreRestSiblings: true },
         ],
+      },
+    },
+    {
+      // Target files inside the 'src/special-directory' directory
+      files: ["**/tasks/**/*.{js,ts}"],
+      rules: {
+        "no-console": "off", // Disable the 'no-console' rule in this directory
+      },
+    },
+    {
+      // Target files inside the 'src/special-directory' directory
+      files: ["**/tasks/**/*.{js,ts}"],
+      rules: {
+        "@typescript-eslint/no-floating-promises": "off", // Disable the 'no-console' rule in this directory
       },
     },
   ],
