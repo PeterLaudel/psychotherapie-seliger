@@ -29,7 +29,6 @@ export default function BillingSection() {
         <ValueSubscription<boolean> name="billingInfoIsPatient">
           {(billingInfoIsPatient) => (
             <>
-              {" "}
               <SynchronizedField<string>
                 name="billingInfo.name"
                 originFieldName="name"
