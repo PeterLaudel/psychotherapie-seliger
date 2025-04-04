@@ -13,8 +13,11 @@
     "ci": "npm run typecheck && npm run lint && npm run test",
     "db:create": "ts-node ./src/tasks/dbCreate.ts",
     "db:drop": "ts-node ./src/tasks/dbDrop.ts",
-    "db:migrate": "ts-node ./src/tasks/dbMigrate.ts",
-    "db:seed": "npm run db:drop && npm run  db:create && npm run db:migrate"
+    "db:migrate": "kysely migrate:latest --debug",
+    "db:seed": "kysely seed run --debug",
+    "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
+    "db:all": "npm run db:reset && npm run db:seed",
+    "kysely": "kysely"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -54,6 +57,7 @@
     "eslint-config-next": "14.1.4",
     "fishery": "^2.2.3",
     "jest": "^29.7.0",
+    "kysely-ctl": "^0.12.1",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "ts-jest": "^29.2.6",

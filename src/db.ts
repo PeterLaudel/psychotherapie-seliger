@@ -2,6 +2,9 @@ import { Generated } from "kysely";
 
 export interface Database {
   patients: PatientTable;
+  invoices: InvoicesTable;
+  invoicePositions: InvoicePositionsTable;
+  services: ServicesTable;
 }
 
 interface PatientTable {
@@ -19,4 +22,28 @@ interface PatientTable {
   billingStreet: string;
   billingCity: string;
   billingZip: string;
+}
+
+interface InvoicesTable {
+  id: Generated<number>;
+  patientId: number;
+}
+
+interface InvoicePositionsTable {
+  id: Generated<number>;
+  invoiceId: number;
+  serviceDate: string;
+  serviceId: number;
+  factor: string;
+  amount: number;
+}
+
+interface ServicesTable {
+  id: Generated<number>;
+  short: string;
+  originalGopNr: string;
+  description: string;
+  points: number;
+  note?: string;
+  amounts: Record<string, number>;
 }

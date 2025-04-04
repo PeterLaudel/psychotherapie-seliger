@@ -1,4 +1,4 @@
-import { Kysely } from "kysely";
+import { Kysely, sql } from "kysely";
 
 export async function up(kysely: Kysely<unknown>): Promise<void> {
   await kysely.schema
@@ -17,6 +17,9 @@ export async function up(kysely: Kysely<unknown>): Promise<void> {
     .addColumn("billingStreet", "text")
     .addColumn("billingCity", "text")
     .addColumn("billingZip", "text")
+    .addColumn("createdAt", "timestamp", (col) =>
+      col.defaultTo(sql`now()`).notNull()
+    )
     .execute();
 }
 

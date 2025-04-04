@@ -4,11 +4,11 @@ import { patientFactory } from "factories/patient";
 describe("PatientsRepository", () => {
   const patientRepository = new PatientsRepository();
 
-  describe("#get", () => {
+  describe("#all", () => {
     it("returns a list of all patients", async () => {
       const createdPatients = await patientFactory.createList(3);
 
-      const patients = await patientRepository.get();
+      const patients = await patientRepository.all();
 
       expect(new Set(patients)).toEqual(new Set(createdPatients));
     });
@@ -16,15 +16,14 @@ describe("PatientsRepository", () => {
 
   describe("#create", () => {
     it("creates a new patient", async () => {
-      const patient = patientFactory.build();
+      const patientAttributes = patientFactory.build();
 
-      const {
-        id: createdId,
-        ...createdPatient
-      } = await patientRepository.create(patient);
+      const patient = await patientRepository.create(patientAttributes);
 
-      expect(createdId).toBeDefined();
-      expect(createdPatient).toEqual(patient);
+      expect(patient).toEqual({
+        id: expect.any(Number),
+        ...patientAttributes,
+      });
     });
   });
 });

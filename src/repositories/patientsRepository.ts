@@ -9,7 +9,19 @@ function jsonObjectFrom<O>(expr: Expression<O>) {
 export class PatientsRepository {
   constructor(private readonly database = db) {}
 
-  async get(): Promise<Patient[]> {
+  async find(id: number): Promise<Patient> {
+    return await this.database
+      .selectFrom("patients")
+      .select(["id", "name", "surname", "email", "birthdate"])
+      .select((eb) => [
+        this.address(eb.ref("patients.id")).as("address"),
+        this.billingInfo(eb.ref("patients.id")).as("billingInfo"),
+      ])
+      .where("id", "=", id)
+      .executeTakeFirstOrThrow();
+  }
+
+  async all(): Promise<Patient[]> {
     return await this.database
       .selectFrom("patients")
       .select(["id", "name", "surname", "email", "birthdate"])
@@ -22,29 +34,22 @@ export class PatientsRepository {
 
   async create(patient: Omit<Patient, "id">): Promise<Patient> {
     const { address, billingInfo, ...rest } = patient;
-    const mappedBillingInfo = {
-      billingName: billingInfo.name,
-      billingSurname: billingInfo.surname,
-      billingEmail: billingInfo.email,
-      billingStreet: billingInfo.address.street,
-      billingCity: billingInfo.address.city,
-      billingZip: billingInfo.address.zip,
-    };
     const { id } = await this.database
       .insertInto("patients")
-      .values({ ...rest, ...address, ...mappedBillingInfo })
+      .values({
+        ...rest,
+        ...address,
+        billingName: billingInfo.name,
+        billingSurname: billingInfo.surname,
+        billingEmail: billingInfo.email,
+        billingStreet: billingInfo.address.street,
+        billingCity: billingInfo.address.city,
+        billingZip: billingInfo.address.zip,
+      })
       .returning(["id"])
       .executeTakeFirstOrThrow();
 
-    return await this.database
-      .selectFrom("patients")
-      .select(["id", "name", "surname", "email", "birthdate"])
-      .select((eb) => [
-        this.address(eb.ref("patients.id")).as("address"),
-        this.billingInfo(eb.ref("patients.id")).as("billingInfo"),
-      ])
-      .where("id", "=", id)
-      .executeTakeFirstOrThrow();
+    return await this.find(id);
   }
 
   private address(patientId: Expression<number>) {

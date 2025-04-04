@@ -11,7 +11,7 @@ async function clearDatabase(db: Kysely<Database>) {
   }
 }
 
-beforeEach(async () => {
+afterEach(async () => {
   await clearDatabase(db);
 });
 

@@ -1,6 +1,8 @@
-import type { Service } from "../models/service.ts";
+import { Kysely } from "kysely";
+import { Database } from "../src/db";
+import { Service } from "@/models/service";
 
-const services: Service[] = [
+const services: Omit<Service, "id">[] = [
   {
     short: "85 analog",
     originalGopNr: "85",
@@ -181,10 +183,13 @@ const services: Service[] = [
   },
 ];
 
-export class ServicesRepository {
-  constructor() {}
-
-  get(): Service[] {
-    return services;
-  }
+export async function seed(kysely: Kysely<Database>) {
+  await Promise.all(
+    services.map(async (service) => {
+      await kysely
+        .insertInto("services")
+        .values(service)
+        .executeTakeFirstOrThrow();
+    })
+  );
 }
