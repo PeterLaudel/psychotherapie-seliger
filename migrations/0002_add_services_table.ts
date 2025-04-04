@@ -4,12 +4,12 @@ export async function up(kysely: Kysely<unknown>) {
   await kysely.schema
     .createTable("services")
     .addColumn("id", "serial", (col) => col.primaryKey())
-    .addColumn("short", "text")
-    .addColumn("originalGopNr", "text")
-    .addColumn("description", "text")
+    .addColumn("short", "text", (col) => col.notNull())
+    .addColumn("originalGopNr", "text", (col) => col.notNull())
+    .addColumn("description", "text", (col) => col.notNull())
     .addColumn("note", "text", (col) => col.defaultTo(null))
-    .addColumn("points", "integer")
-    .addColumn("amounts", "jsonb")
+    .addColumn("points", "integer", (col) => col.notNull())
+    .addColumn("amounts", "jsonb", (col) => col.notNull())
     .execute();
 }
 

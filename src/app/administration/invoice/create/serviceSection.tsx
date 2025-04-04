@@ -10,8 +10,8 @@ import dayjs from "dayjs";
 import { Fragment } from "react";
 import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
+import { InvoicePositionCreate } from "../../../../repositories/invoicesRepository";
 import { PageBreakField } from "./pageBreakField";
-import { Position } from "./invoiceForm";
 import { Service as ServiceType } from "@/models/service";
 import Section from "@/components/section";
 import { InvalidSubscription, ValueSubscription } from "@/components/forms";
@@ -21,11 +21,13 @@ interface Props {
 }
 
 export default function ServiceSection({ services }: Props) {
-  const addEntry = (push: (value: Partial<Position>) => void) => {
+  const addEntry = (
+    push: (value: Partial<Partial<InvoicePositionCreate>>) => void
+  ) => {
     push({
-      date: undefined,
-      service: undefined,
-      number: 1,
+      serviceDate: undefined,
+      serviceId: undefined,
+      amount: 1,
       factor: undefined,
       pageBreak: false,
     });
@@ -35,7 +37,7 @@ export default function ServiceSection({ services }: Props) {
     <Section>
       <h2 className="mb-4">Leistungen</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
-        <FieldArray<Partial<Position>> name="positions">
+        <FieldArray<Partial<InvoicePositionCreate>> name="invoicePositions">
           {({ fields }) =>
             fields.map((name, index) => (
               <Fragment key={name}>
@@ -45,8 +47,8 @@ export default function ServiceSection({ services }: Props) {
                   </div>
                 )}
                 <Field<Date>
-                  key={`${name}.date`}
-                  name={`${name}.date`}
+                  key={`${name}.serviceDate`}
+                  name={`${name}.serviceDate`}
                   type="input"
                   validate={(value) =>
                     value ? undefined : "Leistungs Datum wird benötigt"
@@ -71,9 +73,9 @@ export default function ServiceSection({ services }: Props) {
                     />
                   )}
                 </Field>
-                <Field<ServiceType>
-                  key={`${name}.service`}
-                  name={`${name}.service`}
+                <Field<number>
+                  key={`${name}.serviceId`}
+                  name={`${name}.serviceId`}
                   type="select"
                   validate={(value) =>
                     value ? undefined : "Eine Leistung wird benötigt"
@@ -82,10 +84,10 @@ export default function ServiceSection({ services }: Props) {
                   {({ input, meta: { touched, error } }) => (
                     <Autocomplete
                       options={services}
-                      onChange={(_, value) => input.onChange(value)}
+                      onChange={(_, value) => input.onChange(value?.id)}
                       getOptionLabel={(option) => option.short}
                       getOptionKey={(option) => option.short}
-                      value={input.value || null}
+                      value={services.find((s) => s.id === input.value) || null}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -99,8 +101,8 @@ export default function ServiceSection({ services }: Props) {
                   )}
                 </Field>
                 <Field<number>
-                  key={`${name}.number`}
-                  name={`${name}.number`}
+                  key={`${name}.amount`}
+                  name={`${name}.amount`}
                   type="number"
                 >
                   {({ input }) => (
@@ -117,24 +119,30 @@ export default function ServiceSection({ services }: Props) {
                     </InvalidSubscription>
                   )}
                 </Field>
-                <ValueSubscription<ServiceType | undefined>
-                  name={`${name}.service`}
+                <ValueSubscription<number | undefined>
+                  name={`${name}.serviceId`}
                 >
-                  {(service) => (
+                  {(serviceId) => (
                     <Field<string>
                       key={`${name}.factor`}
                       name={`${name}.factor`}
                       type="select"
-                      initialValue={Object.keys(service?.amounts || []).at(-1)}
+                      initialValue={Object.keys(
+                        services.find(({ id }) => id === serviceId)?.amounts ||
+                          []
+                      ).at(-1)}
                     >
                       {({ input }) => (
                         <TextField
                           select
                           label="Faktor"
-                          disabled={!service}
+                          disabled={!serviceId}
                           {...input}
                         >
-                          {Object.keys(service?.amounts || []).map((factor) => (
+                          {Object.keys(
+                            services.find(({ id }) => id === serviceId)
+                              ?.amounts || []
+                          ).map((factor) => (
                             <MenuItem key={factor} value={factor}>
                               {factor}
                             </MenuItem>

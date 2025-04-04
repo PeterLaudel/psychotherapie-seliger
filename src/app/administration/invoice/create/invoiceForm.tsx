@@ -7,16 +7,19 @@ import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
+import { InvoicePosition } from "../../../../models/invoiceProcess";
 import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection from "./serviceSection";
-import MessageSection from "./messageSection";
-import InvoiceViewer from "./invoiceViewer";
-import { toInvoiceParameters } from "./toInvoiceParameters";
-import type { Factor, Service, Service as ServiceType } from "@/models/service";
+import {
+  InvoiceCreate,
+  InvoicePositionCreate,
+} from "@/repositories/invoicesRepository";
+import type { Service as ServiceType } from "@/models/service";
 import type { Patient as PatientType } from "@/models/patient";
 import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
+import InvoiceViewer from "./invoiceViewer";
 
 interface Props {
   patients: PatientType[];
@@ -24,21 +27,15 @@ interface Props {
   invoiceNumber: string;
 }
 
-export interface Position {
-  date: Date;
-  service: Service;
-  number: number;
-  factor: Factor;
-  pageBreak: boolean;
-}
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
 
-export interface FormInvoice {
-  invoiceNumber: string;
-  patient: PatientType;
-  diagnosis: string;
-  positions: Partial<Position>[];
-  message: { subject: string; text: string };
-}
+export type FormInvoice = DeepPartial<InvoiceCreate> & {
+  invoicePositions: DeepPartial<InvoicePositionCreate>[];
+};
 
 export default function InvoiceForm({
   patients,
@@ -46,15 +43,20 @@ export default function InvoiceForm({
   invoiceNumber,
 }: Props) {
   const [open, showSuccessMessage] = useState(false);
-  const initialValues = useMemo<Partial<FormInvoice>>(
+  const initialValues = useMemo<
+    DeepPartial<FormInvoice> & {
+      invoicePositions: DeepPartial<
+        Omit<InvoicePosition, "invoiceId" | "id">
+      >[];
+    }
+  >(
     () => ({
       invoiceNumber,
-      diagnosis: "",
-      positions: [
+      invoicePositions: [
         {
-          date: undefined,
-          service: undefined,
-          number: 1,
+          serviceDate: undefined,
+          serviceId: undefined,
+          amount: 1,
           factor: undefined,
           pageBreak: false,
         },
@@ -68,13 +70,7 @@ export default function InvoiceForm({
       values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      const invoiceParameters = toInvoiceParameters(values);
-
-      const message = {
-        recipient: values.patient.billingInfo.email,
-        ...values.message,
-      };
-      await createInvoice(invoiceParameters, message);
+      await createInvoice(values as InvoiceCreate);
       showSuccessMessage(true);
       form.restart(initialValues);
     },
@@ -106,7 +102,6 @@ export default function InvoiceForm({
                 <h1>Rechnung erstellen</h1>
                 <PatientSection patients={patients} />
                 <ServiceSection services={services} />
-                <MessageSection />
                 <SubmitButton
                   submitting={submitting || submitSucceeded}
                   className="justify-self-start self-center"
@@ -115,12 +110,16 @@ export default function InvoiceForm({
                 </SubmitButton>
               </form>
             </div>
-            <InvoiceViewer />
+            <InvoiceViewer
+              patients={patients}
+              services={services}
+              invoiceNumber={invoiceNumber}
+            />
           </div>
         )}
       </Form>
       <SuccessMessage open={open} onClose={() => showSuccessMessage(false)}>
-        Rechnung wurde versendet
+        Rechnung wurde erstellt
       </SuccessMessage>
     </LocalizationProvider>
   );

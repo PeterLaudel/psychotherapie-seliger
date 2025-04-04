@@ -1,4 +1,4 @@
-import ServicesRepository from "./servicesRepositories";
+import ServicesRepository from "./servicesRepository";
 import { serviceFactory } from "factories/service";
 
 describe("ServicesRepository", () => {

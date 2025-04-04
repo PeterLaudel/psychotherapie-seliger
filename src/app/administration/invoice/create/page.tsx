@@ -15,13 +15,12 @@ export default async function Administration() {
   const services = await servicesRepository.all();
 
   const invoiceRepository = await getInvoicesRepository();
-  const invoiceName = await invoiceRepository.generateInvoiceNumber();
-
+  const invoiceNumber = await invoiceRepository.generateInvoiceNumber();
   return (
     <InvoiceForm
       patients={patients}
       services={services}
-      invoiceNumber={invoiceName}
+      invoiceNumber={invoiceNumber}
     />
   );
 }

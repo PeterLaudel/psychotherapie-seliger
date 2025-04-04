@@ -1,9 +1,13 @@
 import { db } from "@/initialize";
 import type { Invoice, InvoicePosition } from "@/models/invoiceProcess";
+import { InvoicePositionsRepository } from "./invoicePositionsRepository";
+import { sql } from "kysely";
+
+export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 
 export type InvoiceCreate = Omit<Invoice, "id" | "status"> & {
   patientId: number;
-  invoicePositions: Omit<InvoicePosition, "id" | "invoiceProcessId">[];
+  invoicePositions: InvoicePositionCreate[];
 };
 export class InvoicesRepository {
   constructor(private readonly database = db) {}
@@ -14,7 +18,6 @@ export class InvoicesRepository {
       ...rest
     } = invoiceProcess;
     return await db.transaction().execute(async (trx) => {
-      // Step 1: Insert into invoice_processes and get the generated ID
       const { id, patientId } = await trx
         .insertInto("invoices")
         .values({
@@ -23,21 +26,11 @@ export class InvoicesRepository {
         .returning(["id", "patientId"])
         .executeTakeFirstOrThrow();
 
+      const positionRepository = new InvoicePositionsRepository(trx);
       const invoicePositions = await Promise.all(
-        createInvoicePositions.map(async (invoicePosition) => {
-          // Step 2: Insert into invoices using the returned invoiceProcessId
-          return await trx
-            .insertInto("invoicePositions")
-            .values({
-              invoiceId: id, // Reference the inserted invoiceProcess
-              serviceDate: invoicePosition.serviceDate,
-              serviceId: invoicePosition.serviceId,
-              factor: invoicePosition.factor,
-              amount: invoicePosition.amount,
-            })
-            .returningAll()
-            .executeTakeFirstOrThrow();
-        })
+        createInvoicePositions.map(async (invoicePosition) =>
+          positionRepository.create({ ...invoicePosition, invoiceId: id })
+        )
       );
 
       return {
@@ -46,5 +39,19 @@ export class InvoicesRepository {
         invoicePositions,
       };
     });
+  }
+
+  public async generateInvoiceNumber() {
+    const result = await sql<{
+      new_id: number;
+    }>`SELECT nextval(pg_get_serial_sequence('invoices', 'id')) AS new_id`.execute(
+      db
+    );
+
+    const next_id = result.rows[0].new_id;
+    const currentDate = new Date();
+    const isoDate = currentDate.toISOString().split("T")[0];
+
+    return `${isoDate.replace(/-/g, "")}${next_id}`;
   }
 }

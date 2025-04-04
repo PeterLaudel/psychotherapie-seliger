@@ -5,7 +5,7 @@ export async function up(kysely: Kysely<unknown>) {
     .createTable("invoices")
     .addColumn("id", "serial", (col) => col.primaryKey())
     .addColumn("patientId", "integer", (col) =>
-      col.references("patients.id").onDelete("cascade")
+      col.references("patients.id").onDelete("cascade").notNull()
     )
     .addColumn("createdAt", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull()

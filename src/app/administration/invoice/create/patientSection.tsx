@@ -10,7 +10,7 @@ interface Props {
   patients: PatientType[];
 }
 
-const validatePatient = (value?: PatientType) =>
+const validatePatient = (value?: number) =>
   value ? undefined : "Bitte wählen Sie einen Patienten aus";
 
 export default function PatientSection({ patients }: Props) {
@@ -18,18 +18,18 @@ export default function PatientSection({ patients }: Props) {
     <Section>
       <h2 className="mb-4">Patient</h2>
       <div className="grid grid-flow-col gap-x-4">
-        <Field<PatientType>
-          name="patient"
+        <Field<number | undefined>
+          name="patientId"
           type="select"
           validate={validatePatient}
         >
           {({ input, meta: { error, touched } }) => (
             <Autocomplete
               options={patients}
-              onChange={(_, value) => input.onChange(value)}
+              onChange={(_, value) => input.onChange(value?.id)}
               getOptionLabel={(patient) => `${patient.name} ${patient.surname}`}
               getOptionKey={(patient) => patient.id}
-              value={input.value || null}
+              value={patients.find(({ id }) => id === input.value) || null}
               renderInput={(params) => (
                 <TextField
                   {...params}

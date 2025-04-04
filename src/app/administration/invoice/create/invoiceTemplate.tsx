@@ -7,50 +7,37 @@ import {
   View,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { createTw } from "react-pdf-tailwind";
+import { InvoicePosition } from "../../../../models/invoiceProcess";
 import logoBuffer from "./logo";
-import Address from "@/models/address";
-import { Factor, Service } from "@/models/service";
-import { Patient } from "@/models/patient";
-
-type InvoiceAddress = {
-  name: string;
-  surname: string;
-} & Address;
+import { Service } from "@/models/service";
+import { BillingInfo, Patient } from "@/models/patient";
 
 type InvoicePatient = { diagnosis?: string } & Pick<
   Patient,
   "name" | "surname" | "birthdate"
 >;
 
-type Position = {
-  date: Date;
-  number: number;
-  factor: Factor;
-  amount: number;
-  pageBreak: boolean;
-} & Pick<Service, "originalGopNr" | "description">;
+type Position = InvoicePosition & { service: Service; price: number };
 
 export interface Props {
   invoiceNumber: string;
-  invoiceAddress?: InvoiceAddress;
+  billingInfo?: BillingInfo;
   patient?: InvoicePatient;
   positions: Position[];
 }
 
-function toKey(position: Position) {
-  return `${position.originalGopNr}${position.date.toISOString()}${
-    position.number
-  }${position.factor}`;
+function toKey({ service, serviceDate, amount, factor }: Position) {
+  return `${service.originalGopNr}${serviceDate}${amount}${factor}`;
 }
 
 export default function InvoiceTemplate({
   invoiceNumber,
-  invoiceAddress,
+  billingInfo,
   patient,
   positions,
 }: Props) {
   const tw = createTw({});
-  const total = positions.reduce((acc, position) => acc + position.amount, 0);
+  const total = positions.reduce((acc, position) => acc + position.price, 0);
   const dateFormatter = new Intl.DateTimeFormat("de-DE", {
     year: "numeric",
     month: "2-digit",
@@ -73,14 +60,16 @@ export default function InvoiceTemplate({
               <Text style={tw("text-xs border-b")}>
                 Ute Seliger - Friedrich-Ebert-Straße 98 - 04105 Leipzig
               </Text>
-              {invoiceAddress && (
+              {billingInfo && (
                 <>
                   <Text
                     style={tw("text-sm mt-8")}
-                  >{`${invoiceAddress.name} ${invoiceAddress.surname}`}</Text>
-                  <Text style={tw("text-sm")}>{invoiceAddress.street}</Text>
+                  >{`${billingInfo.name} ${billingInfo.surname}`}</Text>
                   <Text style={tw("text-sm")}>
-                    {`${invoiceAddress.zip} ${invoiceAddress.city}`}
+                    {billingInfo.address.street}
+                  </Text>
+                  <Text style={tw("text-sm")}>
+                    {`${billingInfo.address.zip} ${billingInfo.address.city}`}
                   </Text>
                 </>
               )}
@@ -165,28 +154,28 @@ export default function InvoiceTemplate({
           >
             <View style={tw("w-[10vw]")}>
               <Text style={tw("text-sm self-center")}>
-                {dateFormatter.format(position.date)}
+                {dateFormatter.format(Date.parse(position.serviceDate))}
               </Text>
             </View>
             <View style={tw("w-[10vw]")}>
               <Text style={tw("text-sm self-center")}>
-                {position.originalGopNr}
+                {position.service.originalGopNr}
               </Text>
             </View>
             <View style={tw("w-[50vw]")}>
               <Text style={tw("text-sm self-start")}>
-                {position.description}
+                {position.service.description}
               </Text>
             </View>
             <View style={tw("w-[10vw]")}>
               <Text style={tw("text-sm self-center")}>{position.factor}</Text>
             </View>
             <View style={tw("w-[10vw]")}>
-              <Text style={tw("text-sm self-center")}>{position.number}</Text>
+              <Text style={tw("text-sm self-center")}>{position.amount}</Text>
             </View>
             <View style={tw("w-[10vw]")}>
               <Text style={tw("text-sm self-end")}>
-                {currencyFormatter.format(position.amount)}
+                {currencyFormatter.format(position.price)}
               </Text>
             </View>
           </View>
