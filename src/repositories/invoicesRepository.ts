@@ -1,7 +1,7 @@
+import { sql } from "kysely";
+import { InvoicePositionsRepository } from "./invoicePositionsRepository";
 import { db } from "@/initialize";
 import type { Invoice, InvoicePosition } from "@/models/invoiceProcess";
-import { InvoicePositionsRepository } from "./invoicePositionsRepository";
-import { sql } from "kysely";
 
 export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 

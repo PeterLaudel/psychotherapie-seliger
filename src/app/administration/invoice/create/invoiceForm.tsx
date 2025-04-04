@@ -11,6 +11,7 @@ import { InvoicePosition } from "../../../../models/invoiceProcess";
 import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection from "./serviceSection";
+import InvoiceViewer from "./invoiceViewer";
 import {
   InvoiceCreate,
   InvoicePositionCreate,
@@ -19,7 +20,6 @@ import type { Service as ServiceType } from "@/models/service";
 import type { Patient as PatientType } from "@/models/patient";
 import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
-import InvoiceViewer from "./invoiceViewer";
 
 interface Props {
   patients: PatientType[];

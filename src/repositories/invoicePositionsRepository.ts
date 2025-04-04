@@ -1,5 +1,5 @@
-import { db } from "@/initialize";
 import { InvoicePosition } from "../models/invoiceProcess";
+import { db } from "@/initialize";
 
 export type InvoicePositionCreate = Omit<InvoicePosition, "id">;
 

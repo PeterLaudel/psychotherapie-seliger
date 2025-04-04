@@ -1,10 +1,10 @@
 import dynamic from "next/dynamic";
 import { useFormState } from "react-final-form";
+import { InvoicePosition } from "../../../../models/invoiceProcess";
 import { FormInvoice } from "./invoiceForm";
 import InvoiceTemplate from "./invoiceTemplate";
 import { Service } from "@/models/service";
 import { Patient } from "@/models/patient";
-import { InvoicePosition } from "../../../../models/invoiceProcess";
 
 interface Props {
   patients: Patient[];

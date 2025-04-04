@@ -1,8 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getInvoicesRepository } from "@/server";
 import { InvoiceCreate } from "@/repositories/invoicesRepository";
-import { revalidatePath } from "next/cache";
 
 export async function createInvoice(invoiceCreate: InvoiceCreate) {
   const invoicesRepository = await getInvoicesRepository();

@@ -1,11 +1,12 @@
 import { sql } from "kysely";
+import timekeeper from "timekeeper";
 import { patientFactory } from "../../factories/patient";
 import { serviceFactory } from "../../factories/service";
+import { db } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
 import { invoicePositionFactory } from "factories/invoicePosition";
-import timekeeper from "timekeeper";
-import { db } from "../initialize";
+
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
 
