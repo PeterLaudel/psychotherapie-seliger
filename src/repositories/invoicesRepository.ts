@@ -1,11 +1,12 @@
 import { sql } from "kysely";
 import { InvoicePositionsRepository } from "./invoicePositionsRepository";
 import { db } from "@/initialize";
-import type { Invoice, InvoicePosition } from "@/models/invoiceProcess";
+import type { Invoice } from "@/models/invoice";
+import type { InvoicePosition } from "@/models/invoicePosition";
 
 export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 
-export type InvoiceCreate = Omit<Invoice, "id" | "status"> & {
+export type InvoiceCreate = Omit<Invoice, "id"> & {
   patientId: number;
   invoicePositions: InvoicePositionCreate[];
 };
@@ -18,24 +19,24 @@ export class InvoicesRepository {
       ...rest
     } = invoiceProcess;
     return await db.transaction().execute(async (trx) => {
-      const { id, patientId } = await trx
+      const invoice = await trx
         .insertInto("invoices")
-        .values({
-          patientId: rest.patientId,
-        })
-        .returning(["id", "patientId"])
+        .values(rest)
+        .returning(["id", "patientId", "invoiceNumber"])
         .executeTakeFirstOrThrow();
 
       const positionRepository = new InvoicePositionsRepository(trx);
       const invoicePositions = await Promise.all(
         createInvoicePositions.map(async (invoicePosition) =>
-          positionRepository.create({ ...invoicePosition, invoiceId: id })
+          positionRepository.create({
+            ...invoicePosition,
+            invoiceId: invoice.id,
+          })
         )
       );
 
       return {
-        id,
-        patientId,
+        ...invoice,
         invoicePositions,
       };
     });

@@ -7,11 +7,11 @@ import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
-import { InvoicePosition } from "../../../../models/invoiceProcess";
 import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
+import { InvoicePosition } from "@/models/invoicePosition";
 import {
   InvoiceCreate,
   InvoicePositionCreate,

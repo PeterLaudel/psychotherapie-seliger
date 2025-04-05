@@ -9,8 +9,3 @@ export interface InvoicePosition {
   amount: number;
   pageBreak?: boolean;
 }
-
-export interface Invoice {
-  id: number;
-  patientId: number;
-}

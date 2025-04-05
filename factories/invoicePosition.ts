@@ -1,7 +1,7 @@
 import { Factory } from "fishery";
 import { faker } from "@faker-js/faker";
 import { factorArray } from "@/models/service";
-import { InvoicePosition } from "@/models/invoiceProcess";
+import { InvoicePosition } from "@/models/invoicePosition";
 import { db } from "@/initialize";
 
 export const invoicePositionFactory = Factory.define<

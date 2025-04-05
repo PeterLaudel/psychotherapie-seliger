@@ -7,8 +7,8 @@ import {
   View,
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { createTw } from "react-pdf-tailwind";
-import { InvoicePosition } from "../../../../models/invoiceProcess";
 import logoBuffer from "./logo";
+import { InvoicePosition } from "@/models/invoicePosition";
 import { Service } from "@/models/service";
 import { BillingInfo, Patient } from "@/models/patient";
 
