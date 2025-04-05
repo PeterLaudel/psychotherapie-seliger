@@ -14,6 +14,20 @@ describe("PatientsRepository", () => {
     });
   });
 
+  describe("#find", () => {
+    it("returns a patient by id", async () => {
+      const patient = await patientFactory.create();
+
+      const foundPatient = await patientRepository.find(patient.id);
+
+      expect(foundPatient).toEqual(patient);
+    });
+
+    it("throws an error if the patient does not exist", async () => {
+      await expect(patientRepository.find(999)).rejects.toThrow();
+    });
+  });
+
   describe("#create", () => {
     it("creates a new patient", async () => {
       const patientAttributes = patientFactory.build();
