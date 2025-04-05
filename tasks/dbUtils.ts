@@ -1,5 +1,5 @@
 import { Kysely, PostgresDialect, sql } from "kysely";
-import { postgresUrl } from "../environment";
+import { postgresUrl } from "../src/environment";
 
 export function databaseName() {
   return postgresUrl().split("/").pop() || "";
