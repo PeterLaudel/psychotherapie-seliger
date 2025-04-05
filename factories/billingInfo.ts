@@ -3,7 +3,7 @@ import { Factory } from "fishery";
 import { addressFactory } from "./address";
 import { BillingInfo } from "@/models/patient";
 
-const billingInfoFactory: Factory<BillingInfo> = Factory.define<BillingInfo>(
+export const billingInfoFactory: Factory<BillingInfo> = Factory.define<BillingInfo>(
   () => ({
     name: faker.person.firstName(),
     surname: faker.person.lastName(),
@@ -11,5 +11,3 @@ const billingInfoFactory: Factory<BillingInfo> = Factory.define<BillingInfo>(
     address: addressFactory.build(),
   })
 );
-
-export { billingInfoFactory };
