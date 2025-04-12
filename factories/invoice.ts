@@ -18,6 +18,6 @@ export const invoiceFactory = Factory.define<
   return await db
     .insertInto("invoices")
     .values(invoice)
-    .returningAll()
+    .returning(["id", "patientId", "invoiceNumber"])
     .executeTakeFirstOrThrow();
 });
