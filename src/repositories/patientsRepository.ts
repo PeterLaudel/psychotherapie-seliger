@@ -1,10 +1,7 @@
-import { Expression, Simplify, sql } from "kysely";
+import { Expression } from "kysely";
+import { jsonObjectFrom } from "kysely/helpers/postgres";
 import { Patient } from "@/models/patient";
 import { db } from "@/initialize";
-
-function jsonObjectFrom<O>(expr: Expression<O>) {
-  return sql<Simplify<O>>`(select to_json(obj) from ${expr} as obj)`;
-}
 
 export class PatientsRepository {
   constructor(private readonly database = db) {}
@@ -57,8 +54,9 @@ export class PatientsRepository {
       this.database
         .selectFrom("patients as address")
         .select(["street", "zip", "city"])
+
         .whereRef(patientId, "=", "address.id")
-    );
+    ).$notNull();
   }
 
   private billingInfo(patientId: Expression<number>) {
@@ -74,7 +72,7 @@ export class PatientsRepository {
           this.billingAddress(eb.ref("billing.id")).as("address"),
         ])
         .whereRef(patientId, "=", "billing.id")
-    );
+    ).$notNull();
   }
 
   private billingAddress(patientId: Expression<number>) {
@@ -87,6 +85,6 @@ export class PatientsRepository {
           "billingCity as city",
         ])
         .whereRef(patientId, "=", "billingAddress.id")
-    );
+    ).$notNull();
   }
 }

@@ -9,7 +9,6 @@ export async function up(kysely: Kysely<unknown>) {
     .addColumn("description", "text", (col) => col.notNull())
     .addColumn("note", "text", (col) => col.defaultTo(null))
     .addColumn("points", "integer", (col) => col.notNull())
-    .addColumn("amounts", "jsonb", (col) => col.notNull())
     .execute();
 }
 

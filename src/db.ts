@@ -5,6 +5,7 @@ export interface Database {
   invoices: InvoicesTable;
   invoicePositions: InvoicePositionsTable;
   services: ServicesTable;
+  serviceAmounts: ServiceAmountsTable;
 }
 
 interface PatientTable {
@@ -47,5 +48,11 @@ interface ServicesTable {
   description: string;
   points: number;
   note?: string;
-  amounts: Record<string, number>;
+}
+
+interface ServiceAmountsTable {
+  id: Generated<number>;
+  serviceId: number;
+  factor: "1.0" | "1.8" | "2.3";
+  price: number;
 }

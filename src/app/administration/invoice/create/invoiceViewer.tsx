@@ -42,7 +42,8 @@ export default function InvoiceViewer({
       service,
       price:
         position?.factor !== undefined
-          ? service?.amounts[position.factor] || 0
+          ? service?.amounts.find((amount) => amount.factor === position.factor)
+              ?.price ?? 0
           : 0,
     };
   });

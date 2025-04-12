@@ -127,10 +127,12 @@ export default function ServiceSection({ services }: Props) {
                       key={`${name}.factor`}
                       name={`${name}.factor`}
                       type="select"
-                      initialValue={Object.keys(
-                        services.find(({ id }) => id === serviceId)?.amounts ||
-                          []
-                      ).at(-1)}
+                      initialValue={
+                        (
+                          services.find(({ id }) => id === serviceId)
+                            ?.amounts || []
+                        ).at(-1)?.["factor"]
+                      }
                     >
                       {({ input }) => (
                         <TextField
@@ -139,10 +141,10 @@ export default function ServiceSection({ services }: Props) {
                           disabled={!serviceId}
                           {...input}
                         >
-                          {Object.keys(
+                          {(
                             services.find(({ id }) => id === serviceId)
                               ?.amounts || []
-                          ).map((factor) => (
+                          ).map(({ factor }) => (
                             <MenuItem key={factor} value={factor}>
                               {factor}
                             </MenuItem>
