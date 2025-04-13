@@ -8,8 +8,6 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const dynamic = "force-dynamic";
-
 export default async function Layout({
   children,
 }: Readonly<{

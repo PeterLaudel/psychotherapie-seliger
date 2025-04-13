@@ -64,7 +64,7 @@ export default function Navbar() {
               <Link href="/administration/patients/create">Patienten</Link>
             </li>
             <li className={isInvoiceRoute ? "font-bold" : ""}>
-              <Link href="/administration/invoice">Rechnungen</Link>
+              <Link href="/administration/invoice/create">Rechnungen</Link>
             </li>
           </ul>
         </div>

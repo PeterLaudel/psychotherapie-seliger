@@ -42,5 +42,19 @@ module.exports = {
         ],
       },
     },
+    {
+      // Target files inside the 'src/special-directory' directory
+      files: ["**/tasks/**/*.{js,ts}"],
+      rules: {
+        "no-console": "off", // Disable the 'no-console' rule in this directory
+      },
+    },
+    {
+      // Target files inside the 'src/special-directory' directory
+      files: ["**/tasks/**/*.{js,ts}"],
+      rules: {
+        "@typescript-eslint/no-floating-promises": "off", // Disable the 'no-console' rule in this directory
+      },
+    },
   ],
 };

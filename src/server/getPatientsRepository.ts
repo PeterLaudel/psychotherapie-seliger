@@ -1,9 +1,5 @@
-import { people_v1 } from "@googleapis/people";
-import PatientsRepository from "../repositories/patients";
-import { getAuthClient } from "./getAuthClient";
+import { PatientsRepository } from "@/repositories/patientsRepository";
 
-export async function getPatientsRepository(): Promise<PatientsRepository> {
-  const auth = await getAuthClient();
-  const peopleClient = new people_v1.People({ auth });
-  return new PatientsRepository(peopleClient);
+export async function getPatientsRepository() {
+  return Promise.resolve(new PatientsRepository());
 }
