@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title:
     "Psychotherapie Seliger | Psychotherapie in Leipzig | Verhaltenstherapie",
   description:
-    "Lernen Sie meine Praxis für Psychotherapie in Leipzig kennen. Ich biete Verhaltenstherapie und psychologische Beratung für Ihre psychische Gesundheit.",
+    "Psychotherapie in Leipzig: Vereinbaren Sie jetzt einen Termin für Ihre individuelle Therapieanfrage. Kontaktieren Sie uns für professionelle psychotherapeutische Unterstützung.",
   keywords: [
     "Psychotherapie Leipzig",
     "Psychologe Leipzig",
