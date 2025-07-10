@@ -32,6 +32,7 @@
     "@mui/x-data-grid": "^7.28.3",
     "@mui/x-date-pickers": "^7.22.2",
     "@react-pdf/renderer": "^4.0.0",
+    "better-sqlite3": "^12.2.0",
     "dayjs": "^1.11.13",
     "google-auth-library": "^9.14.2",
     "kysely": "^0.27.6",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/pg": "^8.11.11",

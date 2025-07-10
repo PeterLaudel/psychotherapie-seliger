@@ -1,23 +1,22 @@
-import { Kysely, PostgresDialect, sql } from "kysely";
-import { Pool } from "pg";
-import { databaseExists, databaseName, dbUrl } from "./dbUtils";
+import fs from "fs";
+import path from "path";
+import { sqliteUrl } from "../src/environment";
 
-export async function dbCreate() {
-  const db = new Kysely<PostgresDialect>({
-    dialect: new PostgresDialect({
-      pool: new Pool({
-        connectionString: dbUrl(),
-      }),
-    }),
-  });
-  const doesExist = await databaseExists(db);
-  if (doesExist) {
-    console.log("Database already exists");
+
+export function dbCreate() {
+
+  const filePath = sqliteUrl();
+  console.log(`Creating database file at: ${filePath}`);
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, "");
+    console.log(`Created file: ${filePath}`);
   } else {
-    console.log("Creating database");
-    await sql`CREATE DATABASE ${sql.raw(databaseName())}`.execute(db);
-    console.log("Database created");
+    console.log(`File already exists: ${filePath}`);
   }
 }
 
-dbCreate().then(() => process.exit(0));
+dbCreate();

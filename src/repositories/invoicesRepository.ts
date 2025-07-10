@@ -1,4 +1,3 @@
-import { sql } from "kysely";
 import { InvoicePositionsRepository } from "./invoicePositionsRepository";
 import { db } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
@@ -43,13 +42,13 @@ export class InvoicesRepository {
   }
 
   public async generateInvoiceNumber() {
-    const result = await sql<{
-      new_id: number;
-    }>`SELECT nextval(pg_get_serial_sequence('invoices', 'id')) AS new_id`.execute(
-      db
-    );
+    // For SQLite: get max id and add 1
+    const result = await db
+      .selectFrom("invoices")
+      .select(db.fn.max("id").as("max_id"))
+      .executeTakeFirst();
 
-    const next_id = result.rows[0].new_id;
+    const next_id = (result?.max_id ?? 0) + 1;
     const currentDate = new Date();
     const isoDate = currentDate.toISOString().split("T")[0];
 

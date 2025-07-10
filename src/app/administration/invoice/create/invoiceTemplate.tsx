@@ -12,15 +12,13 @@ import { InvoicePosition } from "@/models/invoicePosition";
 import { Service } from "@/models/service";
 import { BillingInfo, Patient } from "@/models/patient";
 
-type InvoicePatient = { diagnosis?: string } & Pick<
-  Patient,
-  "name" | "surname" | "birthdate"
->;
+type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate">;
 
 type Position = InvoicePosition & { service: Service; price: number };
 
 export interface Props {
   invoiceNumber: string;
+  diagnosis?: string;
   billingInfo?: BillingInfo;
   patient?: InvoicePatient;
   positions: Position[];
@@ -35,6 +33,7 @@ export default function InvoiceTemplate({
   billingInfo,
   patient,
   positions,
+  diagnosis,
 }: Props) {
   const tw = createTw({});
   const total = positions.reduce((acc, position) => acc + position.price, 0);
@@ -108,10 +107,10 @@ export default function InvoiceTemplate({
             </Text>
           </View>
         </View>
-        {patient?.diagnosis && (
+        {diagnosis && (
           <View style={tw("flex-row justify-between pt-4")}>
             <View style={tw("flex-col")}>
-              <Text style={tw("text-sm")}>{`${patient.diagnosis}`}</Text>
+              <Text style={tw("text-sm")}>{`${diagnosis}`}</Text>
             </View>
           </View>
         )}

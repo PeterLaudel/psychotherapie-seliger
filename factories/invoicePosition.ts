@@ -16,9 +16,17 @@ export const invoicePositionFactory = Factory.define<
   pageBreak: false,
   amount: faker.number.int({ min: 1, max: 1000 }),
 })).onCreate(async (invoicePosition) => {
-  return await db
+  const result =  await db
     .insertInto("invoicePositions")
-    .values(invoicePosition)
+    .values({
+      ...invoicePosition,
+      pageBreak: invoicePosition.pageBreak ? 1 : 0, // Convert boolean to integer
+    })
     .returningAll()
     .executeTakeFirstOrThrow();
+
+  return {
+    ...result,
+    pageBreak: result.pageBreak === 1, // Convert back to boolean
+  };
 });

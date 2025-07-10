@@ -3,7 +3,7 @@ import { Kysely } from "kysely";
 export function up(kysely: Kysely<unknown>) {
   return kysely.schema
     .createTable("serviceAmounts")
-    .addColumn("id", "serial", (col) => col.primaryKey())
+    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
     .addColumn("serviceId", "integer", (col) =>
       col.references("services.id").onDelete("cascade").notNull()
     )

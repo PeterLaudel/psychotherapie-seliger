@@ -16,6 +16,7 @@ export default async function Administration() {
 
   const invoiceRepository = await getInvoicesRepository();
   const invoiceNumber = await invoiceRepository.generateInvoiceNumber();
+
   return (
     <InvoiceForm
       patients={patients}

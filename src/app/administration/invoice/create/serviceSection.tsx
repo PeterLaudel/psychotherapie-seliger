@@ -58,9 +58,17 @@ export default function ServiceSection({ services }: Props) {
                   {({ input, meta: { error, touched } }) => (
                     <DatePicker
                       label="Leistungs Datum"
-                      value={input.value ? dayjs(input.value) : null}
+                      value={
+                        input.value
+                          ? dayjs(input.value).isValid()
+                            ? dayjs(input.value)
+                            : null
+                          : null
+                      }
                       onChange={(newValue) =>
-                        input.onChange(newValue?.toDate())
+                        input.onChange(
+                          newValue ? newValue.format("YYYY-MM-DD") : null
+                        )
                       }
                       minDate={dayjs.unix(0)}
                       slotProps={{

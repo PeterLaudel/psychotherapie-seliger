@@ -1,5 +1,5 @@
 import { Expression } from "kysely";
-import { jsonObjectFrom } from "kysely/helpers/postgres";
+import { jsonObjectFrom } from "kysely/helpers/sqlite";
 import { Patient } from "@/models/patient";
 import { db } from "@/initialize";
 

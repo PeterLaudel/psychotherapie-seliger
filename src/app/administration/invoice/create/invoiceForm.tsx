@@ -34,6 +34,7 @@ type DeepPartial<T> = T extends object
   : T;
 
 export type FormInvoice = DeepPartial<InvoiceCreate> & {
+  diagnosis?: string;
   invoicePositions: DeepPartial<InvoicePositionCreate>[];
 };
 
@@ -70,7 +71,8 @@ export default function InvoiceForm({
       values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      await createInvoice(values as InvoiceCreate);
+      const {diagnosis, ...rest} = values;
+      await createInvoice(rest as InvoiceCreate);
       showSuccessMessage(true);
       form.restart(initialValues);
     },
