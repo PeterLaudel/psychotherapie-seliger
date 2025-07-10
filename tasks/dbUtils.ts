@@ -1,17 +1,21 @@
-import { Kysely, PostgresDialect, sql } from "kysely";
-import { postgresUrl } from "../src/environment";
+import { Kysely } from "kysely";
+import { Database } from "@/db";
 
-export function databaseName() {
-  return postgresUrl().split("/").pop() || "";
-}
+/**
+ * Deletes all rows from all tables in a SQLite database.
+ * Does not drop tables or reset autoincrement counters.
+ */
+export async function clearSqliteDatabase(database: Kysely<Database>) {
+  // Query all user tables using Kysely's selectFrom
+  const tables = await database.withTables()
+    .selectFrom("sqlite_master")
+    .select("name")
+    .where("type", "=", "table")
+    .where("name", "not like", "sqlite_%")
+    .where("name", "not like", "kysely_%")
+    .execute();
 
-export function dbUrl() {
-  return postgresUrl().split("/").slice(0, -1).join("/");
-}
-
-export async function databaseExists(db: Kysely<PostgresDialect>) {
-  const result = await sql`SELECT 1 FROM pg_database WHERE datname = ${databaseName()}`.execute(
-    db
-  );
-  return result.rows.length === 1;
+  for (const { name } of tables) {
+    await database.deleteFrom(name).execute();
+  }
 }

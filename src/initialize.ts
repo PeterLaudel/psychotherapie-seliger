@@ -1,16 +1,14 @@
-import { Kysely, ParseJSONResultsPlugin, PostgresDialect } from "kysely";
-import { Pool } from "pg";
+import { Kysely, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import pg from "pg";
-import { postgresUrl } from "./environment";
-import { Database } from "./db";
+import Database from 'better-sqlite3'
+import { Database as DatabaseDescription } from "./db";
+import { sqliteUrl } from "./environment";
 
 pg.types.setTypeParser(pg.types.builtins.DATE, (val) => val);
 
-export const db = new Kysely<Database>({
-  dialect: new PostgresDialect({
-    pool: new Pool({
-      connectionString: postgresUrl(),
-    }),
+export const db = new Kysely<DatabaseDescription>({
+  dialect: new SqliteDialect({
+    database: new Database(sqliteUrl())
   }),
   plugins: [new ParseJSONResultsPlugin()],
 });

@@ -25,13 +25,13 @@ export default function PatientForm() {
     }),
     []
   );
+
   const onSubmit = useCallback(
     async (
       values: PatientFormData,
       form: FormApi<PatientFormData, Partial<PatientFormData>>
     ) => {
-      const { billingInfoIsPatient, ...patient } = values;
-      await createPatient(patient);
+      await createPatient(values);
       form.restart(initialValues);
     },
     [initialValues]

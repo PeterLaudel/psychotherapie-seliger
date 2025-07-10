@@ -1,4 +1,4 @@
-import { jsonArrayFrom } from "kysely/helpers/postgres";
+import { jsonArrayFrom } from "kysely/helpers/sqlite";
 import { db } from "@/initialize";
 import { Service } from "@/models/service";
 

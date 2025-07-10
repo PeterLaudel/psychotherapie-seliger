@@ -9,10 +9,18 @@ export class InvoicePositionsRepository {
   public async create(
     invoicePosition: InvoicePositionCreate
   ): Promise<InvoicePosition> {
-    return await this.database
+    const result = await this.database
       .insertInto("invoicePositions")
-      .values(invoicePosition)
+      .values({
+        ...invoicePosition,
+        pageBreak: invoicePosition.pageBreak ? 1 : 0,
+      })
       .returningAll()
       .executeTakeFirstOrThrow();
+
+    return {
+      ...result,
+      pageBreak: result.pageBreak === 1, // Convert back to boolean
+    };
   }
 }

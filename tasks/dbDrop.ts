@@ -1,24 +1,15 @@
-import { Kysely, PostgresDialect, sql } from "kysely";
-import { Pool } from "pg";
-import { databaseName, dbUrl, databaseExists } from "./dbUtils";
 
-export async function dbDrop() {
-  const db = new Kysely<PostgresDialect>({
-    dialect: new PostgresDialect({
-      pool: new Pool({
-        connectionString: dbUrl(),
-      }),
-    }),
-  });
+import fs from "fs";
+import { sqliteUrl } from "../src/environment";
 
-  const dbExists = await databaseExists(db);
-  if (dbExists) {
-    console.log("Dropping database");
-    await sql`DROP DATABASE ${sql.raw(databaseName())}`.execute(db);
-    console.log("Database dropped");
+export function dbDrop() {
+  const filePath = sqliteUrl();
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+    console.log(`Deleted file: ${filePath}`);
   } else {
-    console.log("Database does not exist");
+    console.log(`File does not exist: ${filePath}`);
   }
 }
 
-dbDrop().then(() => process.exit(0));
+dbDrop()
