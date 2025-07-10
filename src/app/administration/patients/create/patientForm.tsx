@@ -31,7 +31,8 @@ export default function PatientForm() {
       values: PatientFormData,
       form: FormApi<PatientFormData, Partial<PatientFormData>>
     ) => {
-      await createPatient(values);
+      const { billingInfoIsPatient, ...patientData } = values;
+      await createPatient(patientData);
       form.restart(initialValues);
     },
     [initialValues]

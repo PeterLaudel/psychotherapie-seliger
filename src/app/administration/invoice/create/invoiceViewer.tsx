@@ -26,6 +26,7 @@ export default function InvoiceViewer({
   });
 
   const patient = patients.find((p) => p.id === values.patientId);
+  const diagnosis = values.diagnosis;
   const filteredPositions = values.invoicePositions.filter(
     (position): position is InvoicePosition =>
       !!position &&
@@ -53,6 +54,7 @@ export default function InvoiceViewer({
       <InvoiceTemplate
         invoiceNumber={invoiceNumber}
         billingInfo={patient?.billingInfo}
+        diagnosis={diagnosis}
         patient={patient}
         positions={mappedPositions}
       />
