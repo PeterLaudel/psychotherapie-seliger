@@ -1,5 +1,6 @@
-import dynamic from "next/dynamic";
-import { useFormState } from "react-final-form";
+import { useEffect } from "react";
+import { usePDF } from "@react-pdf/renderer";
+import { useField, useFormState } from "react-final-form";
 import { FormInvoice } from "./invoiceForm";
 import InvoiceTemplate from "./invoiceTemplate";
 import { InvoicePosition } from "@/models/invoicePosition";
@@ -12,15 +13,14 @@ interface Props {
   invoiceNumber: string;
 }
 
-const PDFViewer = dynamic(() => import("./pdfViewer"), {
-  ssr: false,
-});
-
 export default function InvoiceViewer({
   patients,
   services,
   invoiceNumber,
 }: Props) {
+  const [instance, updateInstance] = usePDF();
+  const { input: { onChange } } = useField<string>("base64Pdf");
+
   const { values } = useFormState<FormInvoice>({
     subscription: { values: true },
   });
@@ -49,8 +49,8 @@ export default function InvoiceViewer({
     };
   });
 
-  return (
-    <PDFViewer className="w-full h-full" key={patient?.id}>
+  useEffect(() => {
+    updateInstance(
       <InvoiceTemplate
         invoiceNumber={invoiceNumber}
         billingInfo={patient?.billingInfo}
@@ -58,6 +58,20 @@ export default function InvoiceViewer({
         patient={patient}
         positions={mappedPositions}
       />
-    </PDFViewer>
-  );
+    );
+  }, [invoiceNumber, patient, diagnosis, mappedPositions, updateInstance]);
+
+  useEffect(() => {
+    if (instance.blob) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange(reader.result || "");
+      };
+      reader.readAsDataURL(instance.blob);
+    }
+  }, [instance.blob, onChange]);
+
+  const src = instance.url ? `${instance.url}#toolbar=0` : undefined;
+
+  return <iframe className="w-full h-full" key={patient?.id} src={src} />;
 }

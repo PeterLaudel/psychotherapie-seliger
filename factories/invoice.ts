@@ -14,10 +14,11 @@ export const invoiceFactory = Factory.define<
     .toISOString()
     .split("T")[0]
     .replace(/-/g, "")}${sequence}`,
+  base64Pdf: "data:application/pdf;base64,example",
 })).onCreate(async (invoice) => {
   return await db
     .insertInto("invoices")
     .values(invoice)
-    .returning(["id", "patientId", "invoiceNumber"])
+    .returning(["id", "patientId", "invoiceNumber", "base64Pdf"])
     .executeTakeFirstOrThrow();
 });

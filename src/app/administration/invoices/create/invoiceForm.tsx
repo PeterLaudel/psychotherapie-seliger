@@ -35,6 +35,7 @@ type DeepPartial<T> = T extends object
 
 export type FormInvoice = DeepPartial<InvoiceCreate> & {
   diagnosis?: string;
+  base64Pdf?: string;
   invoicePositions: DeepPartial<InvoicePositionCreate>[];
 };
 
