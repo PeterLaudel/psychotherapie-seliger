@@ -20,8 +20,7 @@ const services: Omit<Service, "id">[] = [
     originalGopNr: "801",
     description:
       "Erhebung des aktuellen psychischen Befunds ohne Mindestdauer.",
-    note:
-      "Kann bei der Psychotherapeutischen Sprechstunde (812 analog) nicht zugesetzt werden",
+    note: "Kann bei der Psychotherapeutischen Sprechstunde (812 analog) nicht zugesetzt werden",
     points: 250,
     amounts: [
       { factor: "1.0", price: 14.57 },
@@ -67,8 +66,7 @@ const services: Omit<Service, "id">[] = [
     originalGopNr: "812",
     description:
       "Psychotherapeutische Sprechstunde – Abklärung des Vorliegens einer krankheitswertigen Störung.",
-    note:
-      "Höchstens sechsmal im Jahr, bei Kindern und Jugendlichen sowie Patienten mit geistiger Behinderung höchstens zehnmal berechnungsfähig.",
+    note: "Höchstens sechsmal im Jahr, bei Kindern und Jugendlichen sowie Patienten mit geistiger Behinderung höchstens zehnmal berechnungsfähig.",
     points: 500,
     amounts: [
       { factor: "1.0", price: 29.14 },
@@ -80,8 +78,7 @@ const services: Omit<Service, "id">[] = [
     originalGopNr: "812",
     description:
       "Psychotherapeutische Akutbehandlung zur Entlastung bei akuten psychischen Krisen- und Ausnahmezuständen. Behandlungsbeginn nach Indikationsstellung innerhalb von zwei Wochen.",
-    note:
-      "Bis zu zweimal an einem Kalendertag und bis zu vierundzwanzigmal im Jahr berechnungsfähig.",
+    note: "Bis zu zweimal an einem Kalendertag und bis zu vierundzwanzigmal im Jahr berechnungsfähig.",
     points: 500,
     amounts: [
       { factor: "1.0", price: 29.14 },
@@ -93,8 +90,7 @@ const services: Omit<Service, "id">[] = [
     originalGopNr: "812",
     description:
       "Psychotherapeutische Kurzzeittherapie – symptom- und/oder konfliktbezogene Behandlung mittels geeigneter psychotherapeutischer Interventionen.",
-    note:
-      "Bis zu zweimal an einem Kalendertag und bis zu achtundvierzigmal im Jahr berechnungsfähig.",
+    note: "Bis zu zweimal an einem Kalendertag und bis zu achtundvierzigmal im Jahr berechnungsfähig.",
     points: 500,
     amounts: [
       { factor: "1.0", price: 29.14 },
@@ -106,8 +102,7 @@ const services: Omit<Service, "id">[] = [
     originalGopNr: "812",
     description:
       "Gruppenpsychotherapeutische Kurzzeittherapie mit mindestens 2 bis 9 Teilnehmern.",
-    note:
-      "Bis zu zweimal an einem Kalendertag und bis zu achtundvierzigmal im Jahr berechnungsfähig.",
+    note: "Bis zu zweimal an einem Kalendertag und bis zu achtundvierzigmal im Jahr berechnungsfähig.",
     points: 500,
     amounts: [
       { factor: "1.0", price: 29.14 },

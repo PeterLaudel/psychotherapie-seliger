@@ -51,10 +51,17 @@ export default function PatientSection() {
         <Field name="birthdate" validate={validateDate}>
           {({ input, meta: { touched, error } }) => (
             <DatePicker
-              {...input}
               label="Geburtsdatum"
-              value={input.value ? dayjs(input.value) : null}
-              onChange={(newValue) => input.onChange(newValue?.toDate())}
+              value={
+                input.value
+                  ? dayjs(input.value).isValid()
+                    ? dayjs(input.value)
+                    : null
+                  : null
+              }
+              onChange={(newValue) =>
+                input.onChange(newValue ? newValue.format("YYYY-MM-DD") : null)
+              }
               minDate={dayjs.unix(0)}
               slotProps={{
                 textField: {

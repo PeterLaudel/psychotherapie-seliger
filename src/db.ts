@@ -38,7 +38,7 @@ interface InvoicePositionsTable {
   serviceId: number;
   factor: "1.0" | "1.8" | "2.3";
   amount: number;
-  pageBreak?: boolean;
+  pageBreak?: number; // 0 for false, 1 for true
 }
 
 interface ServicesTable {

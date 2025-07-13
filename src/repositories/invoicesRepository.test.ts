@@ -53,7 +53,9 @@ describe("InvoicesRepository", () => {
     });
 
     it("generates a unique invoice number", async () => {
-      await sql`ALTER SEQUENCE invoices_id_seq RESTART WITH 1`.execute(db);
+      // For SQLite, reset the auto-increment value by updating sqlite_sequence table
+            await sql`DELETE FROM invoices`.execute(db);
+            await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(db);
       const patient = await patientFactory.create();
       await invoiceFactory.createList(
         3,
