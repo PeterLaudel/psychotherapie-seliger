@@ -6,7 +6,7 @@ import type { Invoice } from "@/models/invoice";
 export const invoiceFactory = Factory.define<
   Omit<Invoice, "id" | "name" | "surname">,
   { withPatient?: boolean },
-  Omit<Invoice, "id" | "name" | "surname">
+  Omit<Invoice, "name" | "surname">
 >(({ associations, sequence }) => ({
   patientId: associations?.patientId ?? sequence,
   invoiceNumber: `${faker.date
