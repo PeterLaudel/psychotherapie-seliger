@@ -28,6 +28,7 @@ interface PatientTable {
 interface InvoicesTable {
   id: Generated<number>;
   invoiceNumber: string;
+  base64Pdf: string;
   patientId: number;
 }
 

@@ -4,9 +4,9 @@ import { db } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 
 export const invoiceFactory = Factory.define<
-  Omit<Invoice, "id">,
+  Omit<Invoice, "id" | "name" | "surname">,
   { withPatient?: boolean },
-  Invoice
+  Omit<Invoice, "name" | "surname">
 >(({ associations, sequence }) => ({
   patientId: associations?.patientId ?? sequence,
   invoiceNumber: `${faker.date
@@ -14,10 +14,11 @@ export const invoiceFactory = Factory.define<
     .toISOString()
     .split("T")[0]
     .replace(/-/g, "")}${sequence}`,
+  base64Pdf: "data:application/pdf;base64,example",
 })).onCreate(async (invoice) => {
   return await db
     .insertInto("invoices")
     .values(invoice)
-    .returning(["id", "patientId", "invoiceNumber"])
+    .returning(["id", "patientId", "invoiceNumber", "base64Pdf"])
     .executeTakeFirstOrThrow();
 });

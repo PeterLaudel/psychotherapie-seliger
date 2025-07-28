@@ -39,6 +39,10 @@ export default function PatientsList({ patients }: Props) {
             columns={columns}
             disableColumnMenu
             hideFooter
+            onRowClick={(params) => {
+              router.push(`/administration/patients/${params.row.id}`);
+            }}
+            getRowId={(row) => row.id}
           />
         </div>
       </Section>

@@ -28,6 +28,7 @@ describe("InvoicesRepository", () => {
 
       const createdInvoice = await invoicesRepository.create({
         ...invoiceAttributes,
+        base64Pdf: "data:application/pdf;base64,example",
         invoicePositions,
       });
 
@@ -39,6 +40,8 @@ describe("InvoicesRepository", () => {
           ...invoicePosition,
           invoiceId: createdInvoice.id,
         })),
+        name: patient.name,
+        surname: patient.surname,
       });
     });
   });
@@ -54,8 +57,10 @@ describe("InvoicesRepository", () => {
 
     it("generates a unique invoice number", async () => {
       // For SQLite, reset the auto-increment value by updating sqlite_sequence table
-            await sql`DELETE FROM invoices`.execute(db);
-            await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(db);
+      await sql`DELETE FROM invoices`.execute(db);
+      await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(
+        db
+      );
       const patient = await patientFactory.create();
       await invoiceFactory.createList(
         3,

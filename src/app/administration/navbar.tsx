@@ -61,10 +61,10 @@ export default function Navbar() {
         <div className="[grid-area:items] justify-self-start hidden peer-has-[:checked]:block w-full md:block md:w-auto">
           <ul className="flex flex-col md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
             <li className={isPatientRoute ? "font-bold" : ""}>
-              <Link href="/administration/patients/create">Patienten</Link>
+              <Link href="/administration/patients">Patienten</Link>
             </li>
             <li className={isInvoiceRoute ? "font-bold" : ""}>
-              <Link href="/administration/invoice/create">Rechnungen</Link>
+              <Link href="/administration/invoices">Rechnungen</Link>
             </li>
           </ul>
         </div>
