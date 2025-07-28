@@ -40,6 +40,8 @@ describe("InvoicesRepository", () => {
           ...invoicePosition,
           invoiceId: createdInvoice.id,
         })),
+        name: patient.name,
+        surname: patient.surname,
       });
     });
   });

@@ -3,4 +3,6 @@ export interface Invoice {
   patientId: number;
   base64Pdf: string;
   invoiceNumber: string;
+  name: string;
+  surname: string;
 }

@@ -5,7 +5,7 @@ import type { InvoicePosition } from "@/models/invoicePosition";
 
 export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 
-export type InvoiceCreate = Omit<Invoice, "id"> & {
+export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   patientId: number;
   invoicePositions: InvoicePositionCreate[];
   base64Pdf: string;
@@ -32,10 +32,16 @@ export class InvoicesRepository {
           })
         )
       );
-
+      const patient = await trx
+        .selectFrom("patients")
+        .selectAll()
+        .where("id", "=", rest.patientId)
+        .executeTakeFirstOrThrow();
       return {
         ...invoice,
         invoicePositions,
+        name: patient.name,
+        surname: patient.surname,
       };
     });
   }
@@ -43,7 +49,15 @@ export class InvoicesRepository {
   public async all(): Promise<Invoice[]> {
     return await this.database
       .selectFrom("invoices")
-      .selectAll()
+      .innerJoin("patients", "invoices.patientId", "patients.id")
+      .select([
+        "patients.name as name",
+        "patients.surname as surname",
+        "invoices.id",
+        "invoices.invoiceNumber",
+        "invoices.base64Pdf",
+        "invoices.patientId",
+      ])
       .execute();
   }
 
