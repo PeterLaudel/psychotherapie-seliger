@@ -40,3 +40,10 @@ docker-compose.override.yml
 .env.development
 
 /tmp
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
