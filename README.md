@@ -1,6 +1,6 @@
 # Web page
 
-This is a single page application website for a psychotherapy practice. Written in nextjs and deployed with vercel. The page can be accessed with www.psychotherapie-seliger.de. The repo contains a public area where the homepage is published. And it does have a private area for administration of patients and invoices.
+This is a website for a psychotherapy practice. Written in nextjs and deployed with vercel. The page can be accessed with www.psychotherapie-seliger.de. The repo contains a public area where the homepage is published. And it does have a private area for administration of patients and invoices.
 
 # Development
 
