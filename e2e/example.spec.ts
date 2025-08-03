@@ -1,6 +1,5 @@
 import { test, expect } from "./fixtures";
 
-
 test("creates a patient", async ({ page }) => {
   await page.goto("/administration/patients");
 
@@ -33,7 +32,12 @@ test("creates a patient", async ({ page }) => {
 
   await page.getByRole("button", { name: "Patient anlegen" }).click();
 
+  // expectation after creating a patient
+  await expect(page.getByText("Patient wurde angelegt")).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Installation" })
+    page.getByRole('gridcell', { name: 'Max', exact: true })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('gridcell', { name: 'Mustermann', exact: true })
   ).toBeVisible();
 });

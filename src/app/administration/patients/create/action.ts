@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { Patient } from "@/models/patient";
 import { getPatientsRepository } from "@/server";
 
@@ -8,4 +10,7 @@ export default async function createPatient(
 ) {
   const repository = await getPatientsRepository();
   await repository.create(createPatient);
+  revalidatePath("/administration/patients");
+  redirect("/administration/patients");
+
 }
