@@ -33,9 +33,9 @@ const default_Middleware = () => {
   return NextResponse.next();
 };
 
-// const middleware = isDevMode ? default_Middleware : auth_Middleware;
-export default default_Middleware;
+const middleware = isDevMode ? default_Middleware : auth_Middleware;
+export default middleware;
 
-// export const config = {
-//   matcher: ["/administration/:path*"],
-// };
+export const config = {
+  matcher: ["/administration/:path*"],
+};
