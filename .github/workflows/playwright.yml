@@ -19,6 +19,8 @@ jobs:
       run: npx playwright install --with-deps
     - name: Build the application
       run: npm run build
+    - name: Create the database
+      run: NODE_ENV=e2e npm run db:create && NODE_ENV=e2e npm run db:migrate && NODE_ENV=e2e npm run db:seed
     - name: Run Playwright tests
       run: npm run e2e
     - uses: actions/upload-artifact@v4
