@@ -36,7 +36,6 @@ const default_Middleware = () => {
 const middleware = isDevMode ? default_Middleware : auth_Middleware;
 export default middleware;
 
-// Routes Middleware should not run on
 export const config = {
   matcher: ["/administration/:path*"],
 };

@@ -17,7 +17,9 @@
     "db:seed": "kysely seed run --debug",
     "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
     "db:all": "npm run db:reset && npm run db:seed",
-    "kysely": "kysely"
+    "kysely": "kysely",
+    "e2e": "E2E=true playwright test",
+    "e2e:ui": "E2E=true playwright test --ui"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -39,6 +41,7 @@
     "next": "^14.2.10",
     "next-auth": "^4.24.8",
     "pg": "^8.14.0",
+    "playwright": "^1.54.1",
     "react": "^18",
     "react-dom": "^18",
     "react-final-form": "^6.5.9",
@@ -48,6 +51,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
+    "@playwright/test": "^1.54.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
