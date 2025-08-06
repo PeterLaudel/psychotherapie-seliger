@@ -40,6 +40,7 @@
     "kysely": "^0.27.6",
     "next": "^14.2.10",
     "next-auth": "^4.24.8",
+    "pdf-lib": "^1.17.1",
     "pg": "^8.14.0",
     "playwright": "^1.54.1",
     "react": "^18",
@@ -47,7 +48,8 @@
     "react-final-form": "^6.5.9",
     "react-final-form-arrays": "^3.1.4",
     "react-pdf-tailwind": "^2.3.0",
-    "schema-dts": "^1.1.5"
+    "schema-dts": "^1.1.5",
+    "xmlbuilder2": "^3.1.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",

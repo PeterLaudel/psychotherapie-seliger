@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createZugferdXml should create a valid Zugferd XML document 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:ferd:CrossIndustryDocument:invoice:1p0" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:factur-x:en16931:basic</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>INV-12345</ram:ID>
+    <ram:TypeCode>380</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">2023-10-01</udt:DateTimeString>
+    </ram:IssueDateTime>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:SellerTradeParty>
+      <ram:Name>Therapist Name</ram:Name>
+      <ram:PostalTradeAddress>
+        <ram:StreetName>Therapist Street 123</ram:StreetName>
+        <ram:CityName>Therapist City</ram:CityName>
+        <ram:PostalZone>12345</ram:PostalZone>
+        <ram:CountryID>Germany</ram:CountryID>
+      </ram:PostalTradeAddress>
+    </ram:SellerTradeParty>
+    <ram:BuyerTradeParty>
+      <ram:Name>Patient Name</ram:Name>
+      <ram:PostalTradeAddress>
+        <ram:StreetName>Patient Street 456</ram:StreetName>
+        <ram:CityName>Patient City</ram:CityName>
+        <ram:PostalZone>67890</ram:PostalZone>
+        <ram:CountryID>Germany</ram:CountryID>
+      </ram:PostalTradeAddress>
+    </ram:BuyerTradeParty>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>pos-1</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Therapy session</ram:Name>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>150.00</ram:ChargeAmount>
+        </ram:GrossPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>E</ram:CategoryCode>
+          <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+          <ram:ExemptionReason>Medical service</ram:ExemptionReason>
+        </ram:ApplicableTradeTax>
+      </ram:SpecifiedLineTradeSettlement>
+      <ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:LineTotalAmount>150.00</ram:LineTotalAmount>
+      </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>pos-2</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Follow-up consultation</ram:Name>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>100.00</ram:ChargeAmount>
+        </ram:GrossPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>E</ram:CategoryCode>
+          <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+          <ram:ExemptionReason>Medical service</ram:ExemptionReason>
+        </ram:ApplicableTradeTax>
+      </ram:SpecifiedLineTradeSettlement>
+      <ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:LineTotalAmount>100.00</ram:LineTotalAmount>
+      </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:SpecifiedTradeSettlementPaymentMeans>
+        <ram:TypeCode>42</ram:TypeCode>
+      </ram:SpecifiedTradeSettlementPaymentMeans>
+      <ram:ApplicableTradeTax>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:CategoryCode>E</ram:CategoryCode>
+        <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+        <ram:ExemptionReason>Medical service</ram:ExemptionReason>
+        <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
+        <ram:BasisAmount>250.00</ram:BasisAmount>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>250.00</ram:LineTotalAmount>
+        <ram:TaxBasisTotalAmount>250.00</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount>0.00</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>250.00</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>250.00</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>"
+`;

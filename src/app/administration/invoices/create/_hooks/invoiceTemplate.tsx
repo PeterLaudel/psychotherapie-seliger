@@ -14,7 +14,7 @@ import { BillingInfo, Patient } from "@/models/patient";
 
 type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate">;
 
-export type Position = InvoicePosition & { service: Service; price: number };
+type Position = InvoicePosition & { service: Service; price: number };
 
 export interface Props {
   invoiceNumber: string;
