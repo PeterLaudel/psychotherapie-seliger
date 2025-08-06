@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useField, useFormState } from "react-final-form";
-import { FormInvoice } from "./invoiceForm";
+import type { FormInvoice } from "./invoiceForm";
 import { usePdf } from "./_hooks/usePdf";
 import { InvoicePosition } from "@/models/invoicePosition";
 import { Service } from "@/models/service";
@@ -24,11 +24,9 @@ export default function InvoiceViewer({
     subscription: { values: true },
   });
 
-  const data = useMemo(() => {
-    return {
-      invoiceNumber: invoiceNumber,
-      patient: patients.find((p) => p.id === values.patientId),
-      mappedPositions: values.invoicePositions
+  const mappedPositions = useMemo(
+    () =>
+      values.invoicePositions
         .filter(
           (position): position is InvoicePosition =>
             !!position &&
@@ -53,31 +51,41 @@ export default function InvoiceViewer({
                 : 0,
           };
         }),
+    [services, values.invoicePositions]
+  );
+
+  const data = useMemo(() => {
+    return {
+      invoiceNumber: invoiceNumber,
+      patient: patients.find((p) => p.id === values.patientId),
+      mappedPositions,
       diagnosis: values.diagnosis,
     };
   }, [
     invoiceNumber,
+    mappedPositions,
     patients,
-    services,
     values.diagnosis,
-    values.invoicePositions,
     values.patientId,
   ]);
 
   const base64Pdf = usePdf(data);
 
+  const url = useMemo(() => {
+    if (!base64Pdf) return null;
+    const blobWithXml = new Blob([base64Pdf], { type: "application/pdf" });
+    return URL.createObjectURL(blobWithXml);
+  }, [base64Pdf]);
+
   useEffect(() => {
     if (base64Pdf) {
-      onChange(base64Pdf);
+      onChange(base64Pdf || "");
     }
   }, [base64Pdf, onChange]);
 
-  if (base64Pdf === null) {
+  if (base64Pdf === null || url === null) {
     return null;
   }
-
-  const blobWithXml = new Blob([base64Pdf], { type: "application/pdf" });
-  const url = URL.createObjectURL(blobWithXml);
 
   return (
     <iframe

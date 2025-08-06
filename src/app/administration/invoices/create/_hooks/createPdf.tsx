@@ -1,8 +1,8 @@
-import { pdf } from "@react-pdf/renderer";
 import { PDFDocument } from "pdf-lib";
-import InvoiceTemplate, { Position } from "../invoiceTemplate";
+import { InvoiceTemplate, Position } from "./invoiceTemplate";
 import { createZugferdXml } from "./zugferd";
 import { Patient } from "@/models/patient";
+
 
 export interface CreatePdfParams {
   patient?: Patient;
@@ -28,6 +28,7 @@ export async function createPdf({
     />
   );
 
+  const pdf = await import("@react-pdf/renderer").then((module) => module.pdf);
   const blob = await pdf(invoice).toBlob();
 
   if (!blob) {
