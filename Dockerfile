@@ -5,6 +5,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 WORKDIR /app
 
+# install xmllint for XML validation
+RUN apt-get update && apt-get install -y libxml2-utils && rm -rf /var/lib/apt/lists/*
+
 # Building app
 COPY --chown=node:node package*.json ./
 
