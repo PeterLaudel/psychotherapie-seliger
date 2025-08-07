@@ -1,3 +1,5 @@
+import * as path from "path";
+import { execSync } from "child_process";
 import { createZugferdXml, InvoiceData } from "./zugferd";
 
 describe("createZugferdXml", () => {
@@ -38,6 +40,18 @@ describe("createZugferdXml", () => {
       };
 
     const xml = createZugferdXml(invoiceData);
-    expect(xml).toMatchSnapshot();
+
+    // Validate using xmllint and the schema via stdin
+    const schemaPath = path.join(__dirname, "Factur-X_1.07.3_EN16931.xsd");
+    let xmllintError = null;
+    try {
+      execSync(
+        `echo "${xml.replace(/"/g, '\\"')}" | xmllint --noout --schema "${schemaPath}" -`,
+      );
+    } catch (e: unknown) {
+      xmllintError = e;
+    }
+
+    expect(xmllintError).toBeNull();
   });
 });
