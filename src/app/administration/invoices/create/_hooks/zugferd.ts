@@ -28,8 +28,9 @@ export interface InvoiceData {
 export function createZugferdXml(invoiceData: InvoiceData): string {
   const { positions, number, date, seller, buyer } = invoiceData;
 
+  const xmlDoc = create({ version: "1.0", encoding: "UTF-8" });
   // prettier-ignore
-  const xmlDoc = create({ version: "1.0", encoding: "UTF-8" }).ele(
+  const root= xmlDoc.ele(
     "rsm:CrossIndustryInvoice",
     {
       "xmlns:rsm": "urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100",
@@ -39,14 +40,14 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
   );
 
   // prettier-ignore
-  xmlDoc.ele("rsm:ExchangedDocumentContext")
+  root.ele("rsm:ExchangedDocumentContext")
     .ele("ram:GuidelineSpecifiedDocumentContextParameter")
       .ele("ram:ID").txt("urn:factur-x:en16931:basic").up()
     .up()
   .up();
 
   // prettier-ignore
-  xmlDoc.ele("rsm:ExchangedDocument")
+  root.ele("rsm:ExchangedDocument")
     .ele("ram:ID").txt(number).up()
     .ele("ram:TypeCode").txt("380").up() // 380 = Commercial invoice
     .ele("ram:IssueDateTime")
@@ -54,13 +55,15 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
     .up()
   .up();
 
-  const transaction = xmlDoc.ele("rsm:SupplyChainTradeTransaction");
+  const transaction = root.ele("rsm:SupplyChainTradeTransaction");
 
   // Add all line items first
   addPositions(transaction, positions);
 
   // Add ApplicableHeaderTradeAgreement with Seller and Buyer
   const agreement = transaction.ele("ram:ApplicableHeaderTradeAgreement");
+
+  // prettier-ignore
   agreement.ele("ram:SellerTradeParty")
     .ele("ram:Name").txt(seller.name).up()
     .ele("ram:PostalTradeAddress")
@@ -70,6 +73,8 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
       .ele("ram:CountryID").txt(seller.country).up()
     .up()
   .up();
+
+  // prettier-ignore
   agreement.ele("ram:BuyerTradeParty")
     .ele("ram:Name").txt(buyer.name).up()
     .ele("ram:PostalTradeAddress")
@@ -86,18 +91,22 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
   // Add ApplicableHeaderTradeSettlement
   addMonetarySummary(transaction, positions);
 
-  return xmlDoc.end({ prettyPrint: true });
+  return root.end({ prettyPrint: true });
 }
 
 function addPositions(xmlDoc: XMLBuilder, positions: ZugferdPosition[]): void {
   positions.forEach((position) => {
     const lineItem = xmlDoc.ele("ram:IncludedSupplyChainTradeLineItem");
+
+    // prettier-ignore
     lineItem
       .ele("ram:AssociatedDocumentLineDocument")
         .ele("ram:LineID")
         .txt(position.id)
         .up()
       .up();
+
+    // prettier-ignore
     lineItem
       .ele("ram:SpecifiedTradeProduct")
         .ele("ram:Name")
@@ -106,12 +115,16 @@ function addPositions(xmlDoc: XMLBuilder, positions: ZugferdPosition[]): void {
       .up();
     // SpecifiedLineTradeAgreement: GrossPrice, NetPrice (required)
     const agreement = lineItem.ele("ram:SpecifiedLineTradeAgreement");
+
+    // prettier-ignore
     agreement
       .ele("ram:GrossPriceProductTradePrice")
         .ele("ram:ChargeAmount")
         .txt(position.price.toFixed(2))
         .up()
       .up();
+
+    // prettier-ignore
     agreement
       .ele("ram:NetPriceProductTradePrice")
         .ele("ram:ChargeAmount")
@@ -119,6 +132,7 @@ function addPositions(xmlDoc: XMLBuilder, positions: ZugferdPosition[]): void {
         .up()
       .up();
 
+    // prettier-ignore
     lineItem
       .ele("ram:SpecifiedLineTradeDelivery")
         .ele("ram:BilledQuantity", { unitCode: "C62" })
@@ -126,18 +140,17 @@ function addPositions(xmlDoc: XMLBuilder, positions: ZugferdPosition[]): void {
         .up()
       .up();
 
-    // SpecifiedLineTradeSettlement: ApplicableTradeTax, SpecifiedTradeSettlementLineMonetarySummation
+    // prettier-ignore
     const settlement = lineItem.ele("ram:SpecifiedLineTradeSettlement");
     const tax = settlement.ele("ram:ApplicableTradeTax");
     tax.ele("ram:TypeCode").txt("VAT").up();
     tax.ele("ram:CategoryCode").txt("E").up();
-    tax.ele("ram:ExemptionReasonCode").txt("E").up();
     tax.ele("ram:RateApplicablePercent").txt(position.tax.toFixed(2)).up();
     settlement
       .ele("ram:SpecifiedTradeSettlementLineMonetarySummation")
-        .ele("ram:LineTotalAmount")
-        .txt((position.price * position.quantity).toFixed(2))
-        .up()
+      .ele("ram:LineTotalAmount")
+      .txt((position.price * position.quantity).toFixed(2))
+      .up()
       .up();
   });
 }
@@ -162,6 +175,7 @@ function addMonetarySummary(
     .up();
 
   // Header-level tax: order and content per schema
+  // prettier-ignore
   const tax = settlement.ele("ram:ApplicableTradeTax");
   tax.ele("ram:CalculatedAmount").txt("0.00").up();
   tax.ele("ram:TypeCode").txt("VAT").up();
