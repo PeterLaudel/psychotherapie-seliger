@@ -54,26 +54,17 @@ export default function InvoiceViewer({
     [services, values.invoicePositions]
   );
 
-  const data = useMemo(() => {
-    return {
-      invoiceNumber: invoiceNumber,
-      patient: patients.find((p) => p.id === values.patientId),
-      mappedPositions,
-      diagnosis: values.diagnosis,
-    };
-  }, [
-    invoiceNumber,
-    mappedPositions,
-    patients,
-    values.diagnosis,
-    values.patientId,
-  ]);
-
-  const base64Pdf = usePdf(data);
+  const base64Pdf = usePdf({
+    invoiceNumber: invoiceNumber,
+    patient: patients.find((p) => p.id === values.patientId),
+    positions: mappedPositions,
+    diagnosis: values.diagnosis,
+  });
 
   const url = useMemo(() => {
     if (!base64Pdf) return null;
-    const blobWithXml = new Blob([base64Pdf], { type: "application/pdf" });
+    const buffer = Buffer.from(base64Pdf, "base64");
+    const blobWithXml = new Blob([buffer], { type: "application/pdf" });
     return URL.createObjectURL(blobWithXml);
   }, [base64Pdf]);
 

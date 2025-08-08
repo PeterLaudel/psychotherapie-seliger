@@ -4,17 +4,17 @@ import { CreatePdfParams, createPdf } from "./createPdf";
 export const usePdf = ({
   patient,
   invoiceNumber,
-  mappedPositions,
+  positions,
   diagnosis,
 }: CreatePdfParams) => {
-  const [pdfBlob, setPdfBlob] = useState<Uint8Array | null>(null);
+  const [pdfBlob, setPdfBlob] = useState<string | null>(null);
 
   useEffect(() => {
     const generatePdf = async () => {
       const pdfData = await createPdf({
         patient,
         invoiceNumber,
-        mappedPositions,
+        positions,
         diagnosis,
       });
       setPdfBlob(pdfData);
@@ -22,7 +22,7 @@ export const usePdf = ({
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     generatePdf();
-  }, [patient, invoiceNumber, mappedPositions, diagnosis]);
+  }, [patient, invoiceNumber, positions, diagnosis]);
 
   return pdfBlob;
 };
