@@ -1,32 +1,9 @@
 import { create } from "xmlbuilder2";
 import { XMLBuilder } from "xmlbuilder2/lib/interfaces";
+import type { ZugferdData, Position } from "./models";
 
-interface ZugferdPosition {
-  id: string;
-  description: string;
-  quantity: number;
-  price: number;
-  tax: number;
-}
-
-interface ZugferdPartie {
-  name: string;
-  street: string;
-  city: string;
-  zip: string;
-  country: string;
-}
-
-export interface InvoiceData {
-  number: string;
-  date: string;
-  positions: ZugferdPosition[];
-  seller: ZugferdPartie;
-  buyer: ZugferdPartie;
-}
-
-export function createZugferdXml(invoiceData: InvoiceData): string {
-  const { positions, number, date, seller, buyer } = invoiceData;
+export function createZugferdXml(invoiceData: ZugferdData): string {
+  const { positions, invoiceNumber, invoiceDate, seller, buyer } = invoiceData;
 
   const xmlDoc = create({ version: "1.0", encoding: "UTF-8" });
   // prettier-ignore
@@ -42,16 +19,16 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
   // prettier-ignore
   root.ele("rsm:ExchangedDocumentContext")
     .ele("ram:GuidelineSpecifiedDocumentContextParameter")
-      .ele("ram:ID").txt("urn:factur-x:en16931:basic").up()
+      .ele("ram:ID").txt("urn:cen.eu:en16931:2017").up()
     .up()
   .up();
 
   // prettier-ignore
   root.ele("rsm:ExchangedDocument")
-    .ele("ram:ID").txt(number).up()
+    .ele("ram:ID").txt(invoiceNumber).up()
     .ele("ram:TypeCode").txt("380").up() // 380 = Commercial invoice
     .ele("ram:IssueDateTime")
-      .ele("udt:DateTimeString", { format: "102" }).txt(date).up()
+      .ele("udt:DateTimeString", { format: "102" }).txt(invoiceDate).up()
     .up()
   .up();
 
@@ -71,6 +48,9 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
       .ele("ram:LineOne").txt(seller.street).up()
       .ele("ram:CityName").txt(seller.city).up()
       .ele("ram:CountryID").txt(seller.country).up()
+    .up()
+    .ele("ram:SpecifiedTaxRegistration")
+      .ele("ram:ID", { schemeID: "VA" }).txt(seller.vatId).up()
     .up()
   .up();
 
@@ -94,7 +74,7 @@ export function createZugferdXml(invoiceData: InvoiceData): string {
   return root.end({ prettyPrint: true });
 }
 
-function addPositions(xmlDoc: XMLBuilder, positions: ZugferdPosition[]): void {
+function addPositions(xmlDoc: XMLBuilder, positions: Position[]): void {
   positions.forEach((position) => {
     const lineItem = xmlDoc.ele("ram:IncludedSupplyChainTradeLineItem");
 
@@ -155,10 +135,7 @@ function addPositions(xmlDoc: XMLBuilder, positions: ZugferdPosition[]): void {
   });
 }
 
-function addMonetarySummary(
-  xmlDoc: XMLBuilder,
-  positions: ZugferdPosition[]
-): void {
+function addMonetarySummary(xmlDoc: XMLBuilder, positions: Position[]): void {
   const totalAmount = positions.reduce(
     (sum, p) => sum + p.price * p.quantity,
     0
@@ -182,8 +159,15 @@ function addMonetarySummary(
   tax.ele("ram:ExemptionReason").txt("Medical service").up();
   tax.ele("ram:BasisAmount").txt(totalAmount.toFixed(2)).up();
   tax.ele("ram:CategoryCode").txt("E").up();
-  tax.ele("ram:ExemptionReasonCode").txt("E").up();
+  tax.ele("ram:ExemptionReasonCode").txt("VATEX-EU-132").up();
   tax.ele("ram:RateApplicablePercent").txt("0.00").up();
+
+  // Move SpecifiedTradePaymentTerms BEFORE SpecifiedTradeSettlementHeaderMonetarySummation
+  settlement.ele("ram:SpecifiedTradePaymentTerms")
+    .ele("ram:Description").txt("Due within 30 days").up()
+    .ele("ram:DueDateDateTime")
+      .ele("udt:DateTimeString", { format: "102" }).txt("2023-10-31").up()
+    .up().up();
 
   // prettier-ignore
   settlement.ele("ram:SpecifiedTradeSettlementHeaderMonetarySummation")
@@ -193,6 +177,4 @@ function addMonetarySummary(
     .ele("ram:GrandTotalAmount").txt(totalAmount.toFixed(2)).up()
     .ele("ram:DuePayableAmount").txt(totalAmount.toFixed(2)).up()
     .up();
-
-  settlement.up();
 }

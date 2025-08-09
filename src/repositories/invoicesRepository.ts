@@ -17,7 +17,6 @@ export class InvoicesRepository {
     const { invoicePositions: createInvoicePositions, ...rest } =
       invoiceProcess;
     return await this.database.transaction().execute(async (trx) => {
-      console.log(rest);
       const invoice = await trx
         .insertInto("invoices")
         .values(rest)
@@ -38,6 +37,7 @@ export class InvoicesRepository {
         .selectAll()
         .where("id", "=", rest.patientId)
         .executeTakeFirstOrThrow();
+        
       return {
         ...invoice,
         invoicePositions,
