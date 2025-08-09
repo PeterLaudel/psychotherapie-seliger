@@ -28,7 +28,7 @@ function toKey({ service, serviceDate, amount, factor }: Position) {
   return `${service.originalGopNr}${serviceDate}${amount}${factor}`;
 }
 
-export default function InvoiceTemplate({
+export function InvoiceTemplate({
   invoiceNumber,
   billingInfo,
   patient,

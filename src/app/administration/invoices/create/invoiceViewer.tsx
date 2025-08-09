@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-import { usePDF } from "@react-pdf/renderer";
+import { useEffect, useMemo } from "react";
 import { useField, useFormState } from "react-final-form";
-import { FormInvoice } from "./invoiceForm";
-import InvoiceTemplate from "./invoiceTemplate";
+import type { FormInvoice } from "./invoiceForm";
+import { usePdf } from "./_hooks/usePdf";
 import { InvoicePosition } from "@/models/invoicePosition";
 import { Service } from "@/models/service";
 import { Patient } from "@/models/patient";
@@ -18,60 +17,72 @@ export default function InvoiceViewer({
   services,
   invoiceNumber,
 }: Props) {
-  const [instance, updateInstance] = usePDF();
-  const { input: { onChange } } = useField<string>("base64Pdf");
-
+  const {
+    input: { onChange },
+  } = useField<string>("base64Pdf");
   const { values } = useFormState<FormInvoice>({
     subscription: { values: true },
   });
 
-  const patient = patients.find((p) => p.id === values.patientId);
-  const diagnosis = values.diagnosis;
-  const filteredPositions = values.invoicePositions.filter(
-    (position): position is InvoicePosition =>
-      !!position &&
-      !!position.serviceDate &&
-      !!position.serviceId &&
-      !!position.factor &&
-      !!position.amount
+  const mappedPositions = useMemo(
+    () =>
+      values.invoicePositions
+        .filter(
+          (position): position is InvoicePosition =>
+            !!position &&
+            !!position.serviceDate &&
+            !!position.serviceId &&
+            !!position.factor &&
+            !!position.amount
+        )
+        .map((position) => {
+          const service = services.filter(
+            (s) => s.id === position.serviceId
+          )[0];
+          return {
+            ...position,
+            id: position.id ?? 0,
+            service,
+            price:
+              position?.factor !== undefined
+                ? service?.amounts.find(
+                    (amount) => amount.factor === position.factor
+                  )?.price ?? 0
+                : 0,
+          };
+        }),
+    [services, values.invoicePositions]
   );
 
-  const mappedPositions = filteredPositions.map((position) => {
-    const service = services.filter((s) => s.id === position.serviceId)[0];
-    return {
-      ...position,
-      service,
-      price:
-        position?.factor !== undefined
-          ? service?.amounts.find((amount) => amount.factor === position.factor)
-              ?.price ?? 0
-          : 0,
-    };
+  const base64Pdf = usePdf({
+    invoiceNumber: invoiceNumber,
+    patient: patients.find((p) => p.id === values.patientId),
+    positions: mappedPositions,
+    diagnosis: values.diagnosis,
   });
 
-  useEffect(() => {
-    updateInstance(
-      <InvoiceTemplate
-        invoiceNumber={invoiceNumber}
-        billingInfo={patient?.billingInfo}
-        diagnosis={diagnosis}
-        patient={patient}
-        positions={mappedPositions}
-      />
-    );
-  }, [invoiceNumber, patient, diagnosis, mappedPositions, updateInstance]);
+  const url = useMemo(() => {
+    if (!base64Pdf) return null;
+    const buffer = Buffer.from(base64Pdf, "base64");
+    const blobWithXml = new Blob([buffer], { type: "application/pdf" });
+    return URL.createObjectURL(blobWithXml);
+  }, [base64Pdf]);
 
   useEffect(() => {
-    if (instance.blob) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        onChange(reader.result || "");
-      };
-      reader.readAsDataURL(instance.blob);
+    if (base64Pdf) {
+      onChange(base64Pdf || "");
     }
-  }, [instance.blob, onChange]);
+  }, [base64Pdf, onChange]);
 
-  const src = instance.url ? `${instance.url}#toolbar=0` : undefined;
+  if (base64Pdf === null || url === null) {
+    return null;
+  }
 
-  return <iframe className="w-full h-full" key={patient?.id} src={src} />;
+  return (
+    <iframe
+      className="w-full h-full"
+      key={patients.find((p) => p.id === values.patientId)?.id}
+      src={url}
+    />
+  );
 }
