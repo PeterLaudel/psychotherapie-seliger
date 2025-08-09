@@ -1,6 +1,6 @@
 import { PDFDocument } from "pdf-lib";
 import { InvoiceTemplate, Position } from "./invoiceTemplate";
-import { createZugferdXml as createZugferdXmlOrigin } from "./zugferd";
+import { createZugferdXml as createZugferdXmlOrigin } from "@/zugferd";
 import { Patient } from "@/models/patient";
 
 export interface CreatePdfParams {
@@ -48,8 +48,8 @@ function createZugferdXml(params: CreatePdfParams) {
     return "";
   }
   return createZugferdXmlOrigin({
-    date: new Date().toISOString(),
-    number: params.invoiceNumber,
+    invoiceDate: new Date().toISOString(),
+    invoiceNumber: params.invoiceNumber,
     positions: params.positions.map((p) => ({
       id: p.id.toString(),
       description: p.service.description,
@@ -70,6 +70,8 @@ function createZugferdXml(params: CreatePdfParams) {
       city: "Leipzig",
       zip: "04105",
       country: "DE",
+      identifier: "SELLER-123",
+      vatId: "DE123456789",
     },
   });
 }
