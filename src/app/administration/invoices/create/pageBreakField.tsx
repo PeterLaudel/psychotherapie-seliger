@@ -16,13 +16,13 @@ export function PageBreakField({ name }: Props) {
   if (isPageBreak)
     return (
       <div className="grid grid-cols-[1fr_auto_1fr]">
-        <div className="border-[1px] border-gray-300 self-center min-w-full" />
+        <div className="border border-gray-300 self-center min-w-full" />
         <Tooltip title="Seitenumbruch entfernen" placement="right">
           <IconButton onClick={() => onChange(!isPageBreak)}>
             <Close fontSize="small" />
           </IconButton>
         </Tooltip>
-        <div className="border-[1px] border-gray-300 self-center min-w-full" />
+        <div className="border border-gray-300 self-center min-w-full" />
       </div>
     );
 

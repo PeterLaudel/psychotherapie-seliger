@@ -17,7 +17,7 @@ export default function Home() {
       />
       <div className="flex h-[30vh] md:h-[80vh] bg-[url('/raum.jpeg')] bg-cover bg-center md:bg-fixed text-white">
         <div className="m-auto grid-flow-row">
-          <h1 className="text-2xl md:text-7xl [text-shadow:_1px_1px_1px_rgb(0_0_0_/_20%)]">
+          <h1 className="text-2xl md:text-7xl [text-shadow:1px_1px_1px_rgb(0_0_0/20%)]">
             Privatpraxis für Psychotherapie
           </h1>
         </div>
