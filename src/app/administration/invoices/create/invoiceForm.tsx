@@ -106,7 +106,7 @@ export default function InvoiceForm({
                 <PatientSection patients={patients} />
                 <ServiceSection services={services} />
                 <SubmitButton
-                  submitting={submitting || submitSucceeded}
+                  submitting={!!submitting || !!submitSucceeded}
                   className="justify-self-start self-center"
                 >
                   Rechnung versenden

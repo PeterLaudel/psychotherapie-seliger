@@ -25,6 +25,8 @@ export default function InvoiceViewer({
     subscription: { values: true },
   });
 
+  if(!values) return null;
+
   const patient = patients.find((p) => p.id === values.patientId);
   const diagnosis = values.diagnosis;
   const filteredPositions = values.invoicePositions.filter(

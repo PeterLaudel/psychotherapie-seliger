@@ -32,6 +32,7 @@ export const test = baseTest.extend<NonNullable<unknown>>({
       },
     ]);
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(page);
 
     await clearSqliteDatabase(db);

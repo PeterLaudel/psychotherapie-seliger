@@ -52,7 +52,7 @@ export default function PatientForm() {
             <PatientSection />
             <BillingSection />
             <SubmitButton
-              submitting={submitting || submitSucceeded}
+              submitting={!!submitting || !!submitSucceeded}
               className="justify-self-start self-center"
             >
               Patient anlegen
