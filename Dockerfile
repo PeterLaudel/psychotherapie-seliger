@@ -1,4 +1,4 @@
-FROM node:20 AS builder
+FROM node:24 AS builder
 
 # Disable telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -19,7 +19,7 @@ COPY --chown=node:node . .
 RUN npm run build
 
 # Running the app
-FROM gcr.io/distroless/nodejs20 AS runner
+FROM gcr.io/distroless/nodejs24 AS runner
 WORKDIR /app
 
 # Mark as prod, disable telemetry, set port

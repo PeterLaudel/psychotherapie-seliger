@@ -17,6 +17,7 @@ export default class ServicesRepository {
             .whereRef("services.id", "=", "serviceId")
         ).as("amounts"),
       ])
+      .$castTo<Service>()
       .execute();
   }
 }

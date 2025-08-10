@@ -42,6 +42,9 @@
       "factories/*": [
         "factories/*"
       ],
+      "tasks/*": [
+        "tasks/*"
+      ],
       "@/*": [
         "./src/*"
       ]
@@ -54,7 +57,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "docker-entrypoint.js",
-    "types/**/*.ts"
+    "types/**/*.ts",
+    ".config/**/*.ts",
   ],
   "exclude": [
     "node_modules"
