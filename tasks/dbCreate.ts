@@ -4,7 +4,6 @@ import { sqliteUrl } from "../src/environment";
 
 
 export function dbCreate() {
-
   const filePath = sqliteUrl();
   console.log(`Creating database file at: ${filePath}`);
   const dir = path.dirname(filePath);

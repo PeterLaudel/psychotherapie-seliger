@@ -2,6 +2,7 @@ import { PDFDocument } from "pdf-lib";
 import { InvoiceTemplate, Position } from "./invoiceTemplate";
 import { createZugferdXml as createZugferdXmlOrigin } from "@/zugferd";
 import { Patient } from "@/models/patient";
+import { ownerInfo } from "@/owner";
 
 export interface CreatePdfParams {
   patient?: Patient;
@@ -65,13 +66,13 @@ function createZugferdXml(params: CreatePdfParams) {
       country: "DE",
     },
     seller: {
-      name: "Ute Seliger",
-      street: "Friedrich-Ebert-Straße 98",
-      city: "Leipzig",
-      zip: "04105",
-      country: "DE",
-      identifier: "SELLER-123",
-      vatId: "DE123456789",
+      name: `${ownerInfo.name} ${ownerInfo.surname}`,
+      street: ownerInfo.address.street,
+      city: ownerInfo.address.city,
+      zip: ownerInfo.address.zip,
+      country: ownerInfo.address.country,
+      identifier: ownerInfo.taxId,
+      vatId: ownerInfo.vatId,
     },
   });
 }
