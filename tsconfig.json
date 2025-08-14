@@ -3,14 +3,20 @@
     // these options are overrides used only by ts-node
     // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "compilerOptions": {
       "module": "commonjs"
     }
   },
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -33,9 +39,17 @@
       }
     ],
     "paths": {
-      "factories/*": ["factories/*"],
-      "@/*": ["./src/*"]
-    }
+      "factories/*": [
+        "factories/*"
+      ],
+      "tasks/*": [
+        "tasks/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -43,7 +57,10 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "docker-entrypoint.js",
-    "types/**/*.ts"
+    "types/**/*.ts",
+    ".config/**/*.ts",
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

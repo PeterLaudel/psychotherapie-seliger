@@ -19,47 +19,56 @@ export default function InvoiceViewer({
   invoiceNumber,
 }: Props) {
   const [instance, updateInstance] = usePDF();
-  const { input: { onChange } } = useField<string>("base64Pdf");
+  const {
+    input: { onChange },
+  } = useField<string>("base64Pdf");
 
   const { values } = useFormState<FormInvoice>({
     subscription: { values: true },
   });
 
-  const patient = patients.find((p) => p.id === values.patientId);
-  const diagnosis = values.diagnosis;
-  const filteredPositions = values.invoicePositions.filter(
-    (position): position is InvoicePosition =>
-      !!position &&
-      !!position.serviceDate &&
-      !!position.serviceId &&
-      !!position.factor &&
-      !!position.amount
-  );
-
-  const mappedPositions = filteredPositions.map((position) => {
-    const service = services.filter((s) => s.id === position.serviceId)[0];
-    return {
-      ...position,
-      service,
-      price:
-        position?.factor !== undefined
-          ? service?.amounts.find((amount) => amount.factor === position.factor)
-              ?.price ?? 0
-          : 0,
-    };
-  });
-
   useEffect(() => {
+    const patient = patients.find((p) => p.id === values?.patientId);
+    const mappedPositions = (values?.invoicePositions || [])
+      .filter(
+        (position): position is InvoicePosition =>
+          !!position &&
+          !!position.serviceDate &&
+          !!position.serviceId &&
+          !!position.factor &&
+          !!position.amount
+      )
+      .map((position) => {
+        const service = services.filter((s) => s.id === position.serviceId)[0];
+        return {
+          ...position,
+          service,
+          price:
+            position?.factor !== undefined
+              ? service?.amounts.find(
+                  (amount) => amount.factor === position.factor
+                )?.price ?? 0
+              : 0,
+        };
+      });
     updateInstance(
       <InvoiceTemplate
         invoiceNumber={invoiceNumber}
         billingInfo={patient?.billingInfo}
-        diagnosis={diagnosis}
-        patient={patient}
+        diagnosis={values?.diagnosis}
+        patient={patients.find((p) => p.id === values?.patientId)}
         positions={mappedPositions}
       />
     );
-  }, [invoiceNumber, patient, diagnosis, mappedPositions, updateInstance]);
+  }, [
+    invoiceNumber,
+    patients,
+    values?.patientId,
+    values?.diagnosis,
+    values?.invoicePositions,
+    services,
+    updateInstance,
+  ]);
 
   useEffect(() => {
     if (instance.blob) {
@@ -73,5 +82,5 @@ export default function InvoiceViewer({
 
   const src = instance.url ? `${instance.url}#toolbar=0` : undefined;
 
-  return <iframe className="w-full h-full" key={patient?.id} src={src} />;
+  return <iframe className="w-full h-full" key={values?.patientId} src={src} />;
 }

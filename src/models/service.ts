@@ -1,7 +1,7 @@
 export const factorArray = ["1.0", "1.8", "2.3"] as const;
 export type Factor = typeof factorArray[number];
 
-type Amount = {
+export type Amount = {
   factor: Factor;
   price: number;
 };

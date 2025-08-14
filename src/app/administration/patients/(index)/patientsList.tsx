@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Section from "@/components/section";
 import { Patient } from "@/models/patient";
+import { useEffect, useState } from "react";
 
 interface Props {
   patients: Patient[];
@@ -19,7 +20,12 @@ const columns: GridColDef[] = [
 ];
 
 export default function PatientsList({ patients }: Props) {
+  const [didMount, setDidMount] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setTimeout(() => setDidMount(true));
+  }, []);
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
@@ -34,16 +40,18 @@ export default function PatientsList({ patients }: Props) {
               Patienten anlegen
             </Button>
           </div>
-          <DataGrid
-            rows={patients}
-            columns={columns}
-            disableColumnMenu
-            hideFooter
-            onRowClick={(params) => {
-              router.push(`/administration/patients/${params.row.id}`);
-            }}
-            getRowId={(row) => row.id}
-          />
+          {didMount && (
+            <DataGrid
+              rows={patients}
+              columns={columns}
+              disableColumnMenu
+              hideFooter
+              onRowClick={(params) => {
+                router.push(`/administration/patients/${params.row.id}`);
+              }}
+              getRowId={(row) => row.id}
+            />
+          )}
         </div>
       </Section>
     </div>

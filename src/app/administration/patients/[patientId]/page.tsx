@@ -2,12 +2,13 @@ import Section from "../../../../components/section";
 import { getPatientsRepository } from "../../../../server";
 
 interface Props {
-  params: {
+  params: Promise<{
     patientId: number;
-  };
+  }>;
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page(props: Props) {
+  const params = await props.params;
   const { patientId } = params;
 
   const patientRepository = await getPatientsRepository();

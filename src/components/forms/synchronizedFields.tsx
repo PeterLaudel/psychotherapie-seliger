@@ -1,38 +1,26 @@
-import {
-  Field,
-  FieldProps,
-  FieldRenderProps,
-  useField,
-  useForm,
-} from "react-final-form";
+import { Field, FieldProps, useField, useForm } from "react-final-form";
 import { useEffect } from "react";
 
 type SunychronizedFieldProps<
   FieldValue,
-  RP extends FieldRenderProps<FieldValue, T, InputValue>,
   T extends HTMLElement = HTMLElement,
   InputValue = FieldValue
 > = {
   originFieldName: string;
   synchronize: boolean;
-} & FieldProps<FieldValue, RP, T, InputValue>;
+} & FieldProps<FieldValue, T, InputValue>;
 
 export default function SynchronizedField<
   FieldValue,
   T extends HTMLElement = HTMLElement,
-  InputValue = FieldValue,
-  RP extends FieldRenderProps<FieldValue, T, InputValue> = FieldRenderProps<
-    FieldValue,
-    T,
-    InputValue
-  >
+  InputValue = FieldValue
 >({
   originFieldName,
   synchronize,
   children,
   name,
   ...rest
-}: SunychronizedFieldProps<FieldValue, RP, T, InputValue>) {
+}: SunychronizedFieldProps<FieldValue, T, InputValue>) {
   const {
     input: { value: originFieldValue },
   } = useField<T>(originFieldName, { subscription: { value: true } });
@@ -54,13 +42,13 @@ export default function SynchronizedField<
   //check if children is a function
   if (typeof children === "function")
     return (
-      <Field<FieldValue, T, InputValue, RP> name={name} {...rest}>
+      <Field<FieldValue, T, InputValue> name={name} {...rest}>
         {(values) => children(values)}
       </Field>
     );
 
   return (
-    <Field<FieldValue, T, InputValue, RP> name={name} {...rest}>
+    <Field<FieldValue, T, InputValue> name={name} {...rest}>
       {children}
     </Field>
   );

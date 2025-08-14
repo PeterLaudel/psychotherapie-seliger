@@ -1,4 +1,5 @@
 import { useField } from "react-final-form";
+import type { JSX } from "react";
 
 interface Props<T, S = T> {
   name: string;

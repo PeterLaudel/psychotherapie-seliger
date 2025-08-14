@@ -16,10 +16,12 @@ test("creates a patient", async ({ page }) => {
     .getByRole("textbox", { name: "E-Mail" })
     .first()
     .fill("max.mustermann@example.com");
-  await page
-    .getByRole("textbox", { name: "Geburtsdatum" })
-    .first()
-    .fill("05.05.1990");
+
+  const brithdateGroup = page.getByRole("group", { name: "Geburtsdatum" });
+  await brithdateGroup.getByRole("spinbutton", { name: "Tag" }).fill("05");
+  await brithdateGroup.getByRole("spinbutton", { name: "Monat" }).fill("05");
+  await brithdateGroup.getByRole("spinbutton", { name: "Jahr" }).fill("1989");
+
   await page
     .getByRole("textbox", { name: "Straße" })
     .first()
@@ -35,9 +37,9 @@ test("creates a patient", async ({ page }) => {
   // expectation after creating a patient
   await expect(page.getByText("Patient wurde angelegt")).toBeVisible();
   await expect(
-    page.getByRole('gridcell', { name: 'Max', exact: true })
+    page.getByRole("gridcell", { name: "Max", exact: true })
   ).toBeVisible();
   await expect(
-    page.getByRole('gridcell', { name: 'Mustermann', exact: true })
+    page.getByRole("gridcell", { name: "Mustermann", exact: true })
   ).toBeVisible();
 });

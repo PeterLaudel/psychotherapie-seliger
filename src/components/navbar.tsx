@@ -35,7 +35,7 @@ export default function Navbar() {
             />
           </label>
         </div>
-        <div className="[grid-area:items] justify-self-start hidden peer-has-[:checked]:block w-full lg:block lg:w-auto">
+        <div className="[grid-area:items] justify-self-start hidden peer-has-checked:block w-full lg:block lg:w-auto">
           <ul className="flex flex-col lg:p-0 mt-4 lg:flex-row lg:space-x-8 lg:mt-0 lg:border-0">
             <li>
               <Link href="#about_me">Über mich</Link>

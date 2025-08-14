@@ -1,4 +1,5 @@
 import { useField } from "react-final-form";
+import type { JSX } from "react";
 
 export default function InvalidSubscription({
   name,
