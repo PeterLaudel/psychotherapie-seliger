@@ -13,13 +13,15 @@ import BillingSection from "./billingSection";
 import { Patient } from "@/models/patient";
 import SubmitButton from "@/components/submitButton";
 import { useSnackbar } from "@/contexts/snackbarProvider";
+import { useRouter } from "next/navigation";
 
 type PatientFormData = Patient & {
   billingInfoIsPatient: boolean;
 };
 
 export default function PatientForm() {
-  const {showSuccessMessage} = useSnackbar();
+  const { showSuccessMessage } = useSnackbar();
+  const router = useRouter();
 
   const initialValues = useMemo<Partial<PatientFormData>>(
     () => ({
@@ -28,11 +30,15 @@ export default function PatientForm() {
     []
   );
 
-  const onSubmit = useCallback(async (values: PatientFormData) => {
-    const { billingInfoIsPatient, ...patientData } = values;
-    await createPatient(patientData);
-    showSuccessMessage("Patient wurde angelegt");
-  }, [showSuccessMessage]);
+  const onSubmit = useCallback(
+    async (values: PatientFormData) => {
+      const { billingInfoIsPatient, ...patientData } = values;
+      await createPatient(patientData);
+      showSuccessMessage("Patient wurde angelegt");
+      router.push("/administration/patients");
+    },
+    [showSuccessMessage, router]
+  );
 
   return (
     <LocalizationProvider
