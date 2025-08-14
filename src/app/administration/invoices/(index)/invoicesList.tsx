@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
+import { useEffect, useState } from "react";
 
 interface Props {
   invoices: Invoice[];
@@ -19,7 +20,12 @@ const columns: GridColDef[] = [
 ];
 
 export function InvoicesList({ invoices }: Props) {
+  const [didMount, setDidMount] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setTimeout(() => setDidMount(true));
+  });
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
@@ -33,12 +39,14 @@ export function InvoicesList({ invoices }: Props) {
               Rechnung anlegen
             </Button>
           </div>
-          <DataGrid
-            rows={invoices}
-            columns={columns}
-            disableColumnMenu
-            hideFooter
-          />
+          {didMount && (
+            <DataGrid
+              rows={invoices}
+              columns={columns}
+              disableColumnMenu
+              hideFooter
+            />
+          )}
         </div>
       </Section>
     </div>
