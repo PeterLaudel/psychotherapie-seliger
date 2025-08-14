@@ -26,7 +26,7 @@ export default function InvoiceViewer({
 
   const mappedPositions = useMemo(
     () =>
-      values.invoicePositions
+      values?.invoicePositions
         .filter(
           (position): position is InvoicePosition =>
             !!position &&
@@ -51,14 +51,14 @@ export default function InvoiceViewer({
                 : 0,
           };
         }),
-    [services, values.invoicePositions]
+    [services, values?.invoicePositions]
   );
 
   const base64Pdf = usePdf({
     invoiceNumber: invoiceNumber,
-    patient: patients.find((p) => p.id === values.patientId),
-    positions: mappedPositions,
-    diagnosis: values.diagnosis,
+    patient: patients.find((p) => p.id === values?.patientId),
+    positions: mappedPositions || [],
+    diagnosis: values?.diagnosis,
   });
 
   const url = useMemo(() => {
@@ -68,21 +68,11 @@ export default function InvoiceViewer({
     return URL.createObjectURL(blobWithXml);
   }, [base64Pdf]);
 
-  useEffect(() => {
-    if (base64Pdf) {
-      onChange(base64Pdf || "");
-    }
-  }, [base64Pdf, onChange]);
+  useEffect(() => onChange(base64Pdf || ""), [base64Pdf, onChange]);
 
   if (base64Pdf === null || url === null) {
     return null;
   }
 
-  return (
-    <iframe
-      className="w-full h-full"
-      key={patients.find((p) => p.id === values.patientId)?.id}
-      src={url}
-    />
-  );
+  return <iframe className="w-full h-full" key={values?.patientId} src={url} />;
 }
