@@ -14,7 +14,7 @@ import { BillingInfo, Patient } from "@/models/patient";
 
 type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate">;
 
-type Position = InvoicePosition & { service: Service; price: number };
+export type Position = InvoicePosition & { service: Service; price: number };
 
 export interface Props {
   invoiceNumber: string;
@@ -28,7 +28,7 @@ function toKey({ service, serviceDate, amount, factor }: Position) {
   return `${service.originalGopNr}${serviceDate}${amount}${factor}`;
 }
 
-export default function InvoiceTemplate({
+export function InvoiceTemplate({
   invoiceNumber,
   billingInfo,
   patient,

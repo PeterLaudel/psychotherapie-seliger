@@ -37,6 +37,7 @@ export class InvoicesRepository {
         .selectAll()
         .where("id", "=", rest.patientId)
         .executeTakeFirstOrThrow();
+        
       return {
         ...invoice,
         invoicePositions,

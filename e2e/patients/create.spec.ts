@@ -1,4 +1,4 @@
-import { test, expect } from "./fixtures";
+import { test, expect } from "../fixtures";
 
 test("creates a patient", async ({ page }) => {
   await page.goto("/administration/patients");
@@ -17,10 +17,7 @@ test("creates a patient", async ({ page }) => {
     .first()
     .fill("max.mustermann@example.com");
 
-  const brithdateGroup = page.getByRole("group", { name: "Geburtsdatum" });
-  await brithdateGroup.getByRole("spinbutton", { name: "Tag" }).fill("05");
-  await brithdateGroup.getByRole("spinbutton", { name: "Monat" }).fill("05");
-  await brithdateGroup.getByRole("spinbutton", { name: "Jahr" }).fill("1989");
+  await page.getByRole("textbox", { name: "Geburtsdatum" }).fill("05.05.1989");
 
   await page
     .getByRole("textbox", { name: "Straße" })
