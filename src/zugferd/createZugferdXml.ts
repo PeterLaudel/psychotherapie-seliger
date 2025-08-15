@@ -163,11 +163,17 @@ function addMonetarySummary(xmlDoc: XMLBuilder, positions: Position[]): void {
   tax.ele("ram:RateApplicablePercent").txt("0.00").up();
 
   // Move SpecifiedTradePaymentTerms BEFORE SpecifiedTradeSettlementHeaderMonetarySummation
-  settlement.ele("ram:SpecifiedTradePaymentTerms")
-    .ele("ram:Description").txt("Due within 30 days").up()
+  settlement
+    .ele("ram:SpecifiedTradePaymentTerms")
+    .ele("ram:Description")
+    .txt("Due within 30 days")
+    .up()
     .ele("ram:DueDateDateTime")
-      .ele("udt:DateTimeString", { format: "102" }).txt("2023-10-31").up()
-    .up().up();
+    .ele("udt:DateTimeString", { format: "102" })
+    .txt("20231031")
+    .up()
+    .up()
+    .up();
 
   // prettier-ignore
   settlement.ele("ram:SpecifiedTradeSettlementHeaderMonetarySummation")

@@ -3,6 +3,7 @@ import { InvoiceTemplate, Position } from "./invoiceTemplate";
 import { createZugferdXml as createZugferdXmlOrigin } from "@/zugferd";
 import { Patient } from "@/models/patient";
 import { ownerInfo } from "@/owner";
+import dayjs from "dayjs";
 
 export interface CreatePdfParams {
   patient?: Patient;
@@ -49,7 +50,7 @@ function createZugferdXml(params: CreatePdfParams) {
     return "";
   }
   return createZugferdXmlOrigin({
-    invoiceDate: new Date().toISOString(),
+    invoiceDate: dayjs().format("YYYYMMDD"),
     invoiceNumber: params.invoiceNumber,
     positions: params.positions.map((p) => ({
       id: p.id.toString(),
