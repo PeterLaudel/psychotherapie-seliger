@@ -72,7 +72,7 @@ export default function InvoiceForm({
       values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      const {diagnosis, ...rest} = values;
+      const { diagnosis, ...rest } = values;
       await createInvoice(rest as InvoiceCreate);
       showSuccessMessage(true);
       form.restart(initialValues);
