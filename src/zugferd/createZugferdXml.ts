@@ -1,6 +1,7 @@
 import { create } from "xmlbuilder2";
 import { XMLBuilder } from "xmlbuilder2/lib/interfaces";
 import type { ZugferdData, Position } from "./models";
+import dayjs from "dayjs";
 
 export function createZugferdXml(invoiceData: ZugferdData): string {
   const { positions, invoiceNumber, invoiceDate, seller, buyer } = invoiceData;
@@ -28,7 +29,7 @@ export function createZugferdXml(invoiceData: ZugferdData): string {
     .ele("ram:ID").txt(invoiceNumber).up()
     .ele("ram:TypeCode").txt("380").up() // 380 = Commercial invoice
     .ele("ram:IssueDateTime")
-      .ele("udt:DateTimeString", { format: "102" }).txt(invoiceDate).up()
+      .ele("udt:DateTimeString", { format: "102" }).txt(dayjs(invoiceDate).format("YYYYMMDD")).up()
     .up()
   .up();
 
