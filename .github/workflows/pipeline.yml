@@ -1,0 +1,12 @@
+name: Run pipeline
+on:
+  pull_request:
+
+permissions:
+  contents: "read"
+  id-token: "write"
+
+jobs:
+  nextjs:
+    uses: PeterLaudel/actions/.github/workflows/nextjs.yml@main
+    secrets: inherit
