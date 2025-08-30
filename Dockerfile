@@ -21,6 +21,13 @@ COPY --chown=node:node . .
 # Build
 RUN npm run build
 
+from builder AS e2e
+
+# Install playwright browsers
+RUN npx playwright install --with-deps
+
+RUN NODE_ENV=e2e npm run db:create && NODE_ENV=e2e npm run db:migrate && NODE_ENV=e2e npm run db:seed
+
 # Running the app
 FROM gcr.io/distroless/nodejs24 AS runner
 WORKDIR /app
