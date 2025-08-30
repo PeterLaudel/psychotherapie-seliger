@@ -21,7 +21,7 @@ COPY --chown=node:node . .
 # Build
 RUN npm run build
 
-from builder AS e2e
+FROM builder AS e2e
 
 # Install playwright browsers
 RUN npx playwright install --with-deps
