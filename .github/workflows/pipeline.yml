@@ -8,5 +8,5 @@ permissions:
 
 jobs:
   nextjs:
-    uses: PeterLaudel/actions/.github/workflows/nextjs.yml@main
+    uses: PeterLaudel/actions/.github/workflows/pipeline.yml@main
     secrets: inherit

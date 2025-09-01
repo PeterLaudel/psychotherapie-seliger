@@ -21,12 +21,8 @@ COPY --chown=node:node . .
 # Build
 RUN npm run build
 
-FROM builder AS e2e
-
-# Install playwright browsers
-RUN npx playwright install --with-deps
-
-RUN NODE_ENV=e2e npm run db:create && NODE_ENV=e2e npm run db:migrate && NODE_ENV=e2e npm run db:seed
+RUN chmod +x docker-entrypoint.sh
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 # Running the app
 FROM gcr.io/distroless/nodejs24 AS runner
@@ -42,7 +38,6 @@ COPY --from=builder --chown=nonroot:nonroot /app/next.config.mjs ./
 COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/.next ./.next
 COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
-
 
 USER nonroot
 

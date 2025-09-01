@@ -9,17 +9,15 @@
     "lint": "eslint --ignore-pattern=.gitignore --max-warnings=0 .",
     "typecheck": "tsc --incremental false",
     "test": "jest --runInBand",
-    "test:ci": "NODE_ENV=test npm run db:reset && npm run test",
+    "test:ci": "npm run test && npm run lint && npm run typecheck",
     "ci": "npm run typecheck && npm run lint && npm run test",
     "db:create": "ts-node ./tasks/dbCreate.ts",
     "db:drop": "ts-node ./tasks/dbDrop.ts",
     "db:migrate": "kysely migrate:latest --debug",
     "db:seed": "kysely seed run --debug",
-    "db:reset": "npm run db:drop && npm run db:create && npm run db:migrate",
-    "db:all": "npm run db:reset && npm run db:seed",
     "kysely": "kysely",
-    "e2e": "E2E=true playwright test",
-    "e2e:ui": "E2E=true playwright test --ui"
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

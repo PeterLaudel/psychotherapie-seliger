@@ -1,5 +1,6 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: builder
     image: "${IMAGE:-psychotherapie-seliger:dev}"
-    command: ["npm", "run", "test:ci"]
