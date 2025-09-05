@@ -1,15 +1,17 @@
 name: Run pipeline
 on:
   pull_request:
-
-permissions:
-  contents: "read"
-  id-token: "write"
+  push:
+    branches:
+      - main
 
 jobs:
   test:
     uses: PeterLaudel/actions/.github/workflows/pipeline.yml@main
     secrets: inherit
+    permissions:
+      contents: write
+      id-token: write
     with:
       e2e: true
   
