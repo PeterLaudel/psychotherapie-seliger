@@ -59,6 +59,7 @@
     "docker-entrypoint.js",
     "types/**/*.ts",
     ".config/**/*.ts",
+    "next.config.ts"
   ],
   "exclude": [
     "node_modules"

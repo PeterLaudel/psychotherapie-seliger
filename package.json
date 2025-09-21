@@ -39,7 +39,6 @@
     "next": "15.4.6",
     "next-auth": "^4.24.11",
     "pdf-lib": "^1.17.1",
-    "pg": "^8.16.3",
     "playwright": "^1.54.2",
     "qrcode": "^1.5.4",
     "react": "19.1.1",
@@ -59,11 +58,11 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "^30.0.0",
     "@types/node": "^24",
-    "@types/pg": "^8.15.5",
     "@types/qrcode": "^1.5.5",
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@yao-pkg/pkg": "^6.6.0",
     "dotenv": "^17.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
@@ -78,5 +77,21 @@
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "xslt3": "^2.7.0"
+  },
+  "bin": "server.js",
+  "pkg": {
+    "scripts": [
+      "server.js"
+    ],
+    "assets": [
+      ".next/**/*",
+      "public/**/*",
+      ".env",
+      "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
+      "tmp/psychotherapie_seliger.sqlite"
+    ],
+    "targets": [
+      "node22-macos-arm64"
+    ]
   }
 }
