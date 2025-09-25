@@ -1,11 +1,9 @@
 import { sql } from "kysely";
 import timekeeper from "timekeeper";
 import { patientFactory } from "../../factories/patient";
-import { serviceFactory } from "../../factories/service";
 import { db } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
-import { invoicePositionFactory } from "factories/invoicePosition";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
@@ -13,13 +11,14 @@ describe("InvoicesRepository", () => {
   describe("#create", () => {
     it("creates a new invoice", async () => {
       const patient = await patientFactory.create();
-      const service = await serviceFactory.create();
-      const invoiceAttributes = invoiceFactory.build(
-        {},
-        { associations: { patientId: patient.id } }
-      );
+      const invoiceAttributes = invoiceFactory.build({
+        invoiceNumber: "202310031",
+        name: patient.name,
+        surname: patient.surname,
+      });
 
       const createdInvoice = await invoicesRepository.create({
+        patientId: patient.id,
         ...invoiceAttributes,
         base64Pdf: "data:application/pdf;base64,example",
       });
@@ -48,11 +47,9 @@ describe("InvoicesRepository", () => {
       await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(
         db
       );
-      const patient = await patientFactory.create();
       await invoiceFactory.createList(
         3,
         {},
-        { associations: { patientId: patient.id } }
       );
 
       const invoiceNumber = await invoicesRepository.generateInvoiceNumber();

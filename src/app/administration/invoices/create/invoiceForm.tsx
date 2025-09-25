@@ -29,8 +29,8 @@ interface Props {
 
 type DeepPartial<T> = T extends object
   ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
+    [P in keyof T]?: DeepPartial<T[P]>;
+  }
   : T;
 
 export type FormInvoice = DeepPartial<InvoiceCreate> & {
@@ -72,8 +72,11 @@ export default function InvoiceForm({
       values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      const { diagnosis, ...rest } = values;
-      await createInvoice(rest as InvoiceCreate);
+      await createInvoice({
+        patientId: values.patientId!,
+        invoiceNumber: values.invoiceNumber!,
+        base64Pdf: values.base64Pdf!,
+      });
       showSuccessMessage(true);
       form.restart(initialValues);
     },

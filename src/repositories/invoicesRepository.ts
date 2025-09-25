@@ -11,24 +11,32 @@ export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
 export class InvoicesRepository {
   constructor(private readonly database = db) { }
 
-  public async create(invoiceProcess: InvoiceCreate): Promise<Invoice> {
-    const { ...rest } =
-      invoiceProcess;
+  public async create(invoice: InvoiceCreate): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
-      const invoice = await trx
+      const createdInvoice = await trx
         .insertInto("invoices")
-        .values(rest)
-        .returning(["id", "patientId", "invoiceNumber", "base64Pdf"])
+        .values(
+          {
+            invoiceNumber: invoice.invoiceNumber,
+            base64Pdf: invoice.base64Pdf,
+          }
+        )
+        .returning(["id", "invoiceNumber", "base64Pdf"])
         .executeTakeFirstOrThrow();
+
+      await trx.insertInto("patientInvoices").values({
+        patientId: invoice.patientId,
+        invoiceId: createdInvoice.id,
+      }).executeTakeFirstOrThrow();
 
       const patient = await trx
         .selectFrom("patients")
         .selectAll()
-        .where("id", "=", rest.patientId)
+        .where("id", "=", invoice.patientId)
         .executeTakeFirstOrThrow();
 
       return {
-        ...invoice,
+        ...createdInvoice,
         name: patient.name,
         surname: patient.surname,
       };
@@ -38,14 +46,14 @@ export class InvoicesRepository {
   public async all(): Promise<Invoice[]> {
     return await this.database
       .selectFrom("invoices")
-      .innerJoin("patients", "invoices.patientId", "patients.id")
+      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
+      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
       .select([
         "patients.name as name",
         "patients.surname as surname",
-        "invoices.id",
-        "invoices.invoiceNumber",
-        "invoices.base64Pdf",
-        "invoices.patientId",
+        "invoices.id as id",
+        "invoices.invoiceNumber as invoiceNumber",
+        "invoices.base64Pdf as base64Pdf",
       ])
       .execute();
   }
