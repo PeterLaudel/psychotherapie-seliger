@@ -13,6 +13,7 @@ export const invoiceFactory = Factory.define<Omit<Invoice, "id">, {}, Invoice>((
   base64Pdf: "data:application/pdf;base64,example",
   name: faker.person.firstName(),
   surname: faker.person.lastName(),
+  invoiceAmount: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
 })).onCreate(async (invoice) => {
   const result = await db
     .insertInto("invoices")
@@ -20,9 +21,10 @@ export const invoiceFactory = Factory.define<Omit<Invoice, "id">, {}, Invoice>((
       {
         invoiceNumber: invoice.invoiceNumber,
         base64Pdf: invoice.base64Pdf,
+        invoiceAmount: invoice.invoiceAmount,
       }
     )
-    .returning(["id", "invoiceNumber", "base64Pdf"])
+    .returning(["id", "invoiceNumber", "base64Pdf", "invoiceAmount"])
     .executeTakeFirstOrThrow();
 
   return {

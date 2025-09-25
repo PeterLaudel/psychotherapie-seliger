@@ -29,6 +29,7 @@ interface InvoicesTable {
   id: Generated<number>;
   invoiceNumber: string;
   base64Pdf: string;
+  invoiceAmount: number;
 }
 
 interface PatientInvoiceTable {

@@ -10,9 +10,8 @@ import dayjs from "dayjs";
 import { Fragment } from "react";
 import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
-import { InvoicePositionCreate } from "../../../../repositories/invoicesRepository";
 import { PageBreakField } from "./pageBreakField";
-import { Service as ServiceType } from "@/models/service";
+import { Service, Service as ServiceType } from "@/models/service";
 import Section from "@/components/section";
 import { InvalidSubscription, ValueSubscription } from "@/components/forms";
 
@@ -20,13 +19,21 @@ interface Props {
   services: ServiceType[];
 }
 
+export interface InvoicePosition {
+  serviceDate?: string;
+  service?: Service;
+  amount: number;
+  factor?: string;
+  pageBreak?: boolean;
+}
+
 export default function ServiceSection({ services }: Props) {
   const addEntry = (
-    push: (value: Partial<Partial<InvoicePositionCreate>>) => void
+    push: (value: Partial<Partial<InvoicePosition>>) => void
   ) => {
     push({
       serviceDate: undefined,
-      serviceId: undefined,
+      service: undefined,
       amount: 1,
       factor: undefined,
       pageBreak: false,
@@ -37,7 +44,7 @@ export default function ServiceSection({ services }: Props) {
     <Section>
       <h2 className="mb-4">Leistungen</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
-        <FieldArray<Partial<InvoicePositionCreate>> name="invoicePositions">
+        <FieldArray<Partial<InvoicePosition>> name="invoicePositions">
           {({ fields }) =>
             fields.map((name, index) => (
               <Fragment key={name}>
@@ -81,9 +88,9 @@ export default function ServiceSection({ services }: Props) {
                     />
                   )}
                 </Field>
-                <Field<number>
-                  key={`${name}.serviceId`}
-                  name={`${name}.serviceId`}
+                <Field<Service>
+                  key={`${name}.service`}
+                  name={`${name}.service`}
                   type="select"
                   validate={(value) =>
                     value ? undefined : "Eine Leistung wird benötigt"
@@ -92,10 +99,10 @@ export default function ServiceSection({ services }: Props) {
                   {({ input, meta: { touched, error } }) => (
                     <Autocomplete
                       options={services}
-                      onChange={(_, value) => input.onChange(value?.id)}
+                      onChange={(_, value) => input.onChange(value)}
                       getOptionLabel={(option) => option.short}
                       getOptionKey={(option) => option.short}
-                      value={services.find((s) => s.id === input.value) || null}
+                      value={services.find((s) => s.id === input.value.id) || null}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -127,30 +134,27 @@ export default function ServiceSection({ services }: Props) {
                     </InvalidSubscription>
                   )}
                 </Field>
-                <ValueSubscription<number | undefined>
-                  name={`${name}.serviceId`}
+                <ValueSubscription<Service | undefined>
+                  name={`${name}.service`}
                 >
-                  {(serviceId) => (
+                  {(service) => (
                     <Field<string>
                       key={`${name}.factor`}
                       name={`${name}.factor`}
                       type="select"
                       initialValue={
-                        (
-                          services.find(({ id }) => id === serviceId)
-                            ?.amounts || []
-                        ).at(-1)?.["factor"]
+                        (service?.amounts || []).at(-1)?.["factor"]
                       }
                     >
                       {({ input }) => (
                         <TextField
                           select
                           label="Faktor"
-                          disabled={!serviceId}
+                          disabled={!service}
                           {...input}
                         >
                           {(
-                            services.find(({ id }) => id === serviceId)
+                            service
                               ?.amounts || []
                           ).map(({ factor }) => (
                             <MenuItem key={factor} value={factor}>

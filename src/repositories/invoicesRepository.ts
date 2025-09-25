@@ -1,12 +1,10 @@
 import { db } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
-import type { InvoicePosition } from "@/models/invoicePosition";
-
-export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 
 export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   patientId: number;
   base64Pdf: string;
+  invoiceAmount: number;
 };
 export class InvoicesRepository {
   constructor(private readonly database = db) { }
@@ -19,9 +17,10 @@ export class InvoicesRepository {
           {
             invoiceNumber: invoice.invoiceNumber,
             base64Pdf: invoice.base64Pdf,
+            invoiceAmount: invoice.invoiceAmount,
           }
         )
-        .returning(["id", "invoiceNumber", "base64Pdf"])
+        .returning(["id", "invoiceNumber", "base64Pdf", "invoiceAmount"])
         .executeTakeFirstOrThrow();
 
       await trx.insertInto("patientInvoices").values({
@@ -54,6 +53,7 @@ export class InvoicesRepository {
         "invoices.id as id",
         "invoices.invoiceNumber as invoiceNumber",
         "invoices.base64Pdf as base64Pdf",
+        "invoices.invoiceAmount as invoiceAmount",
       ])
       .execute();
   }

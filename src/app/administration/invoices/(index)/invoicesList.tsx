@@ -12,11 +12,10 @@ interface Props {
 }
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 90 },
+  { field: "invoiceNumber", headerName: "Rechnungsnummer", width: 90 },
   { field: "name", headerName: "Vorname", width: 150 },
   { field: "surname", headerName: "Nachname", width: 150 },
-  { field: "patientId", headerName: "Patient ID", width: 150 },
-  { field: "invoiceNumber", headerName: "Invoice Number", width: 150 },
+  { field: "invoiceAmount", headerName: "Betrag", width: 110 },
 ];
 
 export function InvoicesList({ invoices }: Props) {
