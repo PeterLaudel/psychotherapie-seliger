@@ -4,7 +4,7 @@ import { db } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 
 
-export const invoiceFactory = Factory.define<Omit<Invoice, "id">, {}, Invoice>(({ sequence, params }) => ({
+export const invoiceFactory = Factory.define<Omit<Invoice, "id">, unknown, Invoice>(({ sequence }) => ({
   invoiceNumber: `${faker.date
     .birthdate()
     .toISOString()

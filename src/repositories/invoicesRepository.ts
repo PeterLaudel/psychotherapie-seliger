@@ -42,6 +42,23 @@ export class InvoicesRepository {
     });
   }
 
+  public async find(id: number): Promise<Invoice> {
+    return await this.database
+      .selectFrom("invoices")
+      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
+      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
+      .select([
+        "patients.name as name",
+        "patients.surname as surname",
+        "invoices.id as id",
+        "invoices.invoiceNumber as invoiceNumber",
+        "invoices.base64Pdf as base64Pdf",
+        "invoices.invoiceAmount as invoiceAmount",
+      ])
+      .where("invoices.id", "=", id)
+      .executeTakeFirstOrThrow();
+  }
+
   public async all(): Promise<Invoice[]> {
     return await this.database
       .selectFrom("invoices")
