@@ -1,4 +1,3 @@
-import { InvoicePositionsRepository } from "./invoicePositionsRepository";
 import { db } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 import type { InvoicePosition } from "@/models/invoicePosition";
@@ -7,14 +6,13 @@ export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 
 export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   patientId: number;
-  invoicePositions: InvoicePositionCreate[];
   base64Pdf: string;
 };
 export class InvoicesRepository {
-  constructor(private readonly database = db) {}
+  constructor(private readonly database = db) { }
 
   public async create(invoiceProcess: InvoiceCreate): Promise<Invoice> {
-    const { invoicePositions: createInvoicePositions, ...rest } =
+    const { ...rest } =
       invoiceProcess;
     return await this.database.transaction().execute(async (trx) => {
       const invoice = await trx
@@ -23,24 +21,14 @@ export class InvoicesRepository {
         .returning(["id", "patientId", "invoiceNumber", "base64Pdf"])
         .executeTakeFirstOrThrow();
 
-      const positionRepository = new InvoicePositionsRepository(trx);
-      const invoicePositions = await Promise.all(
-        createInvoicePositions.map(async (invoicePosition) =>
-          positionRepository.create({
-            ...invoicePosition,
-            invoiceId: invoice.id,
-          })
-        )
-      );
       const patient = await trx
         .selectFrom("patients")
         .selectAll()
         .where("id", "=", rest.patientId)
         .executeTakeFirstOrThrow();
-        
+
       return {
         ...invoice,
-        invoicePositions,
         name: patient.name,
         surname: patient.surname,
       };

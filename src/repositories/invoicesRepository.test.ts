@@ -18,28 +18,15 @@ describe("InvoicesRepository", () => {
         {},
         { associations: { patientId: patient.id } }
       );
-      const invoicePositions = invoicePositionFactory.buildList(
-        3,
-        {},
-        {
-          associations: { serviceId: service.id },
-        }
-      );
 
       const createdInvoice = await invoicesRepository.create({
         ...invoiceAttributes,
         base64Pdf: "data:application/pdf;base64,example",
-        invoicePositions,
       });
 
       expect(createdInvoice).toEqual({
         id: expect.any(Number),
         ...invoiceAttributes,
-        invoicePositions: invoicePositions.map((invoicePosition) => ({
-          id: expect.any(Number),
-          ...invoicePosition,
-          invoiceId: createdInvoice.id,
-        })),
         name: patient.name,
         surname: patient.surname,
       });
