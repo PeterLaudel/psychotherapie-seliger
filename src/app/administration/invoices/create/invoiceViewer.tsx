@@ -29,17 +29,14 @@ export default function InvoiceViewer({
             !!position.serviceDate &&
             !!position.service &&
             !!position.factor &&
-            !!position.amount
+            !!position.amount &&
+            !!position.price
         )
         .map((position, index) => {
           const service = position.service;
           return {
-            ...position,
             id: index,
-            service,
-            price: service?.amounts.find(
-                  (amount) => amount.factor === position.factor
-                )?.price ?? 0
+            ...position,
           };
         }),
     [values?.invoicePositions]

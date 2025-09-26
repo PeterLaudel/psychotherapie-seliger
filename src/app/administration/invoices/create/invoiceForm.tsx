@@ -70,13 +70,7 @@ export default function InvoiceForm({
         patientId: values.patientId!,
         invoiceNumber: values.invoiceNumber!,
         base64Pdf: values.base64Pdf!,
-        invoiceAmount: (values.invoicePositions || []).reduce((sum, pos) => {
-          const { service, factor, amount } = pos;
-          if (!service || !factor || !amount) return sum;
-          const serviceAmount = service.amounts.find((a) => a.factor === factor);
-          if (!serviceAmount) return sum;
-          return sum + serviceAmount.price * pos.amount;
-        }, 0),
+        invoiceAmount: values.invoicePositions.reduce((sum, pos) => sum + pos.price!, 0),
       });
       showSuccessMessage(true);
       form.restart(initialValues);

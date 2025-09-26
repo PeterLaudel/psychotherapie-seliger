@@ -14,6 +14,7 @@ import { PageBreakField } from "./pageBreakField";
 import { Service, Service as ServiceType } from "@/models/service";
 import Section from "@/components/section";
 import { InvalidSubscription, ValueSubscription } from "@/components/forms";
+import { Price } from "./price";
 
 interface Props {
   services: ServiceType[];
@@ -25,6 +26,7 @@ export interface InvoicePosition {
   amount: number;
   factor?: string;
   pageBreak?: boolean;
+  price?: number;
 }
 
 export default function ServiceSection({ services }: Props) {
@@ -139,7 +141,7 @@ export default function ServiceSection({ services }: Props) {
                 >
                   {(service) => (
                     <Field<string>
-                      key={`${name}.factor`}
+                      key={`${name}.factor.${service?.id || ""}`}
                       name={`${name}.factor`}
                       type="select"
                       initialValue={
@@ -166,6 +168,7 @@ export default function ServiceSection({ services }: Props) {
                     </Field>
                   )}
                 </ValueSubscription>
+                <Price  name={name} />
                 <div className="flex min-h-14 items-center">
                   <IconButton
                     onClick={() => fields.remove(index)}
