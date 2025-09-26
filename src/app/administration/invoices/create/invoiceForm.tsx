@@ -9,12 +9,10 @@ import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
 import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
-import ServiceSection from "./serviceSection";
+import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
-import { InvoicePosition } from "@/models/invoicePosition";
 import {
   InvoiceCreate,
-  InvoicePositionCreate,
 } from "@/repositories/invoicesRepository";
 import type { Service as ServiceType } from "@/models/service";
 import type { Patient as PatientType } from "@/models/patient";
@@ -29,14 +27,14 @@ interface Props {
 
 type DeepPartial<T> = T extends object
   ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
+    [P in keyof T]?: DeepPartial<T[P]>;
+  }
   : T;
 
 export type FormInvoice = DeepPartial<InvoiceCreate> & {
   diagnosis?: string;
   base64Pdf?: string;
-  invoicePositions: DeepPartial<InvoicePositionCreate>[];
+  invoicePositions: InvoicePosition[];
 };
 
 export default function InvoiceForm({
@@ -46,18 +44,14 @@ export default function InvoiceForm({
 }: Props) {
   const [open, showSuccessMessage] = useState(false);
   const initialValues = useMemo<
-    DeepPartial<FormInvoice> & {
-      invoicePositions: DeepPartial<
-        Omit<InvoicePosition, "invoiceId" | "id">
-      >[];
-    }
+    Partial<FormInvoice>
   >(
     () => ({
       invoiceNumber,
       invoicePositions: [
         {
           serviceDate: undefined,
-          serviceId: undefined,
+          service: undefined,
           amount: 1,
           factor: undefined,
           pageBreak: false,
@@ -72,8 +66,12 @@ export default function InvoiceForm({
       values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      const { diagnosis, ...rest } = values;
-      await createInvoice(rest as InvoiceCreate);
+      await createInvoice({
+        patientId: values.patientId!,
+        invoiceNumber: values.invoiceNumber!,
+        base64Pdf: values.base64Pdf!,
+        invoiceAmount: values.invoicePositions.reduce((sum, pos) => sum + pos.price!, 0),
+      });
       showSuccessMessage(true);
       form.restart(initialValues);
     },
@@ -115,7 +113,6 @@ export default function InvoiceForm({
             </div>
             <InvoiceViewer
               patients={patients}
-              services={services}
               invoiceNumber={invoiceNumber}
             />
           </div>

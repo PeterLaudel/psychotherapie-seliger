@@ -2,19 +2,16 @@ import { useEffect, useMemo } from "react";
 import { useField, useFormState } from "react-final-form";
 import type { FormInvoice } from "./invoiceForm";
 import { usePdf } from "./_hooks/usePdf";
-import { InvoicePosition } from "@/models/invoicePosition";
-import { Service } from "@/models/service";
 import { Patient } from "@/models/patient";
+import type { InvoicePosition } from "./serviceSection";
 
 interface Props {
   patients: Patient[];
-  services: Service[];
   invoiceNumber: string;
 }
 
 export default function InvoiceViewer({
   patients,
-  services,
   invoiceNumber,
 }: Props) {
   const {
@@ -23,35 +20,25 @@ export default function InvoiceViewer({
   const { values } = useFormState<FormInvoice>({
     subscription: { values: true },
   });
-
   const mappedPositions = useMemo(
     () =>
       values?.invoicePositions
         .filter(
-          (position): position is InvoicePosition =>
+          (position): position is Required<InvoicePosition> =>
             !!position &&
             !!position.serviceDate &&
-            !!position.serviceId &&
+            !!position.service &&
             !!position.factor &&
-            !!position.amount
+            !!position.amount &&
+            !!position.price
         )
-        .map((position) => {
-          const service = services.filter(
-            (s) => s.id === position.serviceId
-          )[0];
-          return {
+        .map((position, index) => (
+          {
+            id: index,
             ...position,
-            id: position.id ?? 0,
-            service,
-            price:
-              position?.factor !== undefined
-                ? service?.amounts.find(
-                    (amount) => amount.factor === position.factor
-                  )?.price ?? 0
-                : 0,
-          };
-        }),
-    [services, values?.invoicePositions]
+          }
+        )),
+    [values?.invoicePositions]
   );
 
   const base64Pdf = usePdf({

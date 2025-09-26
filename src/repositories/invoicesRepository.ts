@@ -1,63 +1,76 @@
-import { InvoicePositionsRepository } from "./invoicePositionsRepository";
 import { db } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
-import type { InvoicePosition } from "@/models/invoicePosition";
-
-export type InvoicePositionCreate = Omit<InvoicePosition, "id" | "invoiceId">;
 
 export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   patientId: number;
-  invoicePositions: InvoicePositionCreate[];
   base64Pdf: string;
+  invoiceAmount: number;
 };
 export class InvoicesRepository {
-  constructor(private readonly database = db) {}
+  constructor(private readonly database = db) { }
 
-  public async create(invoiceProcess: InvoiceCreate): Promise<Invoice> {
-    const { invoicePositions: createInvoicePositions, ...rest } =
-      invoiceProcess;
+  public async create(invoice: InvoiceCreate): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
-      const invoice = await trx
+      const createdInvoice = await trx
         .insertInto("invoices")
-        .values(rest)
-        .returning(["id", "patientId", "invoiceNumber", "base64Pdf"])
+        .values(
+          {
+            invoiceNumber: invoice.invoiceNumber,
+            base64Pdf: invoice.base64Pdf,
+            invoiceAmount: invoice.invoiceAmount,
+          }
+        )
+        .returning(["id", "invoiceNumber", "base64Pdf", "invoiceAmount"])
         .executeTakeFirstOrThrow();
 
-      const positionRepository = new InvoicePositionsRepository(trx);
-      const invoicePositions = await Promise.all(
-        createInvoicePositions.map(async (invoicePosition) =>
-          positionRepository.create({
-            ...invoicePosition,
-            invoiceId: invoice.id,
-          })
-        )
-      );
+      await trx.insertInto("patientInvoices").values({
+        patientId: invoice.patientId,
+        invoiceId: createdInvoice.id,
+      }).executeTakeFirstOrThrow();
+
       const patient = await trx
         .selectFrom("patients")
         .selectAll()
-        .where("id", "=", rest.patientId)
+        .where("id", "=", invoice.patientId)
         .executeTakeFirstOrThrow();
-        
+
       return {
-        ...invoice,
-        invoicePositions,
+        ...createdInvoice,
         name: patient.name,
         surname: patient.surname,
       };
     });
   }
 
-  public async all(): Promise<Invoice[]> {
+  public async find(id: number): Promise<Invoice> {
     return await this.database
       .selectFrom("invoices")
-      .innerJoin("patients", "invoices.patientId", "patients.id")
+      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
+      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
       .select([
         "patients.name as name",
         "patients.surname as surname",
-        "invoices.id",
-        "invoices.invoiceNumber",
-        "invoices.base64Pdf",
-        "invoices.patientId",
+        "invoices.id as id",
+        "invoices.invoiceNumber as invoiceNumber",
+        "invoices.base64Pdf as base64Pdf",
+        "invoices.invoiceAmount as invoiceAmount",
+      ])
+      .where("invoices.id", "=", id)
+      .executeTakeFirstOrThrow();
+  }
+
+  public async all(): Promise<Invoice[]> {
+    return await this.database
+      .selectFrom("invoices")
+      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
+      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
+      .select([
+        "patients.name as name",
+        "patients.surname as surname",
+        "invoices.id as id",
+        "invoices.invoiceNumber as invoiceNumber",
+        "invoices.base64Pdf as base64Pdf",
+        "invoices.invoiceAmount as invoiceAmount",
       ])
       .execute();
   }

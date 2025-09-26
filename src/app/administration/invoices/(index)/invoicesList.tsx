@@ -11,12 +11,17 @@ interface Props {
   invoices: Invoice[];
 }
 
+const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "EUR",
+});
+
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 90 },
+  { field: "invoiceNumber", headerName: "Rechnungsnummer", width: 90 },
   { field: "name", headerName: "Vorname", width: 150 },
   { field: "surname", headerName: "Nachname", width: 150 },
-  { field: "patientId", headerName: "Patient ID", width: 150 },
-  { field: "invoiceNumber", headerName: "Invoice Number", width: 150 },
+  { field: "invoiceAmount", headerName: "Betrag", width: 110, valueFormatter: (params) => GermanyCurrencyFormatter.format(params) },
 ];
 
 export function InvoicesList({ invoices }: Props) {
@@ -45,6 +50,9 @@ export function InvoicesList({ invoices }: Props) {
               columns={columns}
               disableColumnMenu
               hideFooter
+              onRowClick={(params) =>
+                router.push(`/administration/invoices/${params.row.id}`)
+              }
             />
           )}
         </div>

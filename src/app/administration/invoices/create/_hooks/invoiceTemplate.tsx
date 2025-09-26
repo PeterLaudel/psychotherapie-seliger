@@ -8,13 +8,14 @@ import {
 } from "@react-pdf/renderer/lib/react-pdf.browser";
 import { createTw } from "react-pdf-tailwind";
 import logoBuffer from "./logo";
-import { InvoicePosition } from "@/models/invoicePosition";
 import { Service } from "@/models/service";
 import { BillingInfo, Patient } from "@/models/patient";
 
 type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate">;
 
-export type Position = InvoicePosition & { service: Service; price: number };
+export type Position = {
+  serviceDate: string, amount: number, factor: string, service: Service; price: number, pageBreak?: boolean
+};
 
 export interface Props {
   invoiceNumber: string;
@@ -99,8 +100,7 @@ export function InvoiceTemplate({
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>
               {patient &&
-                `Behandelt wurde: ${patient.surname}, ${
-                  patient.name
+                `Behandelt wurde: ${patient.surname}, ${patient.name
                 }, geb.: ${dateFormatter.format(
                   Date.parse(patient.birthdate)
                 )} `}

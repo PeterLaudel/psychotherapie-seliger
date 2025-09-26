@@ -52,8 +52,8 @@ function createZugferdXml(params: CreatePdfParams) {
   return createZugferdXmlOrigin({
     invoiceDate: dayjs().format("YYYYMMDD"),
     invoiceNumber: params.invoiceNumber,
-    positions: params.positions.map((p) => ({
-      id: p.id.toString(),
+    positions: params.positions.map((p, index) => ({
+      id: index.toString(),
       description: p.service.description,
       price: p.price,
       quantity: p.amount,
