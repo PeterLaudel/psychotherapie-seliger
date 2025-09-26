@@ -1,5 +1,5 @@
 import { PDFDocument } from "pdf-lib";
-import { InvoiceTemplate, Position } from "./invoiceTemplate";
+import { InvoiceTemplate, Position, Recipient } from "./invoiceTemplate";
 import { createZugferdXml as createZugferdXmlOrigin } from "@/zugferd";
 import { Patient } from "@/models/patient";
 import { ownerInfo } from "@/owner";
@@ -10,6 +10,16 @@ export interface CreatePdfParams {
   invoiceNumber: string;
   positions: Position[];
   diagnosis?: string;
+}
+
+const recipient: Recipient = {
+  name: ownerInfo.bank.accountHolder,
+  iban: ownerInfo.bank.iban,
+  bic: ownerInfo.bank.bic,
+  street: ownerInfo.address.street,
+  zip: ownerInfo.address.zip,
+  city: ownerInfo.address.city,
+  taxId: ownerInfo.taxId,
 }
 
 export async function createPdf(params: CreatePdfParams) {
@@ -38,7 +48,7 @@ async function renderPdf(params: CreatePdfParams) {
   const { patient } = params;
 
   const invoice = (
-    <InvoiceTemplate {...params} billingInfo={patient?.billingInfo} />
+    <InvoiceTemplate {...params} billingInfo={patient?.billingInfo} recepient={recipient} />
   );
 
   const pdf = await import("@react-pdf/renderer").then((module) => module.pdf);
