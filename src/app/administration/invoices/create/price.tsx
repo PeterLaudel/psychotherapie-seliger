@@ -7,16 +7,19 @@ interface Props {
 }
 
 export function Price({ name }: Props) {
-    const { input: { value, onChange } } = useField<InvoicePosition>(name, { subscription: { value: true } });
+    const { input: { value: factor } } = useField<InvoicePosition['factor']>(`${name}.factor`, { subscription: { value: true } });
+    const { input: { value: service } } = useField<InvoicePosition['service']>(`${name}.service`, { subscription: { value: true } });
+    const { input: { value: amount } } = useField<InvoicePosition['amount']>(`${name}.amount`, { subscription: { value: true } });
+    const { input: { onChange } } = useField<InvoicePosition['price']>(`${name}.price`);
 
     useEffect(() => {
-        if (value?.service && value?.factor) {
-            const price = value.service.amounts.find(amount => amount.factor === value.factor)?.price || 0;
-            onChange({ ...value, price: price * value.amount });
+        if (service && factor) {
+            const price = service.amounts.find(amount => amount.factor === factor)?.price || 0;
+            onChange(price * amount);
         } else {
-            onChange({ ...value, price: 0 });
+            onChange(undefined)
         }
-    }, [value?.service, value?.factor, value?.amount, onChange]);
+    }, [service, factor, amount, onChange]);
 
     return <></>
 }

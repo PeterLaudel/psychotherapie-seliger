@@ -32,13 +32,12 @@ export default function InvoiceViewer({
             !!position.amount &&
             !!position.price
         )
-        .map((position, index) => {
-          const service = position.service;
-          return {
+        .map((position, index) => (
+          {
             id: index,
             ...position,
-          };
-        }),
+          }
+        )),
     [values?.invoicePositions]
   );
 
