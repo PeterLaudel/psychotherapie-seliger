@@ -1,16 +1,4 @@
 {
-  "ts-node": {
-    // these options are overrides used only by ts-node
-    // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
-    "compilerOptions": {
-      "module": "es2022"
-    }
-  },
   "compilerOptions": {
     "lib": [
       "dom",
@@ -20,10 +8,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
+    "noEmit": false,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -49,17 +37,13 @@
         "./src/*"
       ]
     },
-    "target": "ES2017"
+    "target": "ES2022"
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "docker-entrypoint.js",
-    "types/**/*.ts",
-    ".config/**/*.ts",
-    "next.config.ts"
+    "migrations/**/*.ts",
+    "seeds/**/*.ts",
+    "tasks/**/*.ts",
+    "./server.ts"
   ],
   "exclude": [
     "node_modules"
