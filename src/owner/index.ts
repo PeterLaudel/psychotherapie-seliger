@@ -31,11 +31,11 @@ export const ownerInfo: Owner = {
   },
   email: "psychotherapie@praxis-seliger.com",
   phone: "01234 567890",
-  taxId: "231/274/03511",
+  taxId: "012930123",
   vatId: "DE123456789",
   bank: {
     accountHolder: "Ute Seliger",
-    iban: "DE16 3006 0601 0022 1680 56",
+    iban: "DE44120300001234567890",
     bic: "DAAEDEDDXXX",
     bankName: "Deutsche Apotheker und Ärztebank",
   },
