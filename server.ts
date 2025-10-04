@@ -1,11 +1,10 @@
 import next from 'next';
 import * as http from 'http';
 
+process.env.SQLITE_URL = process.env.HOME + '/psychotherapie_seliger.sqlite'
 import { dbMigrate } from './tasks/dbMigrate';
-import { dbSeed } from './tasks/dbSeed';
 
 dbMigrate();
-dbSeed();
 
 const dev = false; // we always run production mode
 const app = next({ dev, dir: __dirname });
