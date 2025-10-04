@@ -2,6 +2,13 @@
 
 This is a website for a psychotherapy practice. Written in nextjs and deployed with vercel. The page can be accessed with www.psychotherapie-seliger.de. The repo contains a public area where the homepage is published. And it does have a private area for administration of patients and invoices.
 
+# Example
+
+
+https://github.com/user-attachments/assets/7ea487de-fc7b-4cc2-b294-5af0399acab6
+
+
+
 # Development
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
