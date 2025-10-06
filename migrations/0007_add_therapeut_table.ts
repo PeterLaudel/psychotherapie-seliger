@@ -4,8 +4,8 @@ import { text } from "stream/consumers";
 export async function up(kysely: Kysely<unknown>) {
     await kysely.schema.createTable("therapeuts")
         .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-        .addColumn("name", "text", (col) => col.notNull())
         .addColumn("title", "text", (col) => col.notNull())
+        .addColumn("name", "text", (col) => col.notNull())
         .addColumn("surname", "text", (col) => col.notNull())
         .addColumn("street", "text", (col) => col.notNull())
         .addColumn("zip", "text", (col) => col.notNull())

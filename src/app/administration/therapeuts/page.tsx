@@ -1,14 +1,9 @@
-import { TherapeutRepository } from "@/repositories/therapeutRepository";
 import { getTherapeutsRepository } from "@/server";
-import { TherapeutsForm } from "./therapeutsForm";
+import { TherapeutForm } from "./therapeutForm";
 
 export default async function Page() {
     const therapeutRepository = await getTherapeutsRepository();
     const therapeuts = await therapeutRepository.all();
 
-    if (therapeuts.length === 0) {
-        return <TherapeutsForm />
-    }
-
-    return <TherapeutsForm therapeut={therapeuts[0]} />
+    return <TherapeutForm therapeut={therapeuts[0]} />
 }
