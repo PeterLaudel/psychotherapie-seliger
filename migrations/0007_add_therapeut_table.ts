@@ -1,5 +1,4 @@
 import { Kysely } from "kysely";
-import { text } from "stream/consumers";
 
 export async function up(kysely: Kysely<unknown>) {
     await kysely.schema.createTable("therapeuts")
