@@ -6,6 +6,7 @@ export interface Database {
   patientInvoices: PatientInvoiceTable;
   services: ServicesTable;
   serviceAmounts: ServiceAmountsTable;
+  therapeuts: TherapeutsTable;
 }
 
 interface PatientTable {
@@ -52,4 +53,21 @@ interface ServiceAmountsTable {
   serviceId: number;
   factor: "1.0" | "1.8" | "2.3";
   price: number;
+}
+
+interface TherapeutsTable {
+  id: Generated<number>;
+  title: string;
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  street: string;
+  city: string;
+  zip: string;
+  taxId: string;
+  iban: string;
+  bic: string;
+  bankName: string;
+  website: string;
 }
