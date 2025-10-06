@@ -6,6 +6,7 @@ import { saveTherapeut } from "./action";
 import { Button, TextField } from "@mui/material";
 import Section from "@/components/section";
 import { validateTherapeut } from "./validateTherapeut";
+import { set } from "zod";
 
 interface Props {
   therapeut?: Therapeut;
@@ -17,7 +18,10 @@ export function TherapeutForm({ therapeut }: Props) {
 
   const handleSubmit = (formData: FormData) => {
     const validationErrors = validateTherapeut(formData);
-    return validationErrors ? setErrors(validationErrors) : action(formData);
+    if (validationErrors) return setErrors(validationErrors);
+
+    setErrors({});
+    return action(formData);
   };
 
   const fieldProps = (name: keyof Therapeut) => {
