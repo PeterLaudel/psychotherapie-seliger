@@ -1,8 +1,10 @@
+import { therapeutFactory } from "factories/therapeut";
 import { serviceFactory } from "../../factories/service";
 import { test, expect } from "../fixtures";
 import { patientFactory } from "factories/patient";
 
 test("createas an invoice", async ({ page }) => {
+  await therapeutFactory.create({});
   const patient = await patientFactory.create({
     name: "Max",
     surname: "Mustermann",

@@ -1,25 +1,16 @@
 import { PDFDocument } from "pdf-lib";
-import { InvoiceTemplate, Position, Recipient } from "./invoiceTemplate";
+import { InvoiceTemplate, Position } from "./invoiceTemplate";
 import { createZugferdXml as createZugferdXmlOrigin } from "@/zugferd";
 import { Patient } from "@/models/patient";
-import { ownerInfo } from "@/owner";
 import dayjs from "dayjs";
+import { Therapeut } from "@/models/therapeut";
 
 export interface CreatePdfParams {
   patient?: Patient;
+  therapeut: Therapeut;
   invoiceNumber: string;
   positions: Position[];
   diagnosis?: string;
-}
-
-const recipient: Recipient = {
-  name: ownerInfo.bank.accountHolder,
-  iban: ownerInfo.bank.iban,
-  bic: ownerInfo.bank.bic,
-  street: ownerInfo.address.street,
-  zip: ownerInfo.address.zip,
-  city: ownerInfo.address.city,
-  taxId: ownerInfo.taxId,
 }
 
 export async function createPdf(params: CreatePdfParams) {
@@ -45,10 +36,14 @@ export async function createPdf(params: CreatePdfParams) {
 }
 
 async function renderPdf(params: CreatePdfParams) {
-  const { patient } = params;
+  const { patient, therapeut } = params;
 
   const invoice = (
-    <InvoiceTemplate {...params} billingInfo={patient?.billingInfo} recepient={recipient} />
+    <InvoiceTemplate
+      {...params}
+      billingInfo={patient?.billingInfo}
+      therapeut={therapeut}
+    />
   );
 
   const pdf = await import("@react-pdf/renderer").then((module) => module.pdf);
@@ -77,13 +72,12 @@ function createZugferdXml(params: CreatePdfParams) {
       country: "DE",
     },
     seller: {
-      name: `${ownerInfo.name} ${ownerInfo.surname}`,
-      street: ownerInfo.address.street,
-      city: ownerInfo.address.city,
-      zip: ownerInfo.address.zip,
-      country: ownerInfo.address.country,
-      identifier: ownerInfo.taxId,
-      vatId: ownerInfo.vatId,
+      name: `${params.therapeut.name} ${params.therapeut.surname}`,
+      street: params.therapeut.street,
+      city: params.therapeut.city,
+      zip: params.therapeut.zip,
+      country: "DE",
+      vatId: params.therapeut.taxId,
     },
   });
 }

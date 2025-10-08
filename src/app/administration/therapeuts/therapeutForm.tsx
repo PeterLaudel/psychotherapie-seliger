@@ -57,6 +57,7 @@ export function TherapeutForm({ therapeut }: Props) {
           <TextField label="IBAN" {...fieldProps("iban")} />
           <TextField label="BIC" {...fieldProps("bic")} />
           <TextField label="Webseite" {...fieldProps("website")} />
+          <TextField label="ENR" {...fieldProps("enr")} />
           <Button type="submit" variant="contained" disabled={pending}>
             Speichern
           </Button>

@@ -3,7 +3,7 @@
 import { TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Field } from "react-final-form";
-import { Patient as PatientType } from "@/models/patient";
+import { Patient, Patient as PatientType } from "@/models/patient";
 import Section from "@/components/section";
 
 interface Props {
@@ -18,18 +18,18 @@ export default function PatientSection({ patients }: Props) {
     <Section>
       <h2 className="mb-4">Patient</h2>
       <div className="grid grid-flow-col gap-x-4">
-        <Field<number | undefined>
-          name="patientId"
+        <Field<Patient>
+          name="patient"
           type="select"
           validate={validatePatient}
         >
           {({ input, meta: { error, touched } }) => (
             <Autocomplete
               options={patients}
-              onChange={(_, value) => input.onChange(value?.id)}
+              onChange={(_, value) => input.onChange(value)}
               getOptionLabel={(patient) => `${patient.name} ${patient.surname}`}
               getOptionKey={(patient) => patient.id}
-              value={patients.find(({ id }) => id === input.value) || null}
+              value={patients.find(({ id }) => id === input.value.id) || null}
               renderInput={(params) => (
                 <TextField
                   {...params}
