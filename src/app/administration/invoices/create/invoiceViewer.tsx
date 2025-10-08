@@ -2,18 +2,15 @@ import { useEffect, useMemo } from "react";
 import { useField, useFormState } from "react-final-form";
 import type { FormInvoice } from "./invoiceForm";
 import { usePdf } from "./_hooks/usePdf";
-import { Patient } from "@/models/patient";
 import type { InvoicePosition } from "./serviceSection";
 import { Therapeut } from "@/models/therapeut";
 
 interface Props {
-  patients: Patient[];
   therapeut: Therapeut;
   invoiceNumber: string;
 }
 
 export default function InvoiceViewer({
-  patients,
   therapeut,
   invoiceNumber,
 }: Props) {
@@ -47,7 +44,7 @@ export default function InvoiceViewer({
   const base64Pdf = usePdf({
     therapeut,
     invoiceNumber: invoiceNumber,
-    patient: patients.find((p) => p.id === values?.patientId),
+    patient: values?.patient,
     positions: mappedPositions || [],
     diagnosis: values?.diagnosis,
   });
@@ -65,5 +62,5 @@ export default function InvoiceViewer({
     return null;
   }
 
-  return <iframe className="w-full h-full" key={values?.patientId} src={url} />;
+  return <iframe className="w-full h-full" key={values?.patient?.id} src={url} />;
 }
