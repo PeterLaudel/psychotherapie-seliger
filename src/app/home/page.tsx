@@ -1,9 +1,9 @@
 import Script from "next/script";
-import AboutMe from "../../components/aboutMe";
-import Contact from "../../components/contact";
-import Costs from "../../components/costs";
-import Therapie from "../../components/therapie";
-import TreatmentSpectrum from "../../components/treatmentSpectrum";
+import AboutMe from "./aboutMe";
+import Contact from "./_components/contact";
+import Costs from "./costs";
+import Therapie from "./therapie";
+import TreatmentSpectrum from "./treatmentSpectrum";
 import { graph } from "./structuredData";
 
 export default function Home() {

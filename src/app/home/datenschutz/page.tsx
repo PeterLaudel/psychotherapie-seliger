@@ -1,7 +1,7 @@
 "use client";
 
-import Address from "../../../components/contact/address";
-import Email from "../../../components/contact/email";
+import Address from "../_components/contact/address";
+import Email from "../_components/contact/email";
 
 export default function Datenschutz() {
   return (

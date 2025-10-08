@@ -1,8 +1,8 @@
 "use client";
 
-import Address from "../../../components/contact//address";
-import Email from "../../../components/contact//email";
-import PhoneNumber from "../../../components/contact//phonenumber";
+import Address from "../_components/contact/address";
+import Email from "../_components/contact/email";
+import PhoneNumber from "../_components/contact/phonenumber";
 
 export default function Impressum() {
   return (
