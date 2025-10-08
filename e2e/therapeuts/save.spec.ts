@@ -21,6 +21,7 @@ test("saves a therapeut with empty form", async ({ page }) => {
   await page.getByLabel("IBAN").fill("DE89370400440532013000");
   await page.getByLabel("BIC").fill("COBADEFFXXX");
   await page.getByLabel("Webseite").fill("https://example.com");
+  await page.getByLabel("ENR").fill("123456789");
   await page.getByRole("button", { name: "Speichern" }).click();
 
   const successAlert = page.getByText("Therapeut gespeichert!");
@@ -49,6 +50,7 @@ test("updates a therapeut with filled form", async ({ page }) => {
   await expect(page.getByLabel("IBAN")).toHaveValue(therapeut.iban);
   await expect(page.getByLabel("BIC")).toHaveValue(therapeut.bic);
   await expect(page.getByLabel("Webseite")).toHaveValue(therapeut.website);
+  await expect(page.getByLabel("ENR")).toHaveValue(therapeut.enr);
 
   await page.getByLabel("Name", { exact: true }).fill("new name");
   await page.getByLabel("Vorname").fill("new vorname");
@@ -83,4 +85,5 @@ test("shows validation errors on invalid form", async ({ page }) => {
   await expect(page.getByText("IBAN ist erforderlich")).toBeVisible();
   await expect(page.getByText("BIC ist erforderlich")).toBeVisible();
   await expect(page.getByText("Webseite ist ungültig")).toBeVisible();
+  await expect(page.getByText("ENR ist erforderlich")).toBeVisible();
 });

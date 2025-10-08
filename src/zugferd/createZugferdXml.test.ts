@@ -30,7 +30,6 @@ describe("createZugferdXml", () => {
       city: "Therapist City",
       zip: "12345",
       country: "DE",
-      identifier: "SELLER-123",
       vatId: "DE123456789",
     },
     buyer: {

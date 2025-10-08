@@ -15,6 +15,7 @@ const schema = z.object({
   iban: z.string().min(1, "IBAN ist erforderlich"),
   bic: z.string().min(1, "BIC ist erforderlich"),
   website: z.string().min(1, "Webseite ist ungültig"),
+  enr: z.string().min(1, "ENR ist erforderlich"),
 });
 
 export function validateTherapeut(data: FormData) {

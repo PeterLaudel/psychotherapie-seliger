@@ -11,22 +11,18 @@ import logoBuffer from "./logo";
 import { Service } from "@/models/service";
 import { BillingInfo, Patient } from "@/models/patient";
 import { generateSepaQrBase64Png } from "./generateSepaQrBase64Png";
+import { Therapeut } from "@/models/therapeut";
 
 type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate">;
 
 export type Position = {
-  serviceDate: string, amount: number, factor: string, service: Service; price: number, pageBreak?: boolean
+  serviceDate: string;
+  amount: number;
+  factor: string;
+  service: Service;
+  price: number;
+  pageBreak?: boolean;
 };
-
-export interface Recipient {
-  name: string;
-  iban: string;
-  bic?: string;
-  street: string;
-  zip: string;
-  city: string;
-  taxId: string;
-}
 
 export interface Props {
   invoiceNumber: string;
@@ -34,7 +30,7 @@ export interface Props {
   billingInfo?: BillingInfo;
   patient?: InvoicePatient;
   positions: Position[];
-  recepient: Recipient;
+  therapeut: Therapeut;
 }
 
 function toKey({ service, serviceDate, amount, factor }: Position) {
@@ -47,7 +43,7 @@ export function InvoiceTemplate({
   patient,
   positions,
   diagnosis,
-  recepient,
+  therapeut,
 }: Props) {
   const tw = createTw({});
   const total = positions.reduce((acc, position) => acc + position.price, 0);
@@ -62,13 +58,13 @@ export function InvoiceTemplate({
   });
 
   const data = generateSepaQrBase64Png({
-    recipient: recepient.name,
-    bic: recepient.bic,
-    iban: recepient.iban,
+    recipient: therapeut.name,
+    bic: therapeut.bic,
+    iban: therapeut.iban,
     amount: total,
     purposeCode: "MEDI",
     remittanceInfo: invoiceNumber,
-  })
+  });
 
   return (
     <Document>
@@ -80,7 +76,7 @@ export function InvoiceTemplate({
           <View style={tw("flex-row")}>
             <View>
               <Text style={tw("text-xs border-b")}>
-                {`${recepient.name} • ${recepient.street} • ${recepient.zip} ${recepient.city}`}
+                {`${therapeut.name} ${therapeut.surname} • ${therapeut.street} • ${therapeut.zip} ${therapeut.city}`}
               </Text>
               {billingInfo && (
                 <>
@@ -98,12 +94,17 @@ export function InvoiceTemplate({
             </View>
           </View>
           <View style={tw("flex-col border-l-2 text-sm pl-2 pt-2 pb-2")}>
-            <Text style={tw("font-bold")}>M.Sc. A.Ute Seliger</Text>
+            <Text
+              style={tw("font-bold")}
+            >{`${therapeut.title} ${therapeut.name} ${therapeut.surname}`}</Text>
+
             <Text>Psychologische Psychotherapeutin</Text>
-            <Text style={tw("mb-3")}>ENR.: 9660750</Text>
-            <Text>{`${recepient.street}`}</Text>
-            <Text style={tw("mb-3")}>{`${recepient.zip} ${recepient.city}`}</Text>
-            <Text>psychotherapie@praxis-seliger.com</Text>
+            <Text style={tw("mb-3")}>{`ENR.: ${therapeut.enr}`}</Text>
+            <Text>{`${therapeut.street}`}</Text>
+            <Text
+              style={tw("mb-3")}
+            >{`${therapeut.zip} ${therapeut.city}`}</Text>
+            <Text>{therapeut.email}</Text>
           </View>
         </View>
         <View style={tw("flex-row justify-between pt-8")}>
@@ -122,7 +123,8 @@ export function InvoiceTemplate({
           <View style={tw("flex-col")}>
             <Text style={tw("text-sm")}>
               {patient &&
-                `Behandelt wurde: ${patient.surname}, ${patient.name
+                `Behandelt wurde: ${patient.surname}, ${
+                  patient.name
                 }, geb.: ${dateFormatter.format(
                   Date.parse(patient.birthdate)
                 )} `}
@@ -230,7 +232,9 @@ export function InvoiceTemplate({
           <View style={tw("flex-row border")}>
             <View style={tw("flex-col items-center self-center ml-2")}>
               <Text style={tw("text-sm font-bold")}>Überweisen per Code</Text>
-              <Text style={tw("text-sm")}>Code mit der Banking-App scannen</Text>
+              <Text style={tw("text-sm")}>
+                Code mit der Banking-App scannen
+              </Text>
             </View>
             <ReactPdfImage src={data} />
           </View>
@@ -239,12 +243,14 @@ export function InvoiceTemplate({
           <View style={tw("flex-col items-center")}>
             <Text style={tw("text-sm")}>Deutsche Apotheker und Ärztebank</Text>
             <Text style={tw("text-sm")}>
-              {`IBAN: ${recepient.iban} • Swift/BIC: ${recepient.bic}`}
+              {`IBAN: ${therapeut.iban} • Swift/BIC: ${therapeut.bic}`}
             </Text>
-            <Text style={tw("text-sm")}>{`Steuernummer: ${recepient.taxId}`}</Text>
+            <Text
+              style={tw("text-sm")}
+            >{`Steuernummer: ${therapeut.taxId}`}</Text>
           </View>
         </View>
       </Page>
-    </Document >
+    </Document>
   );
 }

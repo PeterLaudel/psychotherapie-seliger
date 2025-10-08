@@ -16,6 +16,7 @@ export async function up(kysely: Kysely<unknown>) {
         .addColumn("iban", "text", (col) => col.notNull())
         .addColumn("bic", "text", (col) => col.notNull())
         .addColumn("website", "text", (col) => col.notNull())
+        .addColumn("enr", "text", (col) => col.notNull())
         .execute();
 }
 

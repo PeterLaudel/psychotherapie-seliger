@@ -21,6 +21,7 @@ export const therapeutFactory = Factory.define<
   iban: faker.finance.iban(),
   bic: faker.finance.bic(),
   website: faker.internet.url(),
+  enr: faker.string.numeric(10),
 })).onCreate(async (therapeut) => {
   const createdTherapeut = await db
     .insertInto("therapeuts")

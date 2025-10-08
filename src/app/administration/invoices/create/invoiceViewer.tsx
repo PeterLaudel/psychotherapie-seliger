@@ -4,14 +4,17 @@ import type { FormInvoice } from "./invoiceForm";
 import { usePdf } from "./_hooks/usePdf";
 import { Patient } from "@/models/patient";
 import type { InvoicePosition } from "./serviceSection";
+import { Therapeut } from "@/models/therapeut";
 
 interface Props {
   patients: Patient[];
+  therapeut: Therapeut;
   invoiceNumber: string;
 }
 
 export default function InvoiceViewer({
   patients,
+  therapeut,
   invoiceNumber,
 }: Props) {
   const {
@@ -42,6 +45,7 @@ export default function InvoiceViewer({
   );
 
   const base64Pdf = usePdf({
+    therapeut,
     invoiceNumber: invoiceNumber,
     patient: patients.find((p) => p.id === values?.patientId),
     positions: mappedPositions || [],

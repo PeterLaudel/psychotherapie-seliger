@@ -13,4 +13,5 @@ export interface Therapeut {
     bic: string;
     bankName: string;
     website: string;
+    enr: string;
 }

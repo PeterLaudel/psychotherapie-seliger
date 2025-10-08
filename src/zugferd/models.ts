@@ -7,7 +7,6 @@ export interface Position {
 }
 
 export interface Seller {
-  identifier: string;
   vatId: string;
   name: string;
   street: string;

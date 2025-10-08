@@ -11,24 +11,24 @@ import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
-import {
-  InvoiceCreate,
-} from "@/repositories/invoicesRepository";
+import { InvoiceCreate } from "@/repositories/invoicesRepository";
 import type { Service as ServiceType } from "@/models/service";
 import type { Patient as PatientType } from "@/models/patient";
 import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
+import { Therapeut } from "@/models/therapeut";
 
 interface Props {
   patients: PatientType[];
   services: ServiceType[];
+  therapeut: Therapeut;
   invoiceNumber: string;
 }
 
 type DeepPartial<T> = T extends object
   ? {
-    [P in keyof T]?: DeepPartial<T[P]>;
-  }
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
   : T;
 
 export type FormInvoice = DeepPartial<InvoiceCreate> & {
@@ -41,11 +41,10 @@ export default function InvoiceForm({
   patients,
   services,
   invoiceNumber,
+  therapeut,
 }: Props) {
   const [open, showSuccessMessage] = useState(false);
-  const initialValues = useMemo<
-    Partial<FormInvoice>
-  >(
+  const initialValues = useMemo<Partial<FormInvoice>>(
     () => ({
       invoiceNumber,
       invoicePositions: [
@@ -70,7 +69,10 @@ export default function InvoiceForm({
         patientId: values.patientId!,
         invoiceNumber: values.invoiceNumber!,
         base64Pdf: values.base64Pdf!,
-        invoiceAmount: values.invoicePositions.reduce((sum, pos) => sum + pos.price!, 0),
+        invoiceAmount: values.invoicePositions.reduce(
+          (sum, pos) => sum + pos.price!,
+          0
+        ),
       });
       showSuccessMessage(true);
       form.restart(initialValues);
@@ -112,6 +114,7 @@ export default function InvoiceForm({
               </form>
             </div>
             <InvoiceViewer
+              therapeut={therapeut}
               patients={patients}
               invoiceNumber={invoiceNumber}
             />
