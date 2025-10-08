@@ -2,8 +2,8 @@ import "./globals.css";
 import { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Footer from "../../components/footer";
-import Navbar from "../../components/navbar";
+import Footer from "./footer";
+import Navbar from "./navbar";
 
 export const dynamic = "force-static";
 
