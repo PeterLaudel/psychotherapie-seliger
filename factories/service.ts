@@ -1,5 +1,5 @@
 import { Factory } from "fishery";
-import { db } from "../src/initialize";
+import { getDb } from "../src/initialize";
 import type { Service } from "@/models/service";
 
 export const serviceFactory = Factory.define<
@@ -27,7 +27,7 @@ export const serviceFactory = Factory.define<
     },
   ],
 })).onCreate(async ({ amounts, ...rest }) => {
-  const createdService = await db
+  const createdService = await getDb()
     .insertInto("services")
     .values(rest)
     .returningAll()
@@ -35,7 +35,7 @@ export const serviceFactory = Factory.define<
 
   const serviceAmounts = await Promise.all(
     amounts.map(async (amount) => {
-      return await db
+      return await getDb()
         .insertInto("serviceAmounts")
         .values({
           serviceId: createdService.id,

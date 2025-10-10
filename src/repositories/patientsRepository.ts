@@ -1,10 +1,10 @@
 import { Expression } from "kysely";
 import { jsonObjectFrom } from "kysely/helpers/sqlite";
 import { Patient } from "@/models/patient";
-import { db } from "@/initialize";
+import { getDb } from "@/initialize";
 
 export class PatientsRepository {
-  constructor(private readonly database = db) {}
+  constructor(private readonly database = getDb()) {}
 
   async find(id: number): Promise<Patient> {
     return await this.database

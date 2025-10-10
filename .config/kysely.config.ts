@@ -1,6 +1,6 @@
 import { defineConfig } from "kysely-ctl";
-import { db } from "../src/initialize";
+import { getDb } from "../src/initialize";
 
 export default defineConfig({
-  kysely: db,
+  kysely: getDb(),
 });
