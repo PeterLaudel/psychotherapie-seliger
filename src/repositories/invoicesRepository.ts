@@ -1,4 +1,4 @@
-import { db } from "@/initialize";
+import { getDb } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 
 export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
@@ -7,7 +7,7 @@ export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   invoiceAmount: number;
 };
 export class InvoicesRepository {
-  constructor(private readonly database = db) { }
+  constructor(private readonly database = getDb()) { }
 
   public async create(invoice: InvoiceCreate): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {

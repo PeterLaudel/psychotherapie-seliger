@@ -10,3 +10,18 @@ export const db = new Kysely<DatabaseDescription>({
   }),
   plugins: [new ParseJSONResultsPlugin()],
 });
+
+
+let dbInstance: Kysely<DatabaseDescription> | null = null;
+
+export function getDb(): Kysely<DatabaseDescription> {
+  if (!dbInstance) {
+    dbInstance = new Kysely<DatabaseDescription>({
+      dialect: new SqliteDialect({
+        database: new Database(sqliteUrl())
+      }),
+      plugins: [new ParseJSONResultsPlugin()],
+    });
+  }
+  return dbInstance;
+}

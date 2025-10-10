@@ -1,5 +1,5 @@
 import { Factory } from "fishery";
-import { db } from "../src/initialize";
+import { getDb } from "../src/initialize";
 import type { Therapeut } from "@/models/therapeut";
 import { faker } from "@faker-js/faker";
 
@@ -23,7 +23,7 @@ export const therapeutFactory = Factory.define<
   website: faker.internet.url(),
   enr: faker.string.numeric(10),
 })).onCreate(async (therapeut) => {
-  const createdTherapeut = await db
+  const createdTherapeut = await getDb()
     .insertInto("therapeuts")
     .values(therapeut)
     .returningAll()

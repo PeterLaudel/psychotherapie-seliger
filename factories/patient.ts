@@ -2,7 +2,7 @@ import { Factory } from "fishery";
 import { faker } from "@faker-js/faker";
 import { addressFactory } from "./address";
 import { billingInfoFactory } from "./billingInfo";
-import { db } from "@/initialize";
+import { getDb } from "@/initialize";
 import { Patient } from "@/models/patient";
 
 export const patientFactory = Factory.define<
@@ -33,7 +33,7 @@ export const patientFactory = Factory.define<
     billingStreet,
     billingCity,
     billingZip,
-  } = await db
+  } = await getDb()
     .insertInto("patients")
     .values({
       ...rest,

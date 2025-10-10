@@ -1,6 +1,6 @@
 import { Factory } from "fishery";
 import { faker } from "@faker-js/faker";
-import { db } from "@/initialize";
+import { getDb } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 
 
@@ -15,7 +15,7 @@ export const invoiceFactory = Factory.define<Omit<Invoice, "id">, unknown, Invoi
   surname: faker.person.lastName(),
   invoiceAmount: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
 })).onCreate(async (invoice) => {
-  const result = await db
+  const result = await getDb()
     .insertInto("invoices")
     .values(
       {
