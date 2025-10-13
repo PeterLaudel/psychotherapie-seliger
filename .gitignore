@@ -54,3 +54,5 @@ server.js
 /tasks/**/*.js
 /seeds/**/*.js
 /src/**/*.js
+
+/src-tauri/binary/psychotherapie-seliger-*
