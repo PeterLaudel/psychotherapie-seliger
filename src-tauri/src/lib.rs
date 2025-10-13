@@ -1,7 +1,9 @@
-use std::sync::{Arc, Mutex};
-use std::{thread, time::Duration};
-use tauri::path::BaseDirectory;
-use tauri::{Manager, RunEvent, WindowEvent};
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::time::Duration;
+use tauri::Manager;
+use tauri::RunEvent;
+use tauri::WindowEvent;
 use tauri_plugin_http::reqwest;
 use tauri_plugin_shell::{ShellExt, process::CommandChild};
 
@@ -13,15 +15,10 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             // --- Start your sidecar ---
-            let resource_path = app
-                .path()
-                .resolve("resources/info.log", BaseDirectory::Resource)?;
-
             let sidecar_command = app
                 .shell()
                 .sidecar("psychotherapie-seliger")
-                .unwrap()
-                .args([resource_path]);
+                .unwrap();
 
             let (_rx, sidecar_child) = sidecar_command.spawn().expect("Failed to spawn sidecar");
             let child = Arc::new(Mutex::new(Some(sidecar_child)));
