@@ -18,4 +18,6 @@ export function dbCreate() {
   }
 }
 
-dbCreate();
+if (require.main === module) {
+  dbCreate();
+}

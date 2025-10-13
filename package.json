@@ -11,10 +11,10 @@
     "test": "jest --runInBand",
     "test:ci": "npm run test && npm run lint && npm run typecheck",
     "ci": "npm run typecheck && npm run lint && npm run test",
-    "db:create": "ts-node ./tasks/dbCreate.ts",
-    "db:drop": "ts-node ./tasks/dbDrop.ts",
+    "db:create": "tsx ./tasks/dbCreate.ts",
+    "db:drop": "tsx ./tasks/dbDrop.ts",
     "db:migrate": "kysely migrate:latest --debug",
-    "db:seed": "ts-node ./tasks/dbSeed.ts",
+    "db:seed": "kysely seed run --debug",
     "kysely": "kysely",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui"
@@ -78,7 +78,7 @@
     "tauri": "^0.15.0",
     "timekeeper": "^2.3.1",
     "ts-jest": "^29.4.1",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5",
     "xslt3": "^2.7.0"
   }

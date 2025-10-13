@@ -40,7 +40,7 @@ module.exports = defineConfig([
         },
     },
     ...compat.extends("next/core-web-vitals"),
-    globalIgnores(["**/*.d.ts", "playwright-report/**", ".next/**"]),
+    globalIgnores(["**/*.d.ts", "playwright-report/**", ".next/**", "**/*.js"]),
     {
         files: ["**/*.ts", "**/*.tsx"],
         languageOptions: {

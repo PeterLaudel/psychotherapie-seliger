@@ -31,12 +31,15 @@ const dev = false; // we always run production mode
 const app = next({ dev, dir: __dirname });
 const handle = app.getRequestHandler();
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 app.prepare().then(() => {
   http
-    .createServer((req, res) => {
+  .createServer((req, res) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handle(req, res);
     })
     .listen(3000, () => {
+      // eslint-disable-next-line no-console
       console.log("🚀 Next.js server running on http://localhost:3000");
     });
 });

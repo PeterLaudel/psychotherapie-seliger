@@ -1,14 +1,14 @@
 import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  redirects: async () => {
-    return [
+  redirects: () => {
+    return Promise.resolve([
       {
         source: "/",
         destination: "/home",
         permanent: true,
       },
-    ];
+    ]);
   },
   reactStrictMode: true,
   eslint: {
