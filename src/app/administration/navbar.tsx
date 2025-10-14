@@ -13,6 +13,8 @@ export default function Navbar() {
 
   const isPatientRoute = /patients/.test(pathname);
   const isInvoiceRoute = /invoice/.test(pathname);
+  const isTherapeutRoute = /therapeuts/.test(pathname);
+  const isServiceRoute = /services/.test(pathname);
 
   return (
     <nav className="bg-white">
@@ -60,13 +62,16 @@ export default function Navbar() {
         </div>
         <div className="[grid-area:items] justify-self-start hidden peer-has-checked:block w-full md:block md:w-auto">
           <ul className="flex flex-col md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
+            <li className={isTherapeutRoute ? "font-bold" : ""}>
+              <Link href="/administration/therapeuts">Therapeut</Link>
+            </li>
             <li className={isPatientRoute ? "font-bold" : ""}>
               <Link href="/administration/patients">Patienten</Link>
             </li>
             <li className={isInvoiceRoute ? "font-bold" : ""}>
               <Link href="/administration/invoices">Rechnungen</Link>
             </li>
-            <li>
+            <li className={isServiceRoute ? "font-bold" : ""}>
               <Link href="/administration/services">Leistungen</Link>
             </li>
           </ul>
