@@ -47,3 +47,12 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+psychotherapie-seliger
+server.js
+/migrations/**/*.js
+/tasks/**/*.js
+/seeds/**/*.js
+/src/**/*.js
+
+/src-tauri/binary/psychotherapie-seliger-*

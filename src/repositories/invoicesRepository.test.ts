@@ -1,7 +1,7 @@
 import { sql } from "kysely";
 import timekeeper from "timekeeper";
 import { patientFactory } from "../../factories/patient";
-import { db } from "../initialize";
+import { getDb } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
 
@@ -43,9 +43,9 @@ describe("InvoicesRepository", () => {
 
     it("generates a unique invoice number", async () => {
       // For SQLite, reset the auto-increment value by updating sqlite_sequence table
-      await sql`DELETE FROM invoices`.execute(db);
+      await sql`DELETE FROM invoices`.execute(getDb());
       await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(
-        db
+        getDb(),
       );
       await invoiceFactory.createList(
         3,

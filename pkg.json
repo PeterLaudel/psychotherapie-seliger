@@ -1,0 +1,17 @@
+{
+  "name": "psychotherapie-seliger",
+  "version": "0.1.0",
+  "private": true,
+  "bin": "server.js",
+  "pkg": {
+    "scripts": ["server.js", "migrations/*.js"],
+    "assets": [
+      ".next/**/*",
+      "public/**/*",
+      ".env",
+      "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
+      "tmp/psychotherapie_seliger.sqlite"
+    ],
+    "targets": ["node22-macos-arm64"]
+  }
+}
