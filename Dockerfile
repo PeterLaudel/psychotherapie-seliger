@@ -34,7 +34,7 @@ ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy from build
-COPY --from=builder --chown=nonroot:nonroot /app/next.config.mjs ./
+COPY --from=builder --chown=nonroot:nonroot /app/next.config.ts ./
 COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/.next ./.next
 COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
