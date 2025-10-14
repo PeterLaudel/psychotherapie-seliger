@@ -1,5 +1,5 @@
 import ServicesRepository from "@/repositories/servicesRepository";
 
-export function getServicesRepository(): ServicesRepository {
-  return new ServicesRepository();
+export function getServicesRepository(): Promise<ServicesRepository> {
+  return Promise.resolve(new ServicesRepository());
 }
