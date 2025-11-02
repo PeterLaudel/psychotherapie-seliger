@@ -3,14 +3,14 @@ import Image from "next/image";
 export default function Therapie() {
   return (
     <div className="text-image">
-      <div className="image w-full h-auto md:h-full md:w-auto">
+      <div className="image w-full h-auto md:h-full md:w-[30vw]">
         <Image
           src="/filler.jpeg"
           alt="Füllbild was den Verlauf der Therapie darstellt"
           width={0}
           height={0}
           sizes="100%"
-          className="w-full h-auto md:h-full md:w-auto md:min-h-[70vh] rounded-[40%]"
+          className="w-full h-auto aspect-[6/9] rounded-[40%]"
         />
       </div>
       <div className="text">

@@ -10,7 +10,7 @@ export default function AboutMe() {
           width={0}
           height={0}
           sizes="100%"
-          className="w-full h-auto md:h-full md:w-auto md:min-h-[60vh] rounded-[50%]"
+          className="w-full h-auto aspect-[3/4] rounded-[50%]"
         />
       </div>
       <div className="text">

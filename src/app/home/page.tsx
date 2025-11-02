@@ -4,6 +4,7 @@ import Contact from "./_components/contact";
 import Costs from "./costs";
 import Therapie from "./therapie";
 import TreatmentSpectrum from "./treatmentSpectrum";
+import Image from "next/image";
 import { graph } from "./structuredData";
 
 export default function Home() {
@@ -15,9 +16,16 @@ export default function Home() {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
       />
-      <div className="flex h-[30vh] md:h-[80vh] bg-[url('/raum.jpeg')] bg-cover bg-center md:bg-fixed text-white">
-        <div className="m-auto grid-flow-row">
-          <h1 className="text-2xl md:text-7xl [text-shadow:1px_1px_1px_rgb(0_0_0/20%)]">
+      <div className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden">
+        <Image
+          src="/raum.jpeg"
+          alt="Praxisraum"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        <div className="relative flex flex-col items-center justify-center h-full text-white text-center px-4">
+          <h1 className="text-2xl md:text-7xl [text-shadow:1px_1px_1px_rgb(0_0_0/20%)] shrink-on-scroll">
             Privatpraxis für Psychotherapie
           </h1>
         </div>
