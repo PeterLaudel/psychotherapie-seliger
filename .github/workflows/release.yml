@@ -34,19 +34,19 @@ jobs:
       - name: Check for release
         id: changesets
         run: |
-          CHANGES=$(npx changeset status --output=json)
+          CHANGES=$(npx changeset status)
           echo "$CHANGES"
-          echo "has_changes=$(echo $CHANGES | jq '.releases | length > 0')" >> $GITHUB_OUTPUT
+          echo "new_version=$([[ -n "$CHANGES" ]] && echo false || echo true)" >> $GITHUB_OUTPUT
 
       # 🧩 Step 2: Build and release only if versions changed
       - name: Build and publish Tauri app
-        if: steps.changesets.outputs.has_changes == 'true'
+        if: steps.changesets.outputs.new_version == 'true'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: v__VERSION__        # Auto uses version from package.json
           releaseName: "v__VERSION__"
-          releaseBody: "🚀 Tauri app release v__VERSION__"
+          releaseBody: "App release v__VERSION__"
           releaseDraft: false
           prerelease: false
