@@ -8,7 +8,7 @@ on:
 jobs:
   release:
     name: Version & Release
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: write
       pull-requests: write
@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,20 +25,24 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: install dependencies (mac only)
+        run: |
+            rustup target add aarch64-apple-darwin
+            brew install vips
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       # 🧩 Step 1: Let Changesets decide if a release is needed
       - name: Check for release
         id: changesets
         run: |
-          CHANGES=$(npx changeset status --output=json)
-          echo "$CHANGES"
-          echo "has_changes=$(echo $CHANGES | jq '.releases | length > 0')" >> $GITHUB_OUTPUT
+          npx changeset status --output=.changeset-status.json
+          echo "needs_release=$(jq '.releases | length == 0' .changeset-status.json)" >> $GITHUB_OUTPUT
 
       # 🧩 Step 2: Build and release only if versions changed
       - name: Build and publish Tauri app
-        if: steps.changesets.outputs.has_changes == 'true'
+        if: steps.changesets.outputs.needs_release == 'true'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,3 +52,5 @@ jobs:
           releaseBody: "🚀 Tauri app release v__VERSION__"
           releaseDraft: false
           prerelease: false
+          tauriScript: npx tauri
+          args: --target aarch64-apple-darwin
