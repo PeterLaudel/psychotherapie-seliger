@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Version & Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      # 🧩 Step 1: Let Changesets decide if a release is needed
+      - name: Check for release
+        id: changesets
+        run: |
+          CHANGES=$(npx changeset status --output=json)
+          echo "$CHANGES"
+          echo "has_changes=$(echo $CHANGES | jq '.releases | length > 0')" >> $GITHUB_OUTPUT
+
+      # 🧩 Step 2: Build and release only if versions changed
+      - name: Build and publish Tauri app
+        if: steps.changesets.outputs.has_changes == 'true'
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__        # Auto uses version from package.json
+          releaseName: "v__VERSION__"
+          releaseBody: "🚀 Tauri app release v__VERSION__"
+          releaseDraft: false
+          prerelease: false
