@@ -33,16 +33,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 🧩 Step 1: Let Changesets decide if a release is needed
-      - name: Check for release
-        id: changesets
-        run: |
-          npx changeset status --output=.changeset-status.json
-          echo "needs_release=$(jq '.releases | length == 0' .changeset-status.json)" >> $GITHUB_OUTPUT
-
       # 🧩 Step 2: Build and release only if versions changed
       - name: Build and publish Tauri app
-        if: steps.changesets.outputs.needs_release == 'true'
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
