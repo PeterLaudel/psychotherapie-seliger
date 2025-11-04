@@ -2,9 +2,9 @@
 
 import Section from "@/components/section";
 import { Service, factorArray } from "@/models/service";
+import { NoSsr } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 90 },
@@ -24,12 +24,7 @@ interface Props {
 }
 
 export default function ServiceList({ services }: Props) {
-  const [didMount, setDidMount] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    setTimeout(() => setDidMount(true));
-  });
 
   const servicesMapped = services.map((service) => ({
     ...service,
@@ -42,19 +37,18 @@ export default function ServiceList({ services }: Props) {
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
       <h1>Leistungen</h1>
       <Section>
-        {didMount && (
+        <NoSsr>
           <DataGrid
             getRowHeight={() => "auto"}
             rows={servicesMapped}
             columns={columns}
-            loading={!didMount}
             disableColumnMenu
             hideFooter
             onRowClick={(params) =>
               router.push(`/administration/services/${params.row.id}`)
             }
           />
-        )}
+        </NoSsr>
       </Section>
     </div>
   );
