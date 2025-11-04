@@ -12,7 +12,7 @@ export default async function Administration() {
   const patientRepository = await getPatientsRepository();
   const patients = await patientRepository.all();
 
-  const servicesRepository = getServicesRepository();
+  const servicesRepository = await getServicesRepository();
   const services = await servicesRepository.all();
 
   const invoiceRepository = await getInvoicesRepository();
