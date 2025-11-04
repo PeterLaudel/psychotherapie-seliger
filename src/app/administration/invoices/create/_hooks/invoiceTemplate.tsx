@@ -241,7 +241,7 @@ export function InvoiceTemplate({
         </View>
         <View style={tw("absolute bottom-8 self-center")} fixed>
           <View style={tw("flex-col items-center")}>
-            <Text style={tw("text-sm")}>Deutsche Apotheker und Ärztebank</Text>
+            <Text style={tw("text-sm")}>{therapeut.bankName}</Text>
             <Text style={tw("text-sm")}>
               {`IBAN: ${therapeut.iban} • Swift/BIC: ${therapeut.bic}`}
             </Text>

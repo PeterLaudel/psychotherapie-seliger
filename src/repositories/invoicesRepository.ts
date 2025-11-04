@@ -1,12 +1,12 @@
 import { getDb } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
-import { th } from "@faker-js/faker";
 
 export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   patientId: number;
   base64Pdf: string;
   invoiceAmount: number;
 };
+
 export class InvoicesRepository {
   constructor(private readonly database = getDb()) {}
 

@@ -1,11 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@mui/material";
+import { Button, NoSsr } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
-import { useEffect, useState } from "react";
 
 interface Props {
   invoices: Invoice[];
@@ -16,21 +15,22 @@ const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
   currency: "EUR",
 });
 
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 90 },
+const columns: GridColDef<Invoice>[] = [
   { field: "invoiceNumber", headerName: "Rechnungsnummer", width: 90 },
   { field: "name", headerName: "Vorname", width: 150 },
   { field: "surname", headerName: "Nachname", width: 150 },
-  { field: "invoiceAmount", headerName: "Betrag", width: 110, valueFormatter: (params) => GermanyCurrencyFormatter.format(params) },
+  {
+    field: "invoiceAmount",
+    headerName: "Betrag",
+    width: 110,
+    valueFormatter: (params) => GermanyCurrencyFormatter.format(params),
+  },
 ];
 
-export function InvoicesList({ invoices }: Props) {
-  const [didMount, setDidMount] = useState(false);
-  const router = useRouter();
 
-  useEffect(() => {
-    setTimeout(() => setDidMount(true));
-  });
+
+export function InvoicesList({ invoices }: Props) {
+  const router = useRouter();
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
@@ -44,7 +44,7 @@ export function InvoicesList({ invoices }: Props) {
               Rechnung anlegen
             </Button>
           </div>
-          {didMount && (
+          <NoSsr>
             <DataGrid
               rows={invoices}
               columns={columns}
@@ -54,7 +54,7 @@ export function InvoicesList({ invoices }: Props) {
                 router.push(`/administration/invoices/${params.row.id}`)
               }
             />
-          )}
+          </NoSsr>
         </div>
       </Section>
     </div>

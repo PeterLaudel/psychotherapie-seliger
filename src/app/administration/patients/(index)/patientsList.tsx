@@ -1,18 +1,16 @@
 "use client";
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { Button, NoSsr } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Section from "@/components/section";
 import { Patient } from "@/models/patient";
-import { useEffect, useState } from "react";
 
 interface Props {
   patients: Patient[];
 }
 
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 90 },
+const columns: GridColDef<Patient>[] = [
   { field: "name", headerName: "Name", width: 150 },
   { field: "surname", headerName: "Surname", width: 150 },
   { field: "email", headerName: "Email", width: 200 },
@@ -20,12 +18,7 @@ const columns: GridColDef[] = [
 ];
 
 export default function PatientsList({ patients }: Props) {
-  const [didMount, setDidMount] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    setTimeout(() => setDidMount(true));
-  }, []);
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
@@ -40,7 +33,7 @@ export default function PatientsList({ patients }: Props) {
               Patienten anlegen
             </Button>
           </div>
-          {didMount && (
+          <NoSsr>
             <DataGrid
               rows={patients}
               columns={columns}
@@ -51,7 +44,7 @@ export default function PatientsList({ patients }: Props) {
               }}
               getRowId={(row) => row.id}
             />
-          )}
+          </NoSsr>
         </div>
       </Section>
     </div>
