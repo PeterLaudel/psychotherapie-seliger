@@ -1,5 +1,6 @@
 import { getDb } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
+import { th } from "@faker-js/faker";
 
 export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   patientId: number;
@@ -7,26 +8,27 @@ export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
   invoiceAmount: number;
 };
 export class InvoicesRepository {
-  constructor(private readonly database = getDb()) { }
+  constructor(private readonly database = getDb()) {}
 
   public async create(invoice: InvoiceCreate): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
       const createdInvoice = await trx
         .insertInto("invoices")
-        .values(
-          {
-            invoiceNumber: invoice.invoiceNumber,
-            base64Pdf: invoice.base64Pdf,
-            invoiceAmount: invoice.invoiceAmount,
-          }
-        )
+        .values({
+          invoiceNumber: invoice.invoiceNumber,
+          base64Pdf: invoice.base64Pdf,
+          invoiceAmount: invoice.invoiceAmount,
+        })
         .returning(["id", "invoiceNumber", "base64Pdf", "invoiceAmount"])
         .executeTakeFirstOrThrow();
 
-      await trx.insertInto("patientInvoices").values({
-        patientId: invoice.patientId,
-        invoiceId: createdInvoice.id,
-      }).executeTakeFirstOrThrow();
+      await trx
+        .insertInto("patientInvoices")
+        .values({
+          patientId: invoice.patientId,
+          invoiceId: createdInvoice.id,
+        })
+        .executeTakeFirstOrThrow();
 
       const patient = await trx
         .selectFrom("patients")
@@ -43,36 +45,19 @@ export class InvoicesRepository {
   }
 
   public async find(id: number): Promise<Invoice> {
-    return await this.database
-      .selectFrom("invoices")
-      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
-      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
-      .select([
-        "patients.name as name",
-        "patients.surname as surname",
-        "invoices.id as id",
-        "invoices.invoiceNumber as invoiceNumber",
-        "invoices.base64Pdf as base64Pdf",
-        "invoices.invoiceAmount as invoiceAmount",
-      ])
+    return this.modelSelector()
       .where("invoices.id", "=", id)
       .executeTakeFirstOrThrow();
   }
 
+  public async findByInvoiceNumber(invoiceNumber: string): Promise<Invoice> {
+    return this.modelSelector()
+      .where("invoices.invoiceNumber", "=", invoiceNumber)
+      .executeTakeFirstOrThrow();
+  }
+
   public async all(): Promise<Invoice[]> {
-    return await this.database
-      .selectFrom("invoices")
-      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
-      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
-      .select([
-        "patients.name as name",
-        "patients.surname as surname",
-        "invoices.id as id",
-        "invoices.invoiceNumber as invoiceNumber",
-        "invoices.base64Pdf as base64Pdf",
-        "invoices.invoiceAmount as invoiceAmount",
-      ])
-      .execute();
+    return this.modelSelector().execute();
   }
 
   public async generateInvoiceNumber() {
@@ -87,5 +72,20 @@ export class InvoicesRepository {
     const isoDate = currentDate.toISOString().split("T")[0];
 
     return `${isoDate.replace(/-/g, "")}${next_id}`;
+  }
+
+  private modelSelector() {
+    return this.database
+      .selectFrom("invoices")
+      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
+      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
+      .select([
+        "patients.name as name",
+        "patients.surname as surname",
+        "invoices.id as id",
+        "invoices.invoiceNumber as invoiceNumber",
+        "invoices.base64Pdf as base64Pdf",
+        "invoices.invoiceAmount as invoiceAmount",
+      ]);
   }
 }
