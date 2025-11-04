@@ -4,15 +4,26 @@ import Section from "@/components/section";
 import SubmitButton from "@/components/submitButton";
 import { Service } from "@/models/service";
 import { TextField } from "@mui/material";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import saveService from "./action";
+import { useSnackbar } from "@/contexts/snackbarProvider";
+import { useRouter } from "next/navigation";
 
 interface Props {
   service: Service;
 }
 
 export default function ServiceForm({ service }: Props) {
+  const { showSuccessMessage } = useSnackbar();
+  const router = useRouter();
   const [state, action, pending] = useActionState(saveService, null);
+
+  useEffect(() => {
+    if (state?.success) {
+      showSuccessMessage("Service gespeichert");
+      router.push("/administration/services");
+    }
+  }, [state?.success, showSuccessMessage, router]);
 
   return (
     <div className="m-4">
@@ -30,8 +41,7 @@ export default function ServiceForm({ service }: Props) {
             variant="filled"
             className="w-full"
           />
-          <SubmitButton submitting={pending}>Speichern</SubmitButton>
-          {state?.success && "Fertsch"}
+          <SubmitButton submitting={pending || !!state}>Speichern</SubmitButton>
         </Section>
       </form>
     </div>

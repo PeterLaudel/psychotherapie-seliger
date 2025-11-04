@@ -1,6 +1,7 @@
 "use server";
 
 import { getServicesRepository } from "@/server";
+import { revalidatePath } from "next/cache";
 
 type SaveServiceResult = { success: boolean; message?: string };
 
@@ -21,7 +22,12 @@ export default async function saveService(
   const servicesRepository = await getServicesRepository();
   const service = await servicesRepository.find(object.id);
 
-  await servicesRepository.save({ ...service, description: object.description });
+  await servicesRepository.save({
+    ...service,
+    description: object.description,
+  });
+
+  revalidatePath("/administration/services");
 
   return { success: true, message: "Service saved" };
 }
