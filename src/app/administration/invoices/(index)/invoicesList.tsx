@@ -6,7 +6,6 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
 import { InvoiceAction } from "./invoiceAction";
-import { I } from "node_modules/@faker-js/faker/dist/airline-CLphikKp";
 
 interface Props {
   invoices: Invoice[];

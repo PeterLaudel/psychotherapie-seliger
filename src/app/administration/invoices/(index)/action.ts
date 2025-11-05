@@ -17,7 +17,7 @@ export async function sendInvoiceEmail(invoiceId: number) {
 
   const transporter = await createTransport();
 
-  const info = await transporter.sendMail({
+  await transporter.sendMail({
     from: `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`,
     to: `${invoice.name} ${invoice.surname} <${invoice.email}>`,
     subject: `Ihre Rechnung ${invoice.invoiceNumber}`,
@@ -30,8 +30,6 @@ export async function sendInvoiceEmail(invoiceId: number) {
       },
     ],
   });
-
-  console.log("Message sent: %s", nodemailer.getTestMessageUrl(info));
 }
 
 async function createTransport() {

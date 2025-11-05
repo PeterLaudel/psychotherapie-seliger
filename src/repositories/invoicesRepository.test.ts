@@ -4,7 +4,6 @@ import { patientFactory } from "../../factories/patient";
 import { getDb } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
-import { email } from "zod";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
