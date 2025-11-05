@@ -5,4 +5,5 @@ export interface Invoice {
   invoiceAmount: number;
   name: string;
   surname: string;
+  email: string;
 }

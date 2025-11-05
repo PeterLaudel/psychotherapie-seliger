@@ -4,6 +4,7 @@ import { patientFactory } from "../../factories/patient";
 import { getDb } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
+import { email } from "zod";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
@@ -28,6 +29,7 @@ describe("InvoicesRepository", () => {
         ...invoiceAttributes,
         name: patient.name,
         surname: patient.surname,
+        email: patient.billingInfo.email,
       });
     });
   });

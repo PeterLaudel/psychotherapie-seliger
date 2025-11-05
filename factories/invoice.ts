@@ -14,6 +14,7 @@ export const invoiceFactory = Factory.define<Omit<Invoice, "id">, unknown, Invoi
   name: faker.person.firstName(),
   surname: faker.person.lastName(),
   invoiceAmount: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
+  email: faker.internet.email(),
 })).onCreate(async (invoice) => {
   const result = await getDb()
     .insertInto("invoices")
@@ -31,6 +32,7 @@ export const invoiceFactory = Factory.define<Omit<Invoice, "id">, unknown, Invoi
     ...result,
     name: invoice.name,
     surname: invoice.surname,
+    email: invoice.email,
     invoiceNumber: result.invoiceNumber,
     base64Pdf: result.base64Pdf,
   }

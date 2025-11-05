@@ -1,7 +1,10 @@
 import { getDb } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 
-export type InvoiceCreate = Omit<Invoice, "id" | "name" | "surname"> & {
+export type InvoiceCreate = Omit<
+  Invoice,
+  "id" | "name" | "surname" | "email"
+> & {
   patientId: number;
   base64Pdf: string;
   invoiceAmount: number;
@@ -40,6 +43,7 @@ export class InvoicesRepository {
         ...createdInvoice,
         name: patient.name,
         surname: patient.surname,
+        email: patient.billingEmail,
       };
     });
   }
@@ -82,6 +86,7 @@ export class InvoicesRepository {
       .select([
         "patients.name as name",
         "patients.surname as surname",
+        "patients.billingEmail as email",
         "invoices.id as id",
         "invoices.invoiceNumber as invoiceNumber",
         "invoices.base64Pdf as base64Pdf",
