@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.1.3
+
+### Patch Changes
+
+- 04f64e0: Improve app login
+
 ## 0.1.2
 
 ### Patch Changes
