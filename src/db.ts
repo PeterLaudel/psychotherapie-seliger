@@ -31,6 +31,7 @@ interface InvoicesTable {
   invoiceNumber: string;
   base64Pdf: string;
   invoiceAmount: number;
+  status: "pending" | "sent" | "paid";
 }
 
 interface PatientInvoiceTable {

@@ -1,6 +1,7 @@
 "use server";
 
 import { getInvoicesRepository, getTherapeutsRepository } from "@/server";
+import { revalidatePath } from "next/cache";
 
 import * as nodemailer from "nodemailer";
 
@@ -9,14 +10,9 @@ export async function sendInvoiceEmail(invoiceId: number) {
   const invoice = await invoicesRepository.find(invoiceId);
 
   const therapistsRepository = await getTherapeutsRepository();
-  const therapeut = await therapistsRepository.all().then(t => t[0]);
-
-  if (!invoice) {
-    throw new Error("Invoice not found");
-  }
+  const therapeut = await therapistsRepository.all().then((t) => t[0]);
 
   const transporter = await createTransport();
-
   await transporter.sendMail({
     from: `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`,
     to: `${invoice.name} ${invoice.surname} <${invoice.email}>`,
@@ -30,10 +26,12 @@ export async function sendInvoiceEmail(invoiceId: number) {
       },
     ],
   });
+
+  await invoicesRepository.save({ ...invoice, status: "sent" });
+  revalidatePath("/administration/invoices");
 }
 
 async function createTransport() {
-
   const testAccount = await nodemailer.createTestAccount();
   return nodemailer.createTransport({
     host: "smtp.ethereal.email",
@@ -41,7 +39,7 @@ async function createTransport() {
     secure: false,
     auth: {
       user: testAccount.user,
-      pass: testAccount.pass
+      pass: testAccount.pass,
     },
   });
 }

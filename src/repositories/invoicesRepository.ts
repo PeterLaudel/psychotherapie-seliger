@@ -1,50 +1,43 @@
 import { getDb } from "@/initialize";
 import type { Invoice } from "@/models/invoice";
 
-export type InvoiceCreate = Omit<
-  Invoice,
-  "id" | "name" | "surname" | "email"
-> & {
+export type InvoiceCreate = {
   patientId: number;
   base64Pdf: string;
+  invoiceNumber: string;
   invoiceAmount: number;
+  status: "pending" | "sent" | "paid";
 };
+
+type InvoiceUpdate = {
+  id: number;
+  base64Pdf: string;
+  invoiceAmount: number;
+  invoiceNumber: string;
+  status: "pending" | "sent" | "paid";
+};
+
+type InvoiceSave = InvoiceCreate | InvoiceUpdate;
 
 export class InvoicesRepository {
   constructor(private readonly database = getDb()) {}
 
-  public async create(invoice: InvoiceCreate): Promise<Invoice> {
+  public async save(invoice: InvoiceSave): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
-      const createdInvoice = await trx
-        .insertInto("invoices")
-        .values({
-          invoiceNumber: invoice.invoiceNumber,
-          base64Pdf: invoice.base64Pdf,
-          invoiceAmount: invoice.invoiceAmount,
-        })
-        .returning(["id", "invoiceNumber", "base64Pdf", "invoiceAmount"])
-        .executeTakeFirstOrThrow();
+      const createdInvoice = await this.upsertQuery(invoice, trx);
+      if ("id" in invoice === false) {
+        await trx
+          .insertInto("patientInvoices")
+          .values({
+            patientId: invoice.patientId,
+            invoiceId: createdInvoice.id,
+          })
+          .executeTakeFirstOrThrow();
+      }
 
-      await trx
-        .insertInto("patientInvoices")
-        .values({
-          patientId: invoice.patientId,
-          invoiceId: createdInvoice.id,
-        })
+      return this.modelSelector(trx)
+        .where("invoices.id", "=", createdInvoice.id)
         .executeTakeFirstOrThrow();
-
-      const patient = await trx
-        .selectFrom("patients")
-        .selectAll()
-        .where("id", "=", invoice.patientId)
-        .executeTakeFirstOrThrow();
-
-      return {
-        ...createdInvoice,
-        name: patient.name,
-        surname: patient.surname,
-        email: patient.billingEmail,
-      };
     });
   }
 
@@ -78,8 +71,8 @@ export class InvoicesRepository {
     return `${isoDate.replace(/-/g, "")}${next_id}`;
   }
 
-  private modelSelector() {
-    return this.database
+  private modelSelector(transaction: ReturnType<typeof getDb> = this.database) {
+    return transaction
       .selectFrom("invoices")
       .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
       .innerJoin("patients", "patients.id", "patientInvoices.patientId")
@@ -91,6 +84,33 @@ export class InvoicesRepository {
         "invoices.invoiceNumber as invoiceNumber",
         "invoices.base64Pdf as base64Pdf",
         "invoices.invoiceAmount as invoiceAmount",
+        "invoices.status as status",
       ]);
+  }
+
+  private async upsertQuery(
+    invoice: InvoiceSave,
+    transaction: ReturnType<typeof getDb> = this.database
+  ) {
+    const data = {
+      invoiceNumber: invoice.invoiceNumber,
+      base64Pdf: invoice.base64Pdf,
+      invoiceAmount: invoice.invoiceAmount,
+      status: invoice.status,
+    };
+    if ("id" in invoice) {
+      return transaction
+        .updateTable("invoices")
+        .where("id", "=", invoice.id)
+        .set(data)
+        .returningAll()
+        .executeTakeFirstOrThrow();
+    } else {
+      return transaction
+        .insertInto("invoices")
+        .values(data)
+        .returningAll()
+        .executeTakeFirstOrThrow();
+    }
   }
 }

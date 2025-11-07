@@ -6,6 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
 import { InvoiceAction } from "./invoiceAction";
+import { InvoiceStatus } from "./invoiceStatus";
 
 interface Props {
   invoices: Invoice[];
@@ -27,10 +28,18 @@ const columns: GridColDef<Invoice>[] = [
     valueFormatter: (params) => GermanyCurrencyFormatter.format(params),
   },
   {
+    field: "status",
+    headerName: "Status",
+    flex: 1,
+    align: "center",
+    renderCell: (params) => <InvoiceStatus invoice={params.row} />,
+  },
+  {
     field: "action",
-    headerName: "Aktion",
+    headerName: "",
     renderCell: (params) => <InvoiceAction invoice={params.row} />,
     flex: 1,
+    align: "right",
   },
 ];
 
@@ -55,6 +64,13 @@ export function InvoicesList({ invoices }: Props) {
               columns={columns}
               disableColumnMenu
               hideFooter
+              onRowClick={(params, event) => {
+                const tartget = event.target as HTMLElement;
+                if (tartget.closest("button") || tartget.closest("a")) {
+                  return;
+                }
+                router.push(`/administration/invoices/${params.row.id}`);
+              }}
             />
           </NoSsr>
         </div>

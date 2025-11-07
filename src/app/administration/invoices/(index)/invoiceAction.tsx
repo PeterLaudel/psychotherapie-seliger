@@ -1,7 +1,6 @@
 import { Invoice } from "@/models/invoice";
 import { IconButton } from "@mui/material";
-import { Delete, Send, Visibility } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
+import { Delete, Download, Send } from "@mui/icons-material";
 import { sendInvoiceEmail } from "./action";
 
 interface Props {
@@ -9,21 +8,23 @@ interface Props {
 }
 
 export function InvoiceAction({ invoice }: Props) {
-  const router = useRouter();
-
   return (
-    <div>
+    <>
+      {invoice.status === "pending" && (
+        <IconButton onClick={async () => sendInvoiceEmail(invoice.id)}>
+          <Send />
+        </IconButton>
+      )}
       <IconButton
-        onClick={() => router.push(`/administration/invoices/${invoice.id}`)}
+        href={`/api/invoices/${invoice.invoiceNumber}`}
+        target="_blank"
+        download={true}
       >
-        <Visibility />
-      </IconButton>
-      <IconButton onClick={() => sendInvoiceEmail(invoice.id)}>
-        <Send />
+        <Download />
       </IconButton>
       <IconButton>
         <Delete />
       </IconButton>
-    </div>
+    </>
   );
 }
