@@ -47,6 +47,13 @@ export class InvoicesRepository {
       .executeTakeFirstOrThrow();
   }
 
+  public async delete(id: number): Promise<void> {
+    await this.database
+      .deleteFrom("patientInvoices")
+      .where("invoiceId", "=", id)
+      .execute();
+  }
+
   public async findByInvoiceNumber(invoiceNumber: string): Promise<Invoice> {
     return this.modelSelector()
       .where("invoices.invoiceNumber", "=", invoiceNumber)

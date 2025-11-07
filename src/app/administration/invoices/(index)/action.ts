@@ -31,6 +31,21 @@ export async function sendInvoiceEmail(invoiceId: number) {
   revalidatePath("/administration/invoices");
 }
 
+export async function markInvoiceAsPaid(invoiceId: number) {
+  const invoicesRepository = await getInvoicesRepository();
+  const invoice = await invoicesRepository.find(invoiceId);
+
+  await invoicesRepository.save({ ...invoice, status: "paid" });
+  revalidatePath("/administration/invoices");
+}
+
+export async function deleteInvoice(invoiceId: number) {
+  const invoicesRepository = await getInvoicesRepository();
+  await invoicesRepository.delete(invoiceId);
+
+  revalidatePath("/administration/invoices");  
+}
+
 async function createTransport() {
   const testAccount = await nodemailer.createTestAccount();
   return nodemailer.createTransport({
