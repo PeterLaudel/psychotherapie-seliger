@@ -26,7 +26,7 @@ interface PatientTable {
   billingZip: string;
 }
 
-interface InvoicesTable {
+export interface InvoicesTable {
   id: Generated<number>;
   invoiceNumber: string;
   base64Pdf: string;
@@ -34,7 +34,7 @@ interface InvoicesTable {
   status: "pending" | "sent" | "paid";
 }
 
-interface PatientInvoiceTable {
+export interface PatientInvoiceTable {
   id: Generated<number>;
   patientId: number;
   invoiceId: number;

@@ -13,7 +13,7 @@ export async function sendInvoiceEmail(invoiceId: number) {
   const therapeut = await therapistsRepository.all().then((t) => t[0]);
 
   const transporter = createTransport();
-  await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`,
     to: `${invoice.name} ${invoice.surname} <${invoice.email}>`,
     subject: `Ihre Rechnung ${invoice.invoiceNumber}`,
@@ -26,6 +26,8 @@ export async function sendInvoiceEmail(invoiceId: number) {
       },
     ],
   });
+
+  global.lastEmailPreviewUrl = nodemailer.getTestMessageUrl(info) || null;
 
   await invoicesRepository.save({ ...invoice, status: "sent" });
   revalidatePath("/administration/invoices");
@@ -57,8 +59,8 @@ export async function markInvoiceAsSent(invoiceId: number) {
 
 export async function deleteInvoice(invoiceId: number) {
   const invoicesRepository = await getInvoicesRepository();
-  await invoicesRepository.delete(invoiceId);
 
+  await invoicesRepository.delete(invoiceId);
   revalidatePath("/administration/invoices");
 }
 
@@ -72,3 +74,4 @@ function createTransport() {
     },
   });
 }
+

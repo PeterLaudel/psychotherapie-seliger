@@ -27,6 +27,7 @@ function SendButton({ invoice }: { invoice: Invoice }) {
       <IconButton
         onClick={() => setOpen((isOpen) => !isOpen)}
         disabled={isPending}
+        aria-label="Rechnung senden"
       >
         {!isPending && <Send />}
         {isPending && <CircularProgress size={"1em"} color="inherit" />}

@@ -4,6 +4,7 @@ import { patientFactory } from "../../factories/patient";
 import { getDb } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
+import { patientInvoiceFactory } from "factories/patientInvoice";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
@@ -13,8 +14,6 @@ describe("InvoicesRepository", () => {
       const patient = await patientFactory.create();
       const invoiceAttributes = invoiceFactory.build({
         invoiceNumber: "202310031",
-        name: patient.name,
-        surname: patient.surname,
       });
 
       const createdInvoice = await invoicesRepository.save({
@@ -37,20 +36,14 @@ describe("InvoicesRepository", () => {
 
     it("updates an existing invoice", async () => {
       const patient = await patientFactory.create();
-      const invoiceAttributes = invoiceFactory.build({
-        invoiceNumber: "202310032",
-        name: patient.name,
-        surname: patient.surname,
-      });
-
-      const createdInvoice = await invoicesRepository.save({
+      const createdInvoice = await invoiceFactory.create();
+      await patientInvoiceFactory.create({
         patientId: patient.id,
-        ...invoiceAttributes,
-        base64Pdf: "data:application/pdf;base64,example",
+        invoiceId: createdInvoice.id,
       });
 
       const updatedInvoice = await invoicesRepository.save({
-        id: createdInvoice.id,
+        ...createdInvoice,
         base64Pdf: "data:application/pdf;base64,updated-example",
         invoiceAmount: 200,
         invoiceNumber: "202310032",
