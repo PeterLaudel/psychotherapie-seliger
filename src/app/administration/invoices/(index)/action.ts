@@ -12,7 +12,7 @@ export async function sendInvoiceEmail(invoiceId: number) {
   const therapistsRepository = await getTherapeutsRepository();
   const therapeut = await therapistsRepository.all().then((t) => t[0]);
 
-  const transporter = await createTransport();
+  const transporter = createTransport();
   await transporter.sendMail({
     from: `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`,
     to: `${invoice.name} ${invoice.surname} <${invoice.email}>`,
@@ -31,6 +31,14 @@ export async function sendInvoiceEmail(invoiceId: number) {
   revalidatePath("/administration/invoices");
 }
 
+export async function markInvoiceAsPending(invoiceId: number) {
+  const invoicesRepository = await getInvoicesRepository();
+  const invoice = await invoicesRepository.find(invoiceId);
+
+  await invoicesRepository.save({ ...invoice, status: "pending" });
+  revalidatePath("/administration/invoices");
+}
+
 export async function markInvoiceAsPaid(invoiceId: number) {
   const invoicesRepository = await getInvoicesRepository();
   const invoice = await invoicesRepository.find(invoiceId);
@@ -39,22 +47,28 @@ export async function markInvoiceAsPaid(invoiceId: number) {
   revalidatePath("/administration/invoices");
 }
 
+export async function markInvoiceAsSent(invoiceId: number) {
+  const invoicesRepository = await getInvoicesRepository();
+  const invoice = await invoicesRepository.find(invoiceId);
+
+  await invoicesRepository.save({ ...invoice, status: "sent" });
+  revalidatePath("/administration/invoices");
+}
+
 export async function deleteInvoice(invoiceId: number) {
   const invoicesRepository = await getInvoicesRepository();
   await invoicesRepository.delete(invoiceId);
 
-  revalidatePath("/administration/invoices");  
+  revalidatePath("/administration/invoices");
 }
 
-async function createTransport() {
-  const testAccount = await nodemailer.createTestAccount();
+function createTransport() {
   return nodemailer.createTransport({
     host: "smtp.ethereal.email",
     port: 587,
-    secure: false,
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
+      user: "ashton.wintheiser50@ethereal.email",
+      pass: "NvATwt9d9T6KZDj4QB",
     },
   });
 }
