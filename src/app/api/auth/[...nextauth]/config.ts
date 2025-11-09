@@ -59,6 +59,7 @@ export const authOptions: AuthOptions = {
       return {
         ...session,
         accessToken: token.accessToken,
+        refreshToken: token.refreshToken,
       };
     },
   },

@@ -5,10 +5,9 @@ declare global {
 }
 
 export function GET() {
-  // redirect to the last email URL if it exists
   if (global.lastEmailPreviewUrl) {
     const url = global.lastEmailPreviewUrl;
-    global.lastEmailPreviewUrl = null; // reset after redirecting
+    global.lastEmailPreviewUrl = null;
     return NextResponse.redirect(url);
   }
 

@@ -9,3 +9,15 @@ export function sqliteUrl(): string {
 export function environment(): string {
   return process.env.NODE_ENV || "";
 }
+
+export function isProduction(): boolean {
+  return environment() === "production";
+}
+
+export function isDevelopment(): boolean {
+  return environment() === "development";
+}
+
+export function isE2E(): boolean {
+  return environment() === "e2e";
+}
