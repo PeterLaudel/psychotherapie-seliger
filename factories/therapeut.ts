@@ -1,5 +1,5 @@
 import { Factory } from "fishery";
-import { getDb } from "../src/initialize";
+import { getDb } from "@/initialize";
 import type { Therapeut } from "@/models/therapeut";
 import { faker } from "@faker-js/faker";
 

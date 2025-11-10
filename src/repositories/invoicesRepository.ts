@@ -1,5 +1,7 @@
 import { getDb } from "@/initialize";
-import type { Invoice } from "@/models/invoice";
+import { InvoicePosition, type Invoice } from "@/models/invoice";
+import { Expression, sql } from "kysely";
+import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
 
 export type InvoiceCreate = {
   patientId: number;
@@ -7,6 +9,7 @@ export type InvoiceCreate = {
   invoiceNumber: string;
   invoiceAmount: number;
   status: "pending" | "sent" | "paid";
+  positions: InvoicePosition[];
 };
 
 type InvoiceUpdate = {
@@ -15,6 +18,7 @@ type InvoiceUpdate = {
   invoiceAmount: number;
   invoiceNumber: string;
   status: "pending" | "sent" | "paid";
+  positions: InvoicePosition[];
 };
 
 type InvoiceSave = InvoiceCreate | InvoiceUpdate;
@@ -24,19 +28,21 @@ export class InvoicesRepository {
 
   public async save(invoice: InvoiceSave): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
-      const createdInvoice = await this.upsertQuery(invoice, trx);
+      const { id } = await this.upsertInvoice(invoice, trx);
+      await this.upsertPositions(id, invoice.positions, trx);
       if ("id" in invoice === false) {
         await trx
           .insertInto("patientInvoices")
           .values({
             patientId: invoice.patientId,
-            invoiceId: createdInvoice.id,
+            invoiceId: id,
           })
           .executeTakeFirstOrThrow();
       }
 
+
       return this.modelSelector(trx)
-        .where("invoices.id", "=", createdInvoice.id)
+        .where("invoices.id", "=", id)
         .executeTakeFirstOrThrow();
     });
   }
@@ -83,7 +89,7 @@ export class InvoicesRepository {
       .selectFrom("invoices")
       .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
       .innerJoin("patients", "patients.id", "patientInvoices.patientId")
-      .select([
+      .select(({ ref }) => [
         "patients.name as name",
         "patients.surname as surname",
         "patients.billingEmail as email",
@@ -92,10 +98,13 @@ export class InvoicesRepository {
         "invoices.base64Pdf as base64Pdf",
         "invoices.invoiceAmount as invoiceAmount",
         "invoices.status as status",
+        this.selectPositions(ref("invoices.id"))
+          .$castTo<InvoicePosition[]>()
+          .as("positions"),
       ]);
   }
 
-  private async upsertQuery(
+  private async upsertInvoice(
     invoice: InvoiceSave,
     transaction: ReturnType<typeof getDb> = this.database
   ) {
@@ -119,5 +128,75 @@ export class InvoicesRepository {
         .returningAll()
         .executeTakeFirstOrThrow();
     }
+  }
+
+  private selectPositions(invoiceId: Expression<number>) {
+    return jsonArrayFrom(
+      this.database
+        .selectFrom("invoicePositions")
+        .select(({ ref }) => [
+          "invoicePositions.serviceDate as serviceDate",
+          sql<boolean>`invoicePositions.pageBreak != 0`.as("pageBreak"),
+          "invoicePositions.amount as amount",
+          "invoicePositions.factor as factor",
+          this.selectService(ref("invoicePositions.serviceId"))
+            .$notNull()
+            .as("service"),
+        ])
+        .whereRef("invoicePositions.invoiceId", "=", invoiceId)
+    );
+  }
+
+  private selectService(serviceId: Expression<number>) {
+    return jsonObjectFrom(
+      this.database
+        .selectFrom("services")
+        .whereRef("services.id", "=", serviceId)
+        .select(({ ref }) => [
+          "id",
+          "short",
+          "originalGopNr",
+          "description",
+          "note",
+          "points",
+          this.selectAmounts(ref("services.id")).as("amounts"),
+        ])
+    );
+  }
+
+  private selectAmounts(serviceId: Expression<number>) {
+    return jsonArrayFrom(
+      this.database
+        .selectFrom("serviceAmounts")
+        .select(["factor", "price"])
+        .whereRef("serviceAmounts.serviceId", "=", serviceId)
+    );
+  }
+
+  private async upsertPositions(
+    invoiceId: number,
+    positions: InvoicePosition[],
+    transaction = this.database
+  ) {
+    await transaction
+      .deleteFrom("invoicePositions")
+      .where("invoicePositions.invoiceId", "=", invoiceId)
+      .execute();
+
+    return Promise.all(
+      positions.map((position) =>
+        transaction
+          .insertInto("invoicePositions")
+          .values({
+            serviceId: position.service.id,
+            serviceDate: position.serviceDate,
+            amount: position.amount,
+            factor: position.factor,
+            pageBreak: Number(position.pageBreak),
+            invoiceId: invoiceId,
+          })
+          .execute()
+      )
+    );
   }
 }

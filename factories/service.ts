@@ -1,5 +1,5 @@
 import { Factory } from "fishery";
-import { getDb } from "../src/initialize";
+import { getDb } from "@/initialize";
 import type { Service } from "@/models/service";
 
 export const serviceFactory = Factory.define<

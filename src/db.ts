@@ -3,6 +3,7 @@ import { Generated } from "kysely";
 export interface Database {
   patients: PatientTable;
   invoices: InvoicesTable;
+  invoicePositions: InvoicePositionsTable;
   patientInvoices: PatientInvoiceTable;
   services: ServicesTable;
   serviceAmounts: ServiceAmountsTable;
@@ -32,6 +33,16 @@ export interface InvoicesTable {
   base64Pdf: string;
   invoiceAmount: number;
   status: "pending" | "sent" | "paid";
+}
+
+export interface InvoicePositionsTable {
+  id: Generated<number>;
+  invoiceId: number;
+  serviceId: number;
+  serviceDate: string;
+  pageBreak: number;
+  amount: number;
+  factor: "1.0" | "1.8" | "2.3";
 }
 
 export interface PatientInvoiceTable {

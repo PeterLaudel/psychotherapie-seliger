@@ -11,7 +11,7 @@ import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
-import { Service } from "@/models/service";
+import { Factor, Service } from "@/models/service";
 import { Patient } from "@/models/patient";
 import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
@@ -70,6 +70,13 @@ export default function InvoiceForm({
           0
         ),
         status: "pending",
+        positions: values.invoicePositions.map((position) => ({
+          serviceDate: position.serviceDate!,
+          service: position.service!,
+          amount: position.amount,
+          factor: position.factor! as Factor,
+          pageBreak: position.pageBreak!,
+        })),
       });
       showSuccessMessage(true);
       form.restart(initialValues);
