@@ -5,4 +5,6 @@ export interface Invoice {
   invoiceAmount: number;
   name: string;
   surname: string;
+  email: string;
+  status: "pending" | "sent" | "paid";
 }

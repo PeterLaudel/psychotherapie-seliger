@@ -5,6 +5,8 @@ import { Button, NoSsr } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
+import { InvoiceAction } from "./invoiceAction";
+import { InvoiceStatus } from "./invoiceStatus";
 
 interface Props {
   invoices: Invoice[];
@@ -16,18 +18,30 @@ const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
 });
 
 const columns: GridColDef<Invoice>[] = [
-  { field: "invoiceNumber", headerName: "Rechnungsnummer", width: 90 },
-  { field: "name", headerName: "Vorname", width: 150 },
-  { field: "surname", headerName: "Nachname", width: 150 },
+  { field: "invoiceNumber", headerName: "Rechnungsnummer", flex: 1 },
+  { field: "name", headerName: "Vorname", flex: 1 },
+  { field: "surname", headerName: "Nachname", flex: 1 },
   {
     field: "invoiceAmount",
     headerName: "Betrag",
     width: 110,
     valueFormatter: (params) => GermanyCurrencyFormatter.format(params),
   },
+  {
+    field: "status",
+    headerName: "Status",
+    flex: 1,
+    align: "center",
+    renderCell: (params) => <InvoiceStatus invoice={params.row} />,
+  },
+  {
+    field: "action",
+    headerName: "",
+    renderCell: (params) => <InvoiceAction invoice={params.row} />,
+    flex: 1,
+    align: "right",
+  },
 ];
-
-
 
 export function InvoicesList({ invoices }: Props) {
   const router = useRouter();
@@ -45,14 +59,18 @@ export function InvoicesList({ invoices }: Props) {
             </Button>
           </div>
           <NoSsr>
-            <DataGrid
+            <DataGrid<Invoice>
               rows={invoices}
               columns={columns}
               disableColumnMenu
               hideFooter
-              onRowClick={(params) =>
-                router.push(`/administration/invoices/${params.row.id}`)
-              }
+              onRowClick={(params, event) => {
+                const tartget = event.target as HTMLElement;
+                if (tartget.closest("button") || tartget.closest("a")) {
+                  return;
+                }
+                router.push(`/administration/invoices/${params.row.id}`);
+              }}
             />
           </NoSsr>
         </div>

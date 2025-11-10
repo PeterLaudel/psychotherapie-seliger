@@ -69,6 +69,7 @@ export default function InvoiceForm({
           (sum, pos) => sum + pos.price!,
           0
         ),
+        status: "pending",
       });
       showSuccessMessage(true);
       form.restart(initialValues);

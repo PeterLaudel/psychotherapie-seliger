@@ -4,20 +4,19 @@ import { patientFactory } from "../../factories/patient";
 import { getDb } from "../initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
+import { patientInvoiceFactory } from "factories/patientInvoice";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
 
-  describe("#create", () => {
+  describe("#save", () => {
     it("creates a new invoice", async () => {
       const patient = await patientFactory.create();
       const invoiceAttributes = invoiceFactory.build({
         invoiceNumber: "202310031",
-        name: patient.name,
-        surname: patient.surname,
       });
 
-      const createdInvoice = await invoicesRepository.create({
+      const createdInvoice = await invoicesRepository.save({
         patientId: patient.id,
         ...invoiceAttributes,
         base64Pdf: "data:application/pdf;base64,example",
@@ -25,9 +24,41 @@ describe("InvoicesRepository", () => {
 
       expect(createdInvoice).toEqual({
         id: expect.any(Number),
-        ...invoiceAttributes,
+        invoiceNumber: "202310031",
+        base64Pdf: "data:application/pdf;base64,example",
+        invoiceAmount: invoiceAttributes.invoiceAmount,
+        status: "pending",
         name: patient.name,
         surname: patient.surname,
+        email: patient.billingInfo.email,
+      });
+    });
+
+    it("updates an existing invoice", async () => {
+      const patient = await patientFactory.create();
+      const createdInvoice = await invoiceFactory.create();
+      await patientInvoiceFactory.create({
+        patientId: patient.id,
+        invoiceId: createdInvoice.id,
+      });
+
+      const updatedInvoice = await invoicesRepository.save({
+        ...createdInvoice,
+        base64Pdf: "data:application/pdf;base64,updated-example",
+        invoiceAmount: 200,
+        invoiceNumber: "202310032",
+        status: "sent",
+      });
+
+      expect(updatedInvoice).toEqual({
+        id: createdInvoice.id,
+        name: patient.name,
+        surname: patient.surname,
+        email: patient.billingInfo.email,
+        invoiceNumber: "202310032",
+        base64Pdf: "data:application/pdf;base64,updated-example",
+        invoiceAmount: 200,
+        status: "sent",
       });
     });
   });
@@ -45,12 +76,9 @@ describe("InvoicesRepository", () => {
       // For SQLite, reset the auto-increment value by updating sqlite_sequence table
       await sql`DELETE FROM invoices`.execute(getDb());
       await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(
-        getDb(),
+        getDb()
       );
-      await invoiceFactory.createList(
-        3,
-        {},
-      );
+      await invoiceFactory.createList(3, {});
 
       const invoiceNumber = await invoicesRepository.generateInvoiceNumber();
 
