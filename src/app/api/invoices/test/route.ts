@@ -6,9 +6,9 @@ declare global {
 
 export function GET() {
   if (global.lastEmailPreviewUrl) {
-    const url = global.lastEmailPreviewUrl;
+    const content = global.lastEmailPreviewUrl;
     global.lastEmailPreviewUrl = null;
-    return NextResponse.redirect(url);
+    return NextResponse.json(JSON.parse(JSON.parse(content)["message"]));
   }
 
   return new Response("No email URL available", { status: 404 });

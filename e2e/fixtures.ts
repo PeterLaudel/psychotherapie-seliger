@@ -9,6 +9,7 @@ export const test = baseTest.extend<NonNullable<unknown>>({
     const token = await encode({
       secret,
       token: {
+        provider: "test_provider",
         name: "Max Mustermann",
         email: "max.mustermann@example.com",
         picture: "https://example.com/avatar.png",

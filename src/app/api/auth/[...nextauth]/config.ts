@@ -45,6 +45,7 @@ export const authOptions: AuthOptions = {
       if (account) {
         return {
           ...token,
+          provider: account.provider,
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
           expiresAt: account.expires_at,
@@ -58,6 +59,7 @@ export const authOptions: AuthOptions = {
     session({ session, token }) {
       return {
         ...session,
+        provider: token.provider,
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
       };

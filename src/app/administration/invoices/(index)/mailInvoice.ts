@@ -1,16 +1,16 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/config";
-import { isDevelopment, isE2E } from "@/environment";
 import { Invoice } from "@/models/invoice";
 import { Therapeut } from "@/models/therapeut";
 import { getServerSession } from "next-auth";
 import * as nodemailer from "nodemailer";
 
+const isTestEmail = () =>
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+
 export default async function mailInvoice(
   therapeut: Therapeut,
   invoice: Invoice
 ): Promise<void> {
-  // Placeholder function for sending invoice email
-
   const transporter = await createTransport();
   const info = await transporter.sendMail({
     from: `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`,
@@ -26,13 +26,13 @@ export default async function mailInvoice(
     ],
   });
 
-  if (isE2E() || isDevelopment()) {
-    global.lastEmailPreviewUrl = nodemailer.getTestMessageUrl(info) || null;
+  if (transporter.transporter.name === "JSONTransport") {
+    global.lastEmailPreviewUrl = JSON.stringify(info);
   }
 }
 
 async function createTransport() {
-  if (isE2E() || isDevelopment()) {
+  if (isTestEmail()) {
     const account = await nodemailer.createTestAccount();
     return nodemailer.createTransport({
       host: account.smtp.host,
@@ -50,14 +50,22 @@ async function createTransport() {
     throw new Error("Not authenticated");
   }
 
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      type: "OAuth2",
-      user: session.user.email,
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      refreshToken: session.refreshToken,
-    },
-  });
+  if (session.provider === "google") {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: session.user.email,
+        clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+        refreshToken: session.refreshToken,
+      },
+    });
+  }
+
+  if (session.provider === "test_provider") {
+    return nodemailer.createTransport({ jsonTransport: true });
+  }
+
+  throw new Error("Unknown provider");
 }

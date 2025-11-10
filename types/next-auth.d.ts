@@ -4,6 +4,7 @@ declare module "next-auth" {
   interface Session {
     accessToken: string;
     refreshToken: string;
+    provider: string;
     user: {
       name: string;
       email: string;
@@ -24,5 +25,6 @@ declare module "next-auth/jwt" {
     accessToken: string;
     refreshToken: string;
     expiresAt: number;
+    provider: string;
   }
 }

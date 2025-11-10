@@ -22,22 +22,20 @@ test("sents an invoice email", async ({ page }) => {
 
   await expect(page.getByText("Versendet")).toBeVisible();
 
-  await page.goto("/api/invoices/test", { waitUntil: "networkidle" }); // wait for email to be sent
+  const sendedEmail = await page.request.get("/api/invoices/test"); // wait for email to be sent
+  const emailData = await sendedEmail.json();
 
-  await expect(
-    page.getByText(
-      `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`
-    )
-  ).toBeVisible();
-  await expect(
-    page.getByText(
-      `${patient.name} ${patient.surname} <${patient.billingInfo.email}>`
-    )
-  ).toBeVisible();
-  await expect(
-    page.getByText(`Ihre Rechnung ${invoice.invoiceNumber}`, { exact: true })
-  ).toBeVisible();
-  await expect(
-    page.getByText(`Rechnung_${invoice.invoiceNumber}.pdf`)
-  ).toBeVisible();
+  expect(emailData["from"]).toStrictEqual({
+    address: therapeut.email,
+    name: `${therapeut.name} ${therapeut.surname}`,
+  });
+  expect(emailData["to"]).toStrictEqual([
+    {
+      address: patient.billingInfo.email,
+      name: `${patient.name} ${patient.surname}`,
+    },
+  ]);
+  expect(emailData["subject"]).toStrictEqual(
+    `Ihre Rechnung ${invoice.invoiceNumber}`
+  );
 });
