@@ -4,16 +4,9 @@ import { Expression, sql } from "kysely";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
 import { patientSelector } from "./selectors/patient";
 import { Patient } from "@/models/patient";
+import { serviceSelector } from "./selectors/service";
 
-export type InvoiceSave = {
-  id?: number;
-  base64Pdf: string;
-  invoiceAmount: number;
-  invoiceNumber: string;
-  status: "pending" | "sent" | "paid";
-  positions: InvoicePosition[];
-  patient: Patient;
-};
+export type InvoiceSave = Omit<Invoice, "id"> & { id?: number };
 
 export class InvoicesRepository {
   constructor(private readonly database = getDb()) {}
@@ -50,7 +43,7 @@ export class InvoicesRepository {
   }
 
   public async all(): Promise<Invoice[]> {
-    return this.modelSelector().execute();
+    return this.modelSelector(this.database).orderBy("invoiceNumber").execute();
   }
 
   public async generateInvoiceNumber() {
@@ -156,27 +149,7 @@ export class InvoicesRepository {
 
   private selectService(serviceId: Expression<number>) {
     return jsonObjectFrom(
-      this.database
-        .selectFrom("services")
-        .whereRef("services.id", "=", serviceId)
-        .select(({ ref }) => [
-          "id",
-          "short",
-          "originalGopNr",
-          "description",
-          "note",
-          "points",
-          this.selectAmounts(ref("services.id")).as("amounts"),
-        ])
-    );
-  }
-
-  private selectAmounts(serviceId: Expression<number>) {
-    return jsonArrayFrom(
-      this.database
-        .selectFrom("serviceAmounts")
-        .select(["factor", "price"])
-        .whereRef("serviceAmounts.serviceId", "=", serviceId)
+      serviceSelector(this.database).whereRef(serviceId, "=", "services.id")
     );
   }
 

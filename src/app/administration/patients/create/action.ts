@@ -8,7 +8,7 @@ export default async function createPatient(
   createPatient: Omit<Patient, "id">
 ) {
   const repository = await getPatientsRepository();
-  await repository.create(createPatient);
+  await repository.save(createPatient);
 
   revalidatePath("/administration/patients");
 }
