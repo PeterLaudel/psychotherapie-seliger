@@ -17,7 +17,7 @@ describe("InvoicesRepository", () => {
       const service = await serviceFactory.create();
 
       const createdInvoice = await invoicesRepository.save({
-        patientId: patient.id,
+        patient,
         invoiceAmount: 200,
         invoiceNumber: "200212433",
         status: "pending",
@@ -39,9 +39,7 @@ describe("InvoicesRepository", () => {
         base64Pdf: "data:application/pdf;base64,example",
         invoiceAmount: 200,
         status: "pending",
-        name: patient.name,
-        surname: patient.surname,
-        email: patient.billingInfo.email,
+        patient: patient,
         positions: [
           {
             amount: 2,
@@ -69,7 +67,8 @@ describe("InvoicesRepository", () => {
       });
 
       const updatedInvoice = await invoicesRepository.save({
-        ...invoice,
+        id: invoice.id,
+        patient,
         base64Pdf: "data:application/pdf;base64,updated-example",
         invoiceAmount: 200,
         invoiceNumber: "202310032",
@@ -87,13 +86,11 @@ describe("InvoicesRepository", () => {
 
       expect(updatedInvoice).toEqual({
         id: invoice.id,
-        name: patient.name,
-        surname: patient.surname,
-        email: patient.billingInfo.email,
         invoiceNumber: "202310032",
         base64Pdf: "data:application/pdf;base64,updated-example",
         invoiceAmount: 200,
         status: "sent",
+        patient: patient,
         positions: [
           {
             amount: 10,

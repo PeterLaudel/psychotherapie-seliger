@@ -2,18 +2,13 @@ import { Expression } from "kysely";
 import { jsonObjectFrom } from "kysely/helpers/sqlite";
 import { Patient } from "@/models/patient";
 import { getDb } from "@/initialize";
+import { patientSelector } from "./selectors/patient";
 
 export class PatientsRepository {
   constructor(private readonly database = getDb()) {}
 
   async find(id: number): Promise<Patient> {
-    return await this.database
-      .selectFrom("patients")
-      .select(["id", "name", "surname", "email", "birthdate"])
-      .select((eb) => [
-        this.address(eb.ref("patients.id")).as("address"),
-        this.billingInfo(eb.ref("patients.id")).as("billingInfo"),
-      ])
+    return await patientSelector(this.database)
       .where("id", "=", id)
       .executeTakeFirstOrThrow();
   }

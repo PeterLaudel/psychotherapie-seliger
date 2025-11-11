@@ -2,26 +2,18 @@ import { getDb } from "@/initialize";
 import { InvoicePosition, type Invoice } from "@/models/invoice";
 import { Expression, sql } from "kysely";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
+import { patientSelector } from "./selectors/patient";
+import { Patient } from "@/models/patient";
 
-export type InvoiceCreate = {
-  patientId: number;
-  base64Pdf: string;
-  invoiceNumber: string;
-  invoiceAmount: number;
-  status: "pending" | "sent" | "paid";
-  positions: InvoicePosition[];
-};
-
-type InvoiceUpdate = {
-  id: number;
+export type InvoiceSave = {
+  id?: number;
   base64Pdf: string;
   invoiceAmount: number;
   invoiceNumber: string;
   status: "pending" | "sent" | "paid";
   positions: InvoicePosition[];
+  patient: Patient;
 };
-
-export type InvoiceSave = InvoiceCreate | InvoiceUpdate;
 
 export class InvoicesRepository {
   constructor(private readonly database = getDb()) {}
@@ -29,17 +21,8 @@ export class InvoicesRepository {
   public async save(invoice: InvoiceSave): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
       const { id } = await this.upsertInvoice(invoice, trx);
+      await this.upsertPatient(id, invoice.patient, trx);
       await this.upsertPositions(id, invoice.positions, trx);
-      if ("id" in invoice === false) {
-        await trx
-          .insertInto("patientInvoices")
-          .values({
-            patientId: invoice.patientId,
-            invoiceId: id,
-          })
-          .executeTakeFirstOrThrow();
-      }
-
 
       return this.modelSelector(trx)
         .where("invoices.id", "=", id)
@@ -90,9 +73,6 @@ export class InvoicesRepository {
       .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
       .innerJoin("patients", "patients.id", "patientInvoices.patientId")
       .select(({ ref }) => [
-        "patients.name as name",
-        "patients.surname as surname",
-        "patients.billingEmail as email",
         "invoices.id as id",
         "invoices.invoiceNumber as invoiceNumber",
         "invoices.base64Pdf as base64Pdf",
@@ -101,6 +81,7 @@ export class InvoicesRepository {
         this.selectPositions(ref("invoices.id"))
           .$castTo<InvoicePosition[]>()
           .as("positions"),
+        jsonObjectFrom(patientSelector(this.database)).$notNull().as("patient"),
       ]);
   }
 
@@ -114,7 +95,7 @@ export class InvoicesRepository {
       invoiceAmount: invoice.invoiceAmount,
       status: invoice.status,
     };
-    if ("id" in invoice) {
+    if (invoice.id) {
       return transaction
         .updateTable("invoices")
         .where("id", "=", invoice.id)
@@ -128,6 +109,24 @@ export class InvoicesRepository {
         .returningAll()
         .executeTakeFirstOrThrow();
     }
+  }
+  private async upsertPatient(
+    invoiceId: number,
+    patient: Patient,
+    transaction: ReturnType<typeof getDb> = this.database
+  ) {
+    await transaction
+      .deleteFrom("patientInvoices")
+      .where("patientInvoices.invoiceId", "=", invoiceId)
+      .execute();
+
+    await transaction
+      .insertInto("patientInvoices")
+      .values({
+        invoiceId: invoiceId,
+        patientId: patient.id,
+      })
+      .execute();
   }
 
   private selectPositions(invoiceId: Expression<number>) {

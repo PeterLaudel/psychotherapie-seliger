@@ -1,3 +1,4 @@
+import { Patient } from "./patient";
 import { Factor, Service } from "./service";
 
 export interface InvoicePosition {
@@ -13,9 +14,7 @@ export interface Invoice {
   base64Pdf: string;
   invoiceNumber: string;
   invoiceAmount: number;
-  name: string;
-  surname: string;
-  email: string;
   status: "pending" | "sent" | "paid";
   positions: InvoicePosition[];
+  patient: Patient;
 }

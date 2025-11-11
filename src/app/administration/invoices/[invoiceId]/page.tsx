@@ -53,7 +53,7 @@ export default async function Page({ params }: Props) {
         invoiceAmount: invoice.invoiceAmount,
         invoiceNumber: invoice.invoiceNumber,
         invoicePositions: invoice.positions,
-        patient: patients[0],
+        patient: invoice.patient,
       }}
     />
   );

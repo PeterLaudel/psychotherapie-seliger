@@ -67,7 +67,7 @@ export default function InvoiceForm({
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
       await action({
-        patientId: values.patient!.id,
+        patient: values.patient!,
         invoiceNumber: values.invoiceNumber,
         base64Pdf: values.base64Pdf!,
         invoiceAmount: values.invoicePositions.reduce(
