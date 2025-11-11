@@ -70,8 +70,8 @@ export class InvoicesRepository {
   private modelSelector(transaction: ReturnType<typeof getDb> = this.database) {
     return transaction
       .selectFrom("invoices")
-      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
-      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
+      .innerJoin("patientInvoices", "invoices.id", "patientInvoices.invoiceId")
+      .innerJoin("patients", "patientInvoices.patientId", "patients.id")
       .select(({ ref }) => [
         "invoices.id as id",
         "invoices.invoiceNumber as invoiceNumber",
@@ -81,7 +81,15 @@ export class InvoicesRepository {
         this.selectPositions(ref("invoices.id"))
           .$castTo<InvoicePosition[]>()
           .as("positions"),
-        jsonObjectFrom(patientSelector(this.database)).$notNull().as("patient"),
+        jsonObjectFrom(
+          patientSelector(this.database).whereRef(
+            "patients.id",
+            "=",
+            ref("patientInvoices.patientId")
+          )
+        )
+          .$notNull()
+          .as("patient"),
       ]);
   }
 

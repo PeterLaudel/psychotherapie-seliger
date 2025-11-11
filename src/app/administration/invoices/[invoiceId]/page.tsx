@@ -6,6 +6,7 @@ import {
 } from "@/server";
 import { InvoiceViewer } from "./invoiceViewer";
 import InvoiceForm from "../_forms/invoiceForm";
+import { updateInvoice } from "./action";
 
 type Props = {
   params: Promise<{
@@ -35,14 +36,11 @@ export default async function Page({ params }: Props) {
   const servicesRepository = await getServicesRepository();
   const services = await servicesRepository.all();
 
-  async function action() {
-    "use server";
-    return Promise.resolve();
-  }
 
   return (
     <InvoiceForm
-      action={action}
+      action={updateInvoice}
+      invoiceId={invoice.id}
       therapeut={therapeut}
       services={services}
       patients={patients}

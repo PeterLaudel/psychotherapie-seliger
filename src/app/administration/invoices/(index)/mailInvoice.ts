@@ -14,7 +14,7 @@ export default async function mailInvoice(
   const transporter = await createTransport();
   const info = await transporter.sendMail({
     from: `${therapeut.name} ${therapeut.surname} <${therapeut.email}>`,
-    to: `${invoice.patient.name} ${invoice.patient.surname} <${invoice.patient.email}>`,
+    to: `${invoice.patient.name} ${invoice.patient.surname} <${invoice.patient.billingInfo.email}>`,
     subject: `Ihre Rechnung ${invoice.invoiceNumber}`,
     text: `Sehr geehrte/r ${invoice.patient.name} ${invoice.patient.surname},\n\nanbei erhalten Sie Ihre Rechnung ${invoice.invoiceNumber}.\n\nMit freundlichen Grüßen\n${therapeut.name} ${therapeut.surname}`,
     attachments: [
