@@ -3,30 +3,31 @@
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
-import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
-import { Service } from "@/models/service";
+import { Factor, Service } from "@/models/service";
 import { Patient } from "@/models/patient";
 import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
 import { Therapeut } from "@/models/therapeut";
+import { InvoiceSave } from "@/repositories/invoicesRepository";
 
 interface Props {
+  invoiceId?: number;
+  action: (invoice: InvoiceSave) => Promise<void>;
   patients: Patient[];
   services: Service[];
   therapeut: Therapeut;
   invoiceNumber: string;
+  initialValues?: Required<FormInvoice>;
 }
 
 export type FormInvoice = {
   patient?: Patient;
-  diagnosis?: string;
   invoicePositions: InvoicePosition[];
   invoiceAmount?: number;
   base64Pdf?: string;
@@ -34,14 +35,19 @@ export type FormInvoice = {
 };
 
 export default function InvoiceForm({
+  invoiceId,
+  action,
   patients,
   services,
   invoiceNumber,
   therapeut,
+  initialValues: initialValuesProps,
 }: Props) {
   const [open, showSuccessMessage] = useState(false);
-  const initialValues = useMemo<Partial<FormInvoice>>(
-    () => ({
+  const initialValues = useMemo<Partial<FormInvoice>>(() => {
+    if (initialValuesProps) return initialValuesProps;
+
+    return {
       invoiceNumber,
       invoicePositions: [
         {
@@ -52,17 +58,14 @@ export default function InvoiceForm({
           pageBreak: false,
         },
       ],
-    }),
-    [invoiceNumber]
-  );
+    };
+  }, [invoiceNumber, initialValuesProps]);
 
   const onSubmit = useCallback(
-    async (
-      values: FormInvoice,
-      form: FormApi<FormInvoice, Partial<FormInvoice>>
-    ) => {
-      await createInvoice({
-        patientId: values.patient!.id,
+    async (values: FormInvoice) => {
+      await action({
+        id: invoiceId,
+        patient: values.patient!,
         invoiceNumber: values.invoiceNumber,
         base64Pdf: values.base64Pdf!,
         invoiceAmount: values.invoicePositions.reduce(
@@ -70,11 +73,17 @@ export default function InvoiceForm({
           0
         ),
         status: "pending",
+        positions: values.invoicePositions.map((position) => ({
+          serviceDate: position.serviceDate!,
+          service: position.service!,
+          amount: position.amount,
+          factor: position.factor! as Factor,
+          pageBreak: position.pageBreak!,
+        })),
       });
       showSuccessMessage(true);
-      form.restart(initialValues);
     },
-    [initialValues]
+    [action, invoiceId]
   );
 
   return (
@@ -92,7 +101,7 @@ export default function InvoiceForm({
           ...arrayMutators,
         }}
       >
-        {({ handleSubmit, submitting, submitSucceeded }) => (
+        {({ handleSubmit, submitting }) => (
           <div className="grid grid-cols-2 gap-4 h-full overflow-hidden">
             <div className="overflow-auto h-full">
               <form
@@ -103,7 +112,7 @@ export default function InvoiceForm({
                 <PatientSection patients={patients} />
                 <ServiceSection services={services} />
                 <SubmitButton
-                  submitting={!!submitting || !!submitSucceeded}
+                  submitting={!!submitting}
                   className="justify-self-start self-center"
                 >
                   Rechnung versenden

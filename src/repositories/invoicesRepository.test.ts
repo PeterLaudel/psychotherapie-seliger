@@ -1,10 +1,12 @@
 import { sql } from "kysely";
 import timekeeper from "timekeeper";
 import { patientFactory } from "../../factories/patient";
-import { getDb } from "../initialize";
+import { getDb } from "@/initialize";
 import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
 import { patientInvoiceFactory } from "factories/patientInvoice";
+import { serviceFactory } from "factories/service";
+import { invoicePositionFactory } from "factories/invoicePoistion";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
@@ -12,53 +14,92 @@ describe("InvoicesRepository", () => {
   describe("#save", () => {
     it("creates a new invoice", async () => {
       const patient = await patientFactory.create();
-      const invoiceAttributes = invoiceFactory.build({
-        invoiceNumber: "202310031",
-      });
+      const service = await serviceFactory.create();
 
       const createdInvoice = await invoicesRepository.save({
-        patientId: patient.id,
-        ...invoiceAttributes,
+        patient,
+        invoiceAmount: 200,
+        invoiceNumber: "200212433",
+        status: "pending",
         base64Pdf: "data:application/pdf;base64,example",
+        positions: [
+          {
+            amount: 2,
+            factor: "1.0",
+            pageBreak: false,
+            service,
+            serviceDate: "2020-01-01",
+          },
+        ],
       });
 
       expect(createdInvoice).toEqual({
         id: expect.any(Number),
-        invoiceNumber: "202310031",
+        invoiceNumber: "200212433",
         base64Pdf: "data:application/pdf;base64,example",
-        invoiceAmount: invoiceAttributes.invoiceAmount,
+        invoiceAmount: 200,
         status: "pending",
-        name: patient.name,
-        surname: patient.surname,
-        email: patient.billingInfo.email,
+        patient: patient,
+        positions: [
+          {
+            amount: 2,
+            factor: "1.0",
+            pageBreak: 0,
+            service,
+            serviceDate: "2020-01-01",
+          },
+        ],
       });
     });
 
     it("updates an existing invoice", async () => {
       const patient = await patientFactory.create();
-      const createdInvoice = await invoiceFactory.create();
+      const invoice = await invoiceFactory.create();
+      const service = await serviceFactory.create();
       await patientInvoiceFactory.create({
         patientId: patient.id,
-        invoiceId: createdInvoice.id,
+        invoiceId: invoice.id,
+      });
+
+      await invoicePositionFactory.create({
+        invoiceId: invoice.id,
+        serviceId: service.id,
       });
 
       const updatedInvoice = await invoicesRepository.save({
-        ...createdInvoice,
+        id: invoice.id,
+        patient,
         base64Pdf: "data:application/pdf;base64,updated-example",
         invoiceAmount: 200,
         invoiceNumber: "202310032",
         status: "sent",
+        positions: [
+          {
+            amount: 10,
+            factor: "1.0",
+            pageBreak: true,
+            service,
+            serviceDate: "2020-01-01",
+          },
+        ],
       });
 
       expect(updatedInvoice).toEqual({
-        id: createdInvoice.id,
-        name: patient.name,
-        surname: patient.surname,
-        email: patient.billingInfo.email,
+        id: invoice.id,
         invoiceNumber: "202310032",
         base64Pdf: "data:application/pdf;base64,updated-example",
         invoiceAmount: 200,
         status: "sent",
+        patient: patient,
+        positions: [
+          {
+            amount: 10,
+            factor: "1.0",
+            pageBreak: 1,
+            service,
+            serviceDate: "2020-01-01",
+          },
+        ],
       });
     });
   });

@@ -13,8 +13,8 @@ export default createJestConfig({
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
     // ...
-    "^@/(.*)$": "<rootDir>/src/$1",
-    "factories/(.*)$": "<rootDir>/factories/$1",
-    "tasks/(.*)$": "<rootDir>/tasks/$1",
+    "^@/(.*)$": "<rootDir>/src/$1.ts",
+    "factories/(.*)$": "<rootDir>/factories/$1.ts",
+    "tasks/(.*)$": "<rootDir>/tasks/$1.ts",
   },
 });

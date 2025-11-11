@@ -1,19 +1,25 @@
 import { Kysely } from "kysely";
-import { Database } from "@/db";
+import { Database as DatabaseDescription } from "@/db";
 
-/**
- * Deletes all rows from all tables in a SQLite database.
- * Does not drop tables or reset autoincrement counters.
- */
-export async function clearSqliteDatabase(database: Kysely<Database>) {
-  // Query all user tables using Kysely's selectFrom
-  const tables = await database.withTables()
-    .selectFrom("sqlite_master")
-    .select("name")
-    .where("type", "=", "table")
-    .where("name", "not like", "sqlite_%")
-    .where("name", "not like", "kysely_%")
-    .execute();
+type DatabaseRecord = Record<keyof DatabaseDescription, undefined>;
+
+export async function clearSqliteDatabase(
+  database: Kysely<DatabaseDescription>
+) {
+  const allRecords: DatabaseRecord = {
+    invoicePositions: undefined,
+    invoices: undefined,
+    patientInvoices: undefined,
+    serviceAmounts: undefined,
+    services: undefined,
+    patients: undefined,
+    therapeuts: undefined,
+  };
+
+  const tables: {name: keyof DatabaseRecord}[] = Object.keys(allRecords).map((key) => ({
+    name: key,
+  })) as {name: keyof DatabaseRecord}[];
+
 
   for (const { name } of tables) {
     await database.deleteFrom(name).execute();

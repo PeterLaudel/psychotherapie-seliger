@@ -74,6 +74,16 @@ export default function PatientSection() {
             />
           )}
         </Field>
+        <Field name="diagnosis">
+          {({ input, meta: { touched, error } }) => (
+            <TextField
+              {...input}
+              label="Diagnose"
+              helperText={touched && error}
+              error={touched && !!error}
+            />
+          )}
+        </Field>
         <Field name="address.street" validate={validateStreet}>
           {({ input, meta: { touched, error } }) => (
             <TextField

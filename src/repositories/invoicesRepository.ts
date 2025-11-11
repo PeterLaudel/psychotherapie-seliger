@@ -1,42 +1,31 @@
 import { getDb } from "@/initialize";
-import type { Invoice } from "@/models/invoice";
+import { InvoicePosition, type Invoice } from "@/models/invoice";
+import { Expression, sql } from "kysely";
+import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
+import { patientSelector } from "./selectors/patient";
+import { Patient } from "@/models/patient";
 
-export type InvoiceCreate = {
-  patientId: number;
-  base64Pdf: string;
-  invoiceNumber: string;
-  invoiceAmount: number;
-  status: "pending" | "sent" | "paid";
-};
-
-type InvoiceUpdate = {
-  id: number;
+export type InvoiceSave = {
+  id?: number;
   base64Pdf: string;
   invoiceAmount: number;
   invoiceNumber: string;
   status: "pending" | "sent" | "paid";
+  positions: InvoicePosition[];
+  patient: Patient;
 };
-
-type InvoiceSave = InvoiceCreate | InvoiceUpdate;
 
 export class InvoicesRepository {
   constructor(private readonly database = getDb()) {}
 
   public async save(invoice: InvoiceSave): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
-      const createdInvoice = await this.upsertQuery(invoice, trx);
-      if ("id" in invoice === false) {
-        await trx
-          .insertInto("patientInvoices")
-          .values({
-            patientId: invoice.patientId,
-            invoiceId: createdInvoice.id,
-          })
-          .executeTakeFirstOrThrow();
-      }
+      const { id } = await this.upsertInvoice(invoice, trx);
+      await this.upsertPatient(id, invoice.patient, trx);
+      await this.upsertPositions(id, invoice.positions, trx);
 
       return this.modelSelector(trx)
-        .where("invoices.id", "=", createdInvoice.id)
+        .where("invoices.id", "=", id)
         .executeTakeFirstOrThrow();
     });
   }
@@ -81,21 +70,30 @@ export class InvoicesRepository {
   private modelSelector(transaction: ReturnType<typeof getDb> = this.database) {
     return transaction
       .selectFrom("invoices")
-      .innerJoin("patientInvoices", "patientInvoices.invoiceId", "invoices.id")
-      .innerJoin("patients", "patients.id", "patientInvoices.patientId")
-      .select([
-        "patients.name as name",
-        "patients.surname as surname",
-        "patients.billingEmail as email",
+      .innerJoin("patientInvoices", "invoices.id", "patientInvoices.invoiceId")
+      .innerJoin("patients", "patientInvoices.patientId", "patients.id")
+      .select(({ ref }) => [
         "invoices.id as id",
         "invoices.invoiceNumber as invoiceNumber",
         "invoices.base64Pdf as base64Pdf",
         "invoices.invoiceAmount as invoiceAmount",
         "invoices.status as status",
+        this.selectPositions(ref("invoices.id"))
+          .$castTo<InvoicePosition[]>()
+          .as("positions"),
+        jsonObjectFrom(
+          patientSelector(this.database).whereRef(
+            "patients.id",
+            "=",
+            ref("patientInvoices.patientId")
+          )
+        )
+          .$notNull()
+          .as("patient"),
       ]);
   }
 
-  private async upsertQuery(
+  private async upsertInvoice(
     invoice: InvoiceSave,
     transaction: ReturnType<typeof getDb> = this.database
   ) {
@@ -105,7 +103,7 @@ export class InvoicesRepository {
       invoiceAmount: invoice.invoiceAmount,
       status: invoice.status,
     };
-    if ("id" in invoice) {
+    if (invoice.id) {
       return transaction
         .updateTable("invoices")
         .where("id", "=", invoice.id)
@@ -119,5 +117,93 @@ export class InvoicesRepository {
         .returningAll()
         .executeTakeFirstOrThrow();
     }
+  }
+  private async upsertPatient(
+    invoiceId: number,
+    patient: Patient,
+    transaction: ReturnType<typeof getDb> = this.database
+  ) {
+    await transaction
+      .deleteFrom("patientInvoices")
+      .where("patientInvoices.invoiceId", "=", invoiceId)
+      .execute();
+
+    await transaction
+      .insertInto("patientInvoices")
+      .values({
+        invoiceId: invoiceId,
+        patientId: patient.id,
+      })
+      .execute();
+  }
+
+  private selectPositions(invoiceId: Expression<number>) {
+    return jsonArrayFrom(
+      this.database
+        .selectFrom("invoicePositions")
+        .select(({ ref }) => [
+          "invoicePositions.serviceDate as serviceDate",
+          sql<boolean>`invoicePositions.pageBreak != 0`.as("pageBreak"),
+          "invoicePositions.amount as amount",
+          "invoicePositions.factor as factor",
+          this.selectService(ref("invoicePositions.serviceId"))
+            .$notNull()
+            .as("service"),
+        ])
+        .whereRef("invoicePositions.invoiceId", "=", invoiceId)
+    );
+  }
+
+  private selectService(serviceId: Expression<number>) {
+    return jsonObjectFrom(
+      this.database
+        .selectFrom("services")
+        .whereRef("services.id", "=", serviceId)
+        .select(({ ref }) => [
+          "id",
+          "short",
+          "originalGopNr",
+          "description",
+          "note",
+          "points",
+          this.selectAmounts(ref("services.id")).as("amounts"),
+        ])
+    );
+  }
+
+  private selectAmounts(serviceId: Expression<number>) {
+    return jsonArrayFrom(
+      this.database
+        .selectFrom("serviceAmounts")
+        .select(["factor", "price"])
+        .whereRef("serviceAmounts.serviceId", "=", serviceId)
+    );
+  }
+
+  private async upsertPositions(
+    invoiceId: number,
+    positions: InvoicePosition[],
+    transaction = this.database
+  ) {
+    await transaction
+      .deleteFrom("invoicePositions")
+      .where("invoicePositions.invoiceId", "=", invoiceId)
+      .execute();
+
+    return Promise.all(
+      positions.map((position) =>
+        transaction
+          .insertInto("invoicePositions")
+          .values({
+            serviceId: position.service.id,
+            serviceDate: position.serviceDate,
+            amount: position.amount,
+            factor: position.factor,
+            pageBreak: Number(position.pageBreak),
+            invoiceId: invoiceId,
+          })
+          .execute()
+      )
+    );
   }
 }

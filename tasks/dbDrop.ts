@@ -1,6 +1,6 @@
 
 import fs from "fs";
-import { sqliteUrl } from "../src/environment";
+import { sqliteUrl } from "@/environment";
 
 export function dbDrop() {
   const filePath = sqliteUrl();

@@ -19,8 +19,18 @@ const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
 
 const columns: GridColDef<Invoice>[] = [
   { field: "invoiceNumber", headerName: "Rechnungsnummer", flex: 1 },
-  { field: "name", headerName: "Vorname", flex: 1 },
-  { field: "surname", headerName: "Nachname", flex: 1 },
+  {
+    field: "name",
+    headerName: "Vorname",
+    flex: 1,
+    renderCell: (params) => params.row.patient.name,
+  },
+  {
+    field: "surname",
+    headerName: "Nachname",
+    flex: 1,
+    renderCell: (params) => params.row.patient.surname,
+  },
   {
     field: "invoiceAmount",
     headerName: "Betrag",
