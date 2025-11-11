@@ -34,6 +34,7 @@ export interface InvoicesTable {
   base64Pdf: string;
   invoiceAmount: number;
   status: "pending" | "sent" | "paid";
+  createdAt: Generated<string>;
 }
 
 export interface InvoicePositionsTable {

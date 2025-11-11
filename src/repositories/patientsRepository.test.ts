@@ -32,7 +32,7 @@ describe("PatientsRepository", () => {
     it("creates a new patient", async () => {
       const patientAttributes = patientFactory.build();
 
-      const patient = await patientRepository.create(patientAttributes);
+      const patient = await patientRepository.save(patientAttributes);
 
       expect(patient).toEqual({
         id: expect.any(Number),

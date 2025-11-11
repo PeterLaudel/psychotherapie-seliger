@@ -4,9 +4,9 @@ import { getDb } from "@/initialize";
 import type { InvoicesTable } from "@/db";
 
 export const invoiceFactory = Factory.define<
-  Omit<InvoicesTable, "id">,
+  Omit<InvoicesTable, "id" | "createdAt">,
   unknown,
-  Omit<InvoicesTable, "id"> & { id: number }
+  Omit<InvoicesTable, "id" | "createdAt"> & { id: number }
 >(({ sequence }) => ({
   invoiceNumber: `${faker.date
     .birthdate()
