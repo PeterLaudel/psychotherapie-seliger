@@ -6,7 +6,6 @@ export const usePdf = ({
   therapeut,
   invoiceNumber,
   positions,
-  diagnosis,
 }: CreatePdfParams) => {
   const [pdfBlob, setPdfBlob] = useState<string | null>(null);
 
@@ -17,14 +16,13 @@ export const usePdf = ({
         therapeut,
         invoiceNumber,
         positions,
-        diagnosis,
       });
       setPdfBlob(pdfData);
     };
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     generatePdf();
-  }, [patient, invoiceNumber, positions, diagnosis, therapeut]);
+  }, [patient, invoiceNumber, positions, therapeut]);
 
   return pdfBlob;
 };

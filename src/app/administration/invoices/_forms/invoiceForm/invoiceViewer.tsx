@@ -46,7 +46,6 @@ export default function InvoiceViewer({
     invoiceNumber: invoiceNumber,
     patient: values?.patient,
     positions: mappedPositions || [],
-    diagnosis: values?.diagnosis,
   });
 
   const url = useMemo(() => {

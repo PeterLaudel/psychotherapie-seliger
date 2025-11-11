@@ -2,14 +2,10 @@ import { getDb } from "@/initialize";
 import { Expression } from "kysely";
 import { jsonObjectFrom } from "kysely/helpers/sqlite";
 
-export function patientSelectorJson(database = getDb()) {
-    return jsonObjectFrom(patientSelector(database))
-}
-
 export function patientSelector(database = getDb()) {
   return database
     .selectFrom("patients")
-    .select(["id", "name", "surname", "email", "birthdate"])
+    .select(["id", "name", "surname", "email", "birthdate", "diagnosis"])
     .select((eb) => [
       address(eb.ref("patients.id"), database).as("address"),
       billingInfo(eb.ref("patients.id"), database).as("billingInfo"),

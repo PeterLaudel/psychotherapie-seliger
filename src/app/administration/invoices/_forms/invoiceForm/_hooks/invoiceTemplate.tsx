@@ -13,7 +13,7 @@ import { BillingInfo, Patient } from "@/models/patient";
 import { generateSepaQrBase64Png } from "./generateSepaQrBase64Png";
 import { Therapeut } from "@/models/therapeut";
 
-type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate">;
+type InvoicePatient = Pick<Patient, "name" | "surname" | "birthdate" | "diagnosis">;
 
 export type Position = {
   serviceDate: string;
@@ -26,7 +26,6 @@ export type Position = {
 
 export interface Props {
   invoiceNumber: string;
-  diagnosis?: string;
   billingInfo?: BillingInfo;
   patient?: InvoicePatient;
   positions: Position[];
@@ -42,7 +41,6 @@ export function InvoiceTemplate({
   billingInfo,
   patient,
   positions,
-  diagnosis,
   therapeut,
 }: Props) {
   const tw = createTw({});
@@ -131,10 +129,10 @@ export function InvoiceTemplate({
             </Text>
           </View>
         </View>
-        {diagnosis && (
+        {patient?.diagnosis && (
           <View style={tw("flex-row justify-between pt-4")}>
             <View style={tw("flex-col")}>
-              <Text style={tw("text-sm")}>{`${diagnosis}`}</Text>
+              <Text style={tw("text-sm")}>{`${patient.diagnosis}`}</Text>
             </View>
           </View>
         )}

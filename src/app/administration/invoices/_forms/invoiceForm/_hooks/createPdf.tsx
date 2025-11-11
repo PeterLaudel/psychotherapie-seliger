@@ -10,7 +10,6 @@ export interface CreatePdfParams {
   therapeut: Therapeut;
   invoiceNumber: string;
   positions: Position[];
-  diagnosis?: string;
 }
 
 export async function createPdf(params: CreatePdfParams) {

@@ -14,5 +14,6 @@ export interface Patient {
   email: string;
   birthdate: string;
   address: Address;
+  diagnosis: string | null;
   billingInfo: BillingInfo;
 }

@@ -28,7 +28,6 @@ interface Props {
 
 export type FormInvoice = {
   patient?: Patient;
-  diagnosis?: string;
   invoicePositions: InvoicePosition[];
   invoiceAmount?: number;
   base64Pdf?: string;

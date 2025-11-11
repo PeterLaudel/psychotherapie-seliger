@@ -49,7 +49,6 @@ export default async function Page({ params }: Props) {
       invoiceNumber={invoice.invoiceNumber}
       initialValues={{
         base64Pdf: invoice.base64Pdf,
-        diagnosis: "HUHU",
         invoiceAmount: invoice.invoiceAmount,
         invoiceNumber: invoice.invoiceNumber,
         invoicePositions: invoice.positions,

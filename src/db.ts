@@ -19,6 +19,7 @@ interface PatientTable {
   street: string;
   city: string;
   zip: string;
+  diagnosis: string | null;
   billingName: string;
   billingSurname: string;
   billingEmail: string;
