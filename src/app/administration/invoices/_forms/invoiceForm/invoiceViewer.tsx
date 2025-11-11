@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useField, useFormState } from "react-final-form";
-import type { FormInvoice } from "./invoiceForm";
+import type { FormInvoice } from ".";
 import { usePdf } from "./_hooks/usePdf";
 import type { InvoicePosition } from "./serviceSection";
 import { Therapeut } from "@/models/therapeut";

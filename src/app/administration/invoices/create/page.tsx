@@ -1,14 +1,15 @@
 "use server";
 
-import InvoiceForm from "./invoiceForm";
 import {
   getInvoicesRepository,
   getPatientsRepository,
   getServicesRepository,
   getTherapeutsRepository,
 } from "@/server";
+import InvoiceForm from "../_forms/invoiceForm";
+import { createInvoice } from "./action";
 
-export default async function Administration() {
+export default async function Page() {
   const patientRepository = await getPatientsRepository();
   const patients = await patientRepository.all();
 
@@ -27,6 +28,7 @@ export default async function Administration() {
 
   return (
     <InvoiceForm
+      action={createInvoice}
       therapeut={therapeut}
       patients={patients}
       services={services}

@@ -7,7 +7,6 @@ import { FormApi } from "final-form";
 import arrayMutators from "final-form-arrays";
 import { useCallback, useMemo, useState } from "react";
 import { Form } from "react-final-form";
-import { createInvoice } from "./action";
 import PatientSection from "./patientSection";
 import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
@@ -16,12 +15,15 @@ import { Patient } from "@/models/patient";
 import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
 import { Therapeut } from "@/models/therapeut";
+import {  InvoiceSave } from "@/repositories/invoicesRepository";
 
 interface Props {
+  action: (invoice: InvoiceSave) => Promise<void>;
   patients: Patient[];
   services: Service[];
   therapeut: Therapeut;
   invoiceNumber: string;
+  initialValues?: Required<FormInvoice>;
 }
 
 export type FormInvoice = {
@@ -34,14 +36,18 @@ export type FormInvoice = {
 };
 
 export default function InvoiceForm({
+  action,
   patients,
   services,
   invoiceNumber,
   therapeut,
+  initialValues: initialValuesProps,
 }: Props) {
   const [open, showSuccessMessage] = useState(false);
-  const initialValues = useMemo<Partial<FormInvoice>>(
-    () => ({
+  const initialValues = useMemo<Partial<FormInvoice>>(() => {
+    if (initialValuesProps) return initialValuesProps;
+
+    return {
       invoiceNumber,
       invoicePositions: [
         {
@@ -52,16 +58,15 @@ export default function InvoiceForm({
           pageBreak: false,
         },
       ],
-    }),
-    [invoiceNumber]
-  );
+    };
+  }, [invoiceNumber, initialValuesProps]);
 
   const onSubmit = useCallback(
     async (
       values: FormInvoice,
       form: FormApi<FormInvoice, Partial<FormInvoice>>
     ) => {
-      await createInvoice({
+      await action({
         patientId: values.patient!.id,
         invoiceNumber: values.invoiceNumber,
         base64Pdf: values.base64Pdf!,
@@ -81,7 +86,7 @@ export default function InvoiceForm({
       showSuccessMessage(true);
       form.restart(initialValues);
     },
-    [initialValues]
+    [initialValues, action]
   );
 
   return (

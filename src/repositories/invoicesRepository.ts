@@ -21,7 +21,7 @@ type InvoiceUpdate = {
   positions: InvoicePosition[];
 };
 
-type InvoiceSave = InvoiceCreate | InvoiceUpdate;
+export type InvoiceSave = InvoiceCreate | InvoiceUpdate;
 
 export class InvoicesRepository {
   constructor(private readonly database = getDb()) {}
