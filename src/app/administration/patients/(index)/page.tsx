@@ -5,5 +5,7 @@ export default async function Page() {
   const patientsRepository = await getPatientsRepository();
   const patients = await patientsRepository.all();
 
+  console.log(patients)
+
   return <PatientsList patients={patients} />;
 }

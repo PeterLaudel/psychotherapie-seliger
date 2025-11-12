@@ -7,25 +7,37 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
 import { useCallback, useMemo } from "react";
 import { Form } from "react-final-form";
-import createPatient from "./action";
 import PatientSection from "./patientSection";
 import BillingSection from "./billingSection";
 import { Patient } from "@/models/patient";
 import SubmitButton from "@/components/submitButton";
 import { useSnackbar } from "@/contexts/snackbarProvider";
 import { useRouter } from "next/navigation";
+import { PatientSave } from "@/repositories/patientsRepository";
+import { billingInfoIsPatient } from "./billingInfoIsPatient";
 
-type PatientFormData = Patient & {
+type PatientFormData = PatientSave & {
   billingInfoIsPatient: boolean;
 };
 
-export default function PatientForm() {
+interface Props {
+  action: (patient: PatientSave) => void;
+  initialValues?: Patient;
+}
+
+export default function PatientForm({
+  initialValues: initialValuesProps,
+  action,
+}: Props) {
   const { showSuccessMessage } = useSnackbar();
   const router = useRouter();
 
   const initialValues = useMemo<Partial<PatientFormData>>(
     () => ({
-      billingInfoIsPatient: true,
+      ...(initialValuesProps ? initialValuesProps : {}),
+      billingInfoIsPatient: initialValuesProps
+        ? billingInfoIsPatient(initialValuesProps)
+        : true,
     }),
     []
   );
@@ -33,7 +45,7 @@ export default function PatientForm() {
   const onSubmit = useCallback(
     async (values: PatientFormData) => {
       const { billingInfoIsPatient, ...patientData } = values;
-      await createPatient(patientData);
+      await action({ id: initialValues?.id, ...patientData });
       showSuccessMessage("Patient wurde angelegt");
       router.push("/administration/patients");
     },

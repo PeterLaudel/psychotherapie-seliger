@@ -28,7 +28,7 @@ describe("PatientsRepository", () => {
     });
   });
 
-  describe("#create", () => {
+  describe("#save", () => {
     it("creates a new patient", async () => {
       const patientAttributes = patientFactory.build();
 
@@ -37,6 +37,21 @@ describe("PatientsRepository", () => {
       expect(patient).toEqual({
         id: expect.any(Number),
         ...patientAttributes,
+      });
+    });
+
+    it("updates an existing patient", async () => {
+      const patient = await patientFactory.create();
+
+      const updatedPatient = await patientRepository.save({
+        ...patient,
+        diagnosis: "nono",
+      });
+
+      expect(updatedPatient).toEqual({
+        ...patient,
+        id: patient.id,
+        diagnosis: "nono",
       });
     });
   });

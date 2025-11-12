@@ -1,5 +1,6 @@
-import PatientForm from "./patientForm";
+import PatientForm from "../_forms/patientForm";
+import createPatient from "./action";
 
 export default function Page() {
-  return <PatientForm />;
+  return <PatientForm action={createPatient} />;
 }
