@@ -1,3 +1,4 @@
+import { getDb } from "@/initialize";
 import { PatientsRepository } from "./patientsRepository";
 import { patientFactory } from "factories/patient";
 
@@ -53,6 +54,21 @@ describe("PatientsRepository", () => {
         id: patient.id,
         diagnosis: "nono",
       });
+    });
+  });
+
+  describe("#delete", () => {
+    it("deletes the patient from the database", async () => {
+      const database = getDb();
+      const patient = await patientFactory.create();
+
+      await patientRepository.delete(patient.id);
+
+      const patients = await database
+        .selectFrom("patients")
+        .selectAll()
+        .execute();
+      expect(patients.length).toEqual(0);
     });
   });
 });

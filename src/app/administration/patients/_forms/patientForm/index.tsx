@@ -39,17 +39,17 @@ export default function PatientForm({
         ? billingInfoIsPatient(initialValuesProps)
         : true,
     }),
-    []
+    [initialValuesProps]
   );
 
   const onSubmit = useCallback(
-    async (values: PatientFormData) => {
+    (values: PatientFormData) => {
       const { billingInfoIsPatient, ...patientData } = values;
-      await action({ id: initialValues?.id, ...patientData });
+      action({ id: values.id, ...patientData });
       showSuccessMessage("Patient wurde angelegt");
       router.push("/administration/patients");
     },
-    [showSuccessMessage, router]
+    [showSuccessMessage, router, action]
   );
 
   return (

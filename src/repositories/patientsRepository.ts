@@ -48,4 +48,11 @@ export class PatientsRepository {
         .executeTakeFirstOrThrow();
     });
   }
+
+  async delete(patientId: number) {
+    await this.database
+      .deleteFrom("patients")
+      .where("id", "=", patientId)
+      .execute();
+  }
 }

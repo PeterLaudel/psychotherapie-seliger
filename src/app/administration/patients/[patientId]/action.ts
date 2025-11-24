@@ -6,10 +6,8 @@ import { revalidatePath } from "next/cache";
 
 
 export async function updatePatient(patient: PatientSave) {
-
-    console.log(patient)
     const patientsRepository = await getPatientsRepository();
-    patientsRepository.save(patient)
+    await patientsRepository.save(patient)
 
     revalidatePath('/administration/patients')
 }
