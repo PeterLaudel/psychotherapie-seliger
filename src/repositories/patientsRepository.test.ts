@@ -1,3 +1,4 @@
+import { getDb } from "@/initialize";
 import { PatientsRepository } from "./patientsRepository";
 import { patientFactory } from "factories/patient";
 
@@ -28,7 +29,7 @@ describe("PatientsRepository", () => {
     });
   });
 
-  describe("#create", () => {
+  describe("#save", () => {
     it("creates a new patient", async () => {
       const patientAttributes = patientFactory.build();
 
@@ -38,6 +39,36 @@ describe("PatientsRepository", () => {
         id: expect.any(Number),
         ...patientAttributes,
       });
+    });
+
+    it("updates an existing patient", async () => {
+      const patient = await patientFactory.create();
+
+      const updatedPatient = await patientRepository.save({
+        ...patient,
+        diagnosis: "nono",
+      });
+
+      expect(updatedPatient).toEqual({
+        ...patient,
+        id: patient.id,
+        diagnosis: "nono",
+      });
+    });
+  });
+
+  describe("#delete", () => {
+    it("deletes the patient from the database", async () => {
+      const database = getDb();
+      const patient = await patientFactory.create();
+
+      await patientRepository.delete(patient.id);
+
+      const patients = await database
+        .selectFrom("patients")
+        .selectAll()
+        .execute();
+      expect(patients.length).toEqual(0);
     });
   });
 });

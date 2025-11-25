@@ -24,6 +24,9 @@ export default function SynchronizedField<
   const {
     input: { value: originFieldValue },
   } = useField<T>(originFieldName, { subscription: { value: true } });
+  const {
+    meta: { initial },
+  } = useField<T>(name);
   const { resetFieldState, change } = useForm();
 
   useEffect(() => {
@@ -35,9 +38,9 @@ export default function SynchronizedField<
 
   useEffect(() => {
     if (!synchronize) {
-      change(name, "");
+      change(name, initial);
     }
-  }, [synchronize, change, name]);
+  }, [synchronize, change, name, initial]);
 
   //check if children is a function
   if (typeof children === "function")

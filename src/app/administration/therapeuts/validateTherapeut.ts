@@ -21,7 +21,6 @@ const schema = z.object({
 export function validateTherapeut(data: FormData) {
   const object = Object.fromEntries(data.entries());
   const result = schema.safeParse(object);
-
   if (result.success) return;
   const treeifiedErrors = z.treeifyError(result.error);
   const entries = Object.entries(treeifiedErrors.properties || {});

@@ -5,5 +5,5 @@ import Address from "@/models/address";
 export const addressFactory: Factory<Address> = Factory.define<Address>(() => ({
   street: faker.location.streetAddress(),
   city: faker.location.city(),
-  zip: faker.location.zipCode(),
+  zip: faker.location.zipCode('#####'),
 }));

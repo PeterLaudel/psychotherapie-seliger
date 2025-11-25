@@ -2,7 +2,7 @@ import { Patient } from "@/models/patient";
 import { getDb } from "@/initialize";
 import { patientSelector } from "./selectors/patient";
 
-type PatientSave = Omit<Patient, "id"> & { id?: number };
+export type PatientSave = Omit<Patient, "id"> & { id?: number };
 
 export class PatientsRepository {
   constructor(private readonly database = getDb()) {}
@@ -19,25 +19,40 @@ export class PatientsRepository {
 
   async save(patient: PatientSave): Promise<Patient> {
     return await this.database.transaction().execute(async (trx) => {
-      const { address, billingInfo, ...rest } = patient;
-      const { id } = await trx
-        .insertInto("patients")
-        .values({
-          ...rest,
-          ...address,
-          billingName: billingInfo.name,
-          billingSurname: billingInfo.surname,
-          billingEmail: billingInfo.email,
-          billingStreet: billingInfo.address.street,
-          billingCity: billingInfo.address.city,
-          billingZip: billingInfo.address.zip,
-        })
-        .returning(["id"])
-        .executeTakeFirstOrThrow();
+      const { address, billingInfo, id: originId, ...rest } = patient;
+      const data = {
+        ...rest,
+        ...address,
+        billingName: billingInfo.name,
+        billingSurname: billingInfo.surname,
+        billingEmail: billingInfo.email,
+        billingStreet: billingInfo.address.street,
+        billingCity: billingInfo.address.city,
+        billingZip: billingInfo.address.zip,
+      };
+      const { id } = originId
+        ? await trx
+            .updateTable("patients")
+            .set(data)
+            .returning(["id"])
+            .where("patients.id", "=", originId)
+            .executeTakeFirstOrThrow()
+        : await trx
+            .insertInto("patients")
+            .values(data)
+            .returning(["id"])
+            .executeTakeFirstOrThrow();
 
       return await patientSelector(trx)
         .where("patients.id", "=", id)
         .executeTakeFirstOrThrow();
     });
+  }
+
+  async delete(patientId: number) {
+    await this.database
+      .deleteFrom("patients")
+      .where("id", "=", patientId)
+      .execute();
   }
 }

@@ -16,7 +16,7 @@ export default function BillingSection() {
     <Section>
       <h2 className="mb-4">Rechnungsdaten</h2>
       <div className="grid grid-cols-2 gap-4">
-        <Field<boolean> name="billingInfoIsPatient">
+        <Field<boolean> name="billingInfoIsPatient" type="checkbox">
           {({ input }) => (
             <div className="col-span-2">
               <FormControlLabel
