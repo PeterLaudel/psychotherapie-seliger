@@ -3,10 +3,6 @@ export function validateName(value?: string) {
     return "Dieses Feld ist erforderlich";
   }
 
-  if (!/^[a-zA-ZäöüÄÖÜß\s]*$/.test(value)) {
-    return "Dieses Feld darf nur Buchstaben und Leerzeichen enthalten";
-  }
-
   return undefined;
 }
 

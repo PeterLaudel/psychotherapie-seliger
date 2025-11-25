@@ -34,10 +34,8 @@ export default function PatientForm({
 
   const initialValues = useMemo<Partial<PatientFormData>>(
     () => ({
-      ...(initialValuesProps ? initialValuesProps : {}),
-      billingInfoIsPatient: initialValuesProps
-        ? billingInfoIsPatient(initialValuesProps)
-        : true,
+      ...initialValuesProps,
+      billingInfoIsPatient: billingInfoIsPatient(initialValuesProps),
     }),
     [initialValuesProps]
   );
