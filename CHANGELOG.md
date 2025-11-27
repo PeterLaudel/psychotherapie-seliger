@@ -1,5 +1,16 @@
 # psychotherapie-seliger
 
+## 0.2.0
+
+### Minor Changes
+
+- 4b08364: Add update page for patient
+
+### Patch Changes
+
+- 987590a: Pending invoices are editable now
+- 3c49c53: Add status functionality for invoices
+
 ## 0.1.3
 
 ### Patch Changes
