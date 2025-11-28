@@ -1,7 +1,7 @@
 "use client";
 
 import { Therapeut } from "@/models/therapeut";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { saveTherapeut } from "./action";
 import { Button, TextField } from "@mui/material";
 import Section from "@/components/section";
@@ -14,7 +14,7 @@ interface Props {
 
 export function TherapeutForm({ therapeut }: Props) {
   const { showSuccessMessage } = useSnackbar();
-  const [_state, action, pending] = useActionState(saveTherapeut, null);
+  const [, action, pending] = useActionState(saveTherapeut, null);
   const [errors, setErrors] = useState<Partial<Therapeut>>({});
 
   const handleSubmit = (formData: FormData) => {

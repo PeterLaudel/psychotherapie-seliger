@@ -88,7 +88,7 @@ export default function InvoiceForm({
 
       router.push(`/administration/invoices/${invoice.id}`);
     },
-    [action, invoiceId]
+    [action, invoiceId, router, showSuccessMessage]
   );
 
   return (
