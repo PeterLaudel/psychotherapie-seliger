@@ -24,7 +24,7 @@ test("saves a therapeut with empty form", async ({ page }) => {
   await page.getByLabel("ENR").fill("123456789");
   await page.getByRole("button", { name: "Speichern" }).click();
 
-  const successAlert = page.getByText("Therapeut gespeichert!");
+  const successAlert = page.getByText("Therapeut gespeichert");
   await expect(successAlert).toBeVisible();
 });
 
@@ -58,7 +58,7 @@ test("updates a therapeut with filled form", async ({ page }) => {
 
   await page.getByRole("button", { name: "Speichern" }).click();
 
-  const successAlert = page.getByText("Therapeut gespeichert!");
+  const successAlert = page.getByText("Therapeut gespeichert");
   await expect(successAlert).toBeVisible();
 });
 

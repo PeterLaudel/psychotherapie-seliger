@@ -120,7 +120,7 @@ export default function InvoiceForm({
                   submitting={!!submitting}
                   className="justify-self-start self-center"
                 >
-                  {initialValues ? "Speichern" : "Anlegen"}
+                  {initialValuesProps ? "Speichern" : "Anlegen"}
                 </SubmitButton>
               </form>
             </div>

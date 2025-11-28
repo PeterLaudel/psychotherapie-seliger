@@ -23,7 +23,7 @@ export function TherapeutForm({ therapeut }: Props) {
 
     setErrors({});
     action(formData);
-    showSuccessMessage("Patient wurde angelegt");
+    showSuccessMessage("Therapeut gespeichert");
   };
 
   const fieldProps = (name: keyof Therapeut) => {
