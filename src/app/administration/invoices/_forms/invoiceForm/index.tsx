@@ -4,17 +4,17 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
 import arrayMutators from "final-form-arrays";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Form } from "react-final-form";
 import PatientSection from "./patientSection";
 import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
 import { Factor, Service } from "@/models/service";
 import { Patient } from "@/models/patient";
-import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
 import { Therapeut } from "@/models/therapeut";
 import { InvoiceSave } from "@/repositories/invoicesRepository";
+import { useSnackbar } from "@/contexts/snackbarProvider";
 
 interface Props {
   invoiceId?: number;
@@ -43,7 +43,7 @@ export default function InvoiceForm({
   therapeut,
   initialValues: initialValuesProps,
 }: Props) {
-  const [open, showSuccessMessage] = useState(false);
+  const { showSuccessMessage } = useSnackbar();
   const initialValues = useMemo<Partial<FormInvoice>>(() => {
     if (initialValuesProps) return initialValuesProps;
 
@@ -81,7 +81,7 @@ export default function InvoiceForm({
           pageBreak: position.pageBreak!,
         })),
       });
-      showSuccessMessage(true);
+      showSuccessMessage("Rechnung wurde gespeichert");
     },
     [action, invoiceId]
   );
@@ -126,9 +126,6 @@ export default function InvoiceForm({
           </div>
         )}
       </Form>
-      <SuccessMessage open={open} onClose={() => showSuccessMessage(false)}>
-        Rechnung wurde erstellt
-      </SuccessMessage>
     </LocalizationProvider>
   );
 }
