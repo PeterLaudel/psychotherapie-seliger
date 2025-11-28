@@ -1,18 +1,20 @@
 "use client";
 
 import { Therapeut } from "@/models/therapeut";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { saveTherapeut } from "./action";
 import { Button, TextField } from "@mui/material";
 import Section from "@/components/section";
 import { validateTherapeut } from "./validateTherapeut";
+import { useSnackbar } from "@/contexts/snackbarProvider";
 
 interface Props {
   therapeut?: Therapeut;
 }
 
 export function TherapeutForm({ therapeut }: Props) {
-  const [state, action, pending] = useActionState(saveTherapeut, null);
+  const { showSuccessMessage } = useSnackbar();
+  const [_state, action, pending] = useActionState(saveTherapeut, null);
   const [errors, setErrors] = useState<Partial<Therapeut>>({});
 
   const handleSubmit = (formData: FormData) => {
@@ -20,7 +22,8 @@ export function TherapeutForm({ therapeut }: Props) {
     if (validationErrors) return setErrors(validationErrors);
 
     setErrors({});
-    return action(formData);
+    action(formData);
+    showSuccessMessage("Patient wurde angelegt");
   };
 
   const fieldProps = (name: keyof Therapeut) => {
@@ -61,9 +64,6 @@ export function TherapeutForm({ therapeut }: Props) {
           <Button type="submit" variant="contained" disabled={pending}>
             Speichern
           </Button>
-          {state?.success && (
-            <div style={{ color: "green" }}>{state.message}</div>
-          )}
         </form>
       </Section>
     </div>

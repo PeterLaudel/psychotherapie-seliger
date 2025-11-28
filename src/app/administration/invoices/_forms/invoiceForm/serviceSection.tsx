@@ -11,7 +11,7 @@ import { Fragment } from "react";
 import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
 import { PageBreakField } from "./pageBreakField";
-import { Service, Service as ServiceType } from "@/models/service";
+import { Factor, Service, Service as ServiceType } from "@/models/service";
 import Section from "@/components/section";
 import { InvalidSubscription, ValueSubscription } from "@/components/forms";
 import { Price } from "./price";
@@ -24,7 +24,7 @@ export interface InvoicePosition {
   serviceDate?: string;
   service?: Service;
   amount: number;
-  factor?: string;
+  factor?: Factor;
   pageBreak?: boolean;
   price?: number;
 }
@@ -104,7 +104,9 @@ export default function ServiceSection({ services }: Props) {
                       onChange={(_, value) => input.onChange(value)}
                       getOptionLabel={(option) => option.short}
                       getOptionKey={(option) => option.short}
-                      value={services.find((s) => s.id === input.value.id) || null}
+                      value={
+                        services.find((s) => s.id === input.value.id) || null
+                      }
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -130,7 +132,7 @@ export default function ServiceSection({ services }: Props) {
                           type="number"
                           disabled={invalid}
                           label={"Anzahl"}
-                          InputProps={{ inputProps: { min: 1 } }}
+                          slotProps={{ htmlInput: { min: 1 } }}
                         />
                       )}
                     </InvalidSubscription>
@@ -144,9 +146,7 @@ export default function ServiceSection({ services }: Props) {
                       key={`${name}.factor.${service?.id || ""}`}
                       name={`${name}.factor`}
                       type="select"
-                      initialValue={
-                        (service?.amounts || []).at(-1)?.["factor"]
-                      }
+                      initialValue={(service?.amounts || []).at(-1)?.["factor"]}
                     >
                       {({ input }) => (
                         <TextField
@@ -155,10 +155,7 @@ export default function ServiceSection({ services }: Props) {
                           disabled={!service}
                           {...input}
                         >
-                          {(
-                            service
-                              ?.amounts || []
-                          ).map(({ factor }) => (
+                          {(service?.amounts || []).map(({ factor }) => (
                             <MenuItem key={factor} value={factor}>
                               {factor}
                             </MenuItem>
@@ -168,7 +165,7 @@ export default function ServiceSection({ services }: Props) {
                     </Field>
                   )}
                 </ValueSubscription>
-                <Price  name={name} />
+                <Price name={name} />
                 <div className="flex min-h-14 items-center">
                   <IconButton
                     onClick={() => fields.remove(index)}

@@ -6,7 +6,8 @@ import { InvoiceSave } from "@/repositories/invoicesRepository";
 
 export async function createInvoice(invoiceCreate: InvoiceSave) {
   const invoicesRepository = await getInvoicesRepository();
-  await invoicesRepository.save(invoiceCreate);
+  const createdInvoice = await invoicesRepository.save(invoiceCreate);
 
   revalidatePath("/administration/invoice/create");
+  return createdInvoice;
 }

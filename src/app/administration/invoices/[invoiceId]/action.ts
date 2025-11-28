@@ -6,7 +6,9 @@ import { revalidatePath } from "next/cache";
 
 export async function updateInvoice(invoice: InvoiceSave) {
   const invoicesRepository = await getInvoicesRepository();
-  await invoicesRepository.save(invoice);
+  const updatedInvoice = await invoicesRepository.save(invoice);
 
   revalidatePath(`/administration/invoices/${invoice.id}`);
+
+  return updatedInvoice;
 }
