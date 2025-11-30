@@ -16,7 +16,7 @@ test("updates patient", async ({ page }) => {
 
   await page.getByRole("textbox", { name: "Vorname" }).first().fill("Max");
 
-  await page.getByRole("button", { name: "Patient anlegen" }).click();
+  await page.getByRole("button", { name: "Speichern" }).click();
 
   await expect(
     page.getByRole("gridcell", { name: "Max", exact: true })

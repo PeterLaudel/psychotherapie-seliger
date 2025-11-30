@@ -29,7 +29,7 @@ test("creates a patient", async ({ page }) => {
     .first()
     .fill("Musterstadt");
 
-  await page.getByRole("button", { name: "Patient anlegen" }).click();
+  await page.getByRole("button", { name: "Anlegen" }).click();
 
   // expectation after creating a patient
   await expect(page.getByText("Patient wurde angelegt")).toBeVisible();

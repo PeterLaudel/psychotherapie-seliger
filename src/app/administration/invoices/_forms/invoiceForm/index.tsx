@@ -4,21 +4,23 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
 import arrayMutators from "final-form-arrays";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Form } from "react-final-form";
 import PatientSection from "./patientSection";
 import ServiceSection, { InvoicePosition } from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
-import { Factor, Service } from "@/models/service";
+import { Service } from "@/models/service";
 import { Patient } from "@/models/patient";
-import SuccessMessage from "@/components/successMessage";
 import SubmitButton from "@/components/submitButton";
 import { Therapeut } from "@/models/therapeut";
 import { InvoiceSave } from "@/repositories/invoicesRepository";
+import { useSnackbar } from "@/contexts/snackbarProvider";
+import { Invoice } from "@/models/invoice";
+import { useRouter } from "next/navigation";
 
 interface Props {
   invoiceId?: number;
-  action: (invoice: InvoiceSave) => Promise<void>;
+  action: (invoice: InvoiceSave) => Promise<Invoice>;
   patients: Patient[];
   services: Service[];
   therapeut: Therapeut;
@@ -43,7 +45,8 @@ export default function InvoiceForm({
   therapeut,
   initialValues: initialValuesProps,
 }: Props) {
-  const [open, showSuccessMessage] = useState(false);
+  const router = useRouter();
+  const { showSuccessMessage } = useSnackbar();
   const initialValues = useMemo<Partial<FormInvoice>>(() => {
     if (initialValuesProps) return initialValuesProps;
 
@@ -63,7 +66,7 @@ export default function InvoiceForm({
 
   const onSubmit = useCallback(
     async (values: FormInvoice) => {
-      await action({
+      const invoice = await action({
         id: invoiceId,
         patient: values.patient!,
         invoiceNumber: values.invoiceNumber,
@@ -77,13 +80,15 @@ export default function InvoiceForm({
           serviceDate: position.serviceDate!,
           service: position.service!,
           amount: position.amount,
-          factor: position.factor! as Factor,
+          factor: position.factor!,
           pageBreak: position.pageBreak!,
         })),
       });
-      showSuccessMessage(true);
+      showSuccessMessage("Rechnung wurde gespeichert");
+
+      router.push(`/administration/invoices/${invoice.id}`);
     },
-    [action, invoiceId]
+    [action, invoiceId, router, showSuccessMessage]
   );
 
   return (
@@ -115,7 +120,7 @@ export default function InvoiceForm({
                   submitting={!!submitting}
                   className="justify-self-start self-center"
                 >
-                  Rechnung versenden
+                  {initialValuesProps ? "Speichern" : "Anlegen"}
                 </SubmitButton>
               </form>
             </div>
@@ -126,9 +131,6 @@ export default function InvoiceForm({
           </div>
         )}
       </Form>
-      <SuccessMessage open={open} onClose={() => showSuccessMessage(false)}>
-        Rechnung wurde erstellt
-      </SuccessMessage>
     </LocalizationProvider>
   );
 }

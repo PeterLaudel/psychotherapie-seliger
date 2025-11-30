@@ -23,8 +23,6 @@ test("createas an invoice", async ({ page }) => {
   await page.getByRole("combobox", { name: "Patient" }).first().click();
   await page.getByRole("option", { name: patient.name }).click();
 
-  await page.getByRole("textbox", { name: "Diagnose" }).fill("Doof");
-
   const dateGroup = page.getByRole("group", { name: "Leistungs Datum" });
   await dateGroup.getByRole("spinbutton", { name: "Tag" }).fill("10");
   await dateGroup.getByRole("spinbutton", { name: "Monat" }).fill("10");
@@ -33,8 +31,8 @@ test("createas an invoice", async ({ page }) => {
   await page.getByRole("combobox", { name: "Leistung" }).click();
   await page.getByRole("option", { name: service.short }).click();
 
-  await page.getByRole("button", { name: "Rechnung versenden" }).click();
+  await page.getByRole("button", { name: "Anlegen" }).click();
 
   const succesAlert = page.getByRole("alert");
-  await expect(succesAlert.getByText("Rechnung wurde erstellt")).toBeVisible();
+  await expect(succesAlert.getByText("Rechnung wurde gespeichert")).toBeVisible();
 });

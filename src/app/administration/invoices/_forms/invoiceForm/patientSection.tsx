@@ -42,9 +42,6 @@ export default function PatientSection({ patients }: Props) {
             />
           )}
         </Field>
-        <Field<string> name="diagnosis" type="text">
-          {({ input }) => <TextField {...input} label="Diagnose" />}
-        </Field>
       </div>
     </Section>
   );

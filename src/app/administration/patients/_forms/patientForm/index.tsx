@@ -71,7 +71,7 @@ export default function PatientForm({
               submitting={!!submitting || !!submitSucceeded}
               className="justify-self-start self-center"
             >
-              Patient anlegen
+              {initialValuesProps ? "Speichern" : "Anlegen"}
             </SubmitButton>
           </form>
         )}
