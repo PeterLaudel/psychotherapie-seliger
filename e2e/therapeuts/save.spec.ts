@@ -36,10 +36,10 @@ test("updates a therapeut with filled form", async ({ page }) => {
   await expect(heading).toBeVisible();
 
   await expect(page.getByLabel("Titel")).toHaveValue(therapeut.title);
+  await expect(page.getByLabel("Vorname")).toHaveValue(therapeut.name);
   await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
-    therapeut.name
+    therapeut.surname
   );
-  await expect(page.getByLabel("Vorname")).toHaveValue(therapeut.surname);
   await expect(page.getByLabel("Straße")).toHaveValue(therapeut.street);
   await expect(page.getByLabel("PLZ")).toHaveValue(therapeut.zip);
   await expect(page.getByLabel("Ort")).toHaveValue(therapeut.city);

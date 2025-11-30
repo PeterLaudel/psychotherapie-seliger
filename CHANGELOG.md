@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.2.2
+
+### Patch Changes
+
+- Fix sepa recipient
+
 ## 0.2.1
 
 ### Patch Changes
