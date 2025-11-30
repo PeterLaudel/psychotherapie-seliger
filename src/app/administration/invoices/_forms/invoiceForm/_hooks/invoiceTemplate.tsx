@@ -56,7 +56,7 @@ export function InvoiceTemplate({
   });
 
   const data = generateSepaQrBase64Png({
-    recipient: therapeut.name,
+    recipient: `${therapeut.name} ${therapeut.surname}`,
     bic: therapeut.bic,
     iban: therapeut.iban,
     amount: total,

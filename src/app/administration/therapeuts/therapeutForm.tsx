@@ -46,10 +46,10 @@ export function TherapeutForm({ therapeut }: Props) {
           <TextField label="Titel" {...fieldProps("title")} />
           <TextField
             className="col-start-[1]"
-            label="Name"
+            label="Vorname"
             {...fieldProps("name")}
           />
-          <TextField label="Vorname" {...fieldProps("surname")} />
+          <TextField label="Name" {...fieldProps("surname")} />
           <TextField label="Straße" {...fieldProps("street")} />
           <TextField label="PLZ" {...fieldProps("zip")} />
           <TextField label="Ort" {...fieldProps("city")} />
