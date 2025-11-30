@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.2.1
+
+### Patch Changes
+
+- e0dae13: Improve component text
+
 ## 0.2.0
 
 ### Minor Changes
