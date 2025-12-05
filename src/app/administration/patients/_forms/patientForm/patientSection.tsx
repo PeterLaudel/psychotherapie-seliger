@@ -62,7 +62,6 @@ export default function PatientSection() {
               onChange={(newValue) =>
                 input.onChange(newValue ? newValue.format("YYYY-MM-DD") : null)
               }
-              minDate={dayjs.unix(0)}
               enableAccessibleFieldDOMStructure={false}
               slotProps={{
                 textField: {
