@@ -39,7 +39,7 @@
     "dayjs": "^1.11.13",
     "google-auth-library": "^10.2.1",
     "kysely": "^0.28.4",
-    "next": "15.4.6",
+    "next": "^15.5.7",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "pdf-lib": "^1.17.1",
