@@ -1,6 +1,6 @@
 import { getDb } from "@/initialize";
 import { InvoicePosition, type Invoice } from "@/models/invoice";
-import { Expression, sql } from "kysely";
+import { Expression } from "kysely";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
 import { patientSelector } from "./selectors/patient";
 import { Patient } from "@/models/patient";
@@ -136,7 +136,6 @@ export class InvoicesRepository {
         .selectFrom("invoicePositions")
         .select(({ ref }) => [
           "invoicePositions.serviceDate as serviceDate",
-          sql<boolean>`invoicePositions.pageBreak != 0`.as("pageBreak"),
           "invoicePositions.amount as amount",
           "invoicePositions.factor as factor",
           this.selectService(ref("invoicePositions.serviceId"))
@@ -172,7 +171,6 @@ export class InvoicesRepository {
             serviceDate: position.serviceDate,
             amount: position.amount,
             factor: position.factor,
-            pageBreak: Number(position.pageBreak),
             invoiceId: invoiceId,
           })
           .execute()

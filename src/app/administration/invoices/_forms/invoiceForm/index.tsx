@@ -58,7 +58,6 @@ export default function InvoiceForm({
           service: undefined,
           amount: 1,
           factor: undefined,
-          pageBreak: false,
         },
       ],
     };
@@ -82,7 +81,6 @@ export default function InvoiceForm({
           service: position.service!,
           amount: position.amount,
           factor: position.factor!,
-          pageBreak: position.pageBreak!,
         })),
       });
       showSuccessMessage("Rechnung wurde gespeichert");

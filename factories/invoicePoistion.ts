@@ -13,7 +13,6 @@ export const invoicePositionFactory = Factory.define<
   invoiceId: sequence,
   amount: faker.number.int(),
   factor: faker.helpers.arrayElement(["1.0", "1.8", "2.3"]),
-  pageBreak: faker.helpers.arrayElement([0, 1]),
 })).onCreate(async (invoicePosition) => {
   return await getDb()
     .insertInto("invoicePositions")

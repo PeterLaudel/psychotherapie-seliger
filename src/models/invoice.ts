@@ -4,7 +4,6 @@ import { Factor, Service } from "./service";
 export interface InvoicePosition {
   serviceDate: string;
   service: Service;
-  pageBreak: boolean;
   amount: number;
   factor: Factor;
 }

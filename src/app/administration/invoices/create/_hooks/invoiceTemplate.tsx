@@ -21,7 +21,6 @@ export type Position = {
   factor: string;
   service: Service;
   price: number;
-  pageBreak?: boolean;
 };
 
 export interface Props {
@@ -172,7 +171,6 @@ export function InvoiceTemplate({
           <View
             style={tw("flex-row py-2")}
             key={toKey(position)}
-            break={position.pageBreak}
             wrap={false}
           >
             <View style={tw("w-[10vw]")}>

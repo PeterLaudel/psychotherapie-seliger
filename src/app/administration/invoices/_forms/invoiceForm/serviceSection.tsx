@@ -10,7 +10,6 @@ import dayjs from "dayjs";
 import { Fragment } from "react";
 import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
-import { PageBreakField } from "./pageBreakField";
 import { Factor, Service, Service as ServiceType } from "@/models/service";
 import Section from "@/components/section";
 import { InvalidSubscription, ValueSubscription } from "@/components/forms";
@@ -25,7 +24,6 @@ export interface InvoicePosition {
   service?: Service;
   amount: number;
   factor?: Factor;
-  pageBreak?: boolean;
   price?: number;
 }
 
@@ -38,7 +36,6 @@ export default function ServiceSection({ services }: Props) {
       service: undefined,
       amount: 1,
       factor: undefined,
-      pageBreak: false,
     });
   };
 
@@ -50,11 +47,6 @@ export default function ServiceSection({ services }: Props) {
           {({ fields }) =>
             fields.map((name, index) => (
               <Fragment key={name}>
-                {index > 0 && (
-                  <div className="col-span-5">
-                    <PageBreakField name={name} />
-                  </div>
-                )}
                 <Field<Date>
                   key={`${name}.serviceDate`}
                   name={`${name}.serviceDate`}

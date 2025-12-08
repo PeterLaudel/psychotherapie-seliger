@@ -26,7 +26,6 @@ describe("InvoicesRepository", () => {
           {
             amount: 2,
             factor: "1.0",
-            pageBreak: false,
             service,
             serviceDate: "2020-01-01",
           },
@@ -44,7 +43,6 @@ describe("InvoicesRepository", () => {
           {
             amount: 2,
             factor: "1.0",
-            pageBreak: 0,
             service,
             serviceDate: "2020-01-01",
           },
@@ -77,7 +75,6 @@ describe("InvoicesRepository", () => {
           {
             amount: 10,
             factor: "1.0",
-            pageBreak: true,
             service,
             serviceDate: "2020-01-01",
           },
@@ -95,7 +92,6 @@ describe("InvoicesRepository", () => {
           {
             amount: 10,
             factor: "1.0",
-            pageBreak: 1,
             service,
             serviceDate: "2020-01-01",
           },

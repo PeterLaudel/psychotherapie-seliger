@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useFormState } from "react-final-form";
+import { useField, useFormState } from "react-final-form";
 import type { FormInvoice } from ".";
 import type { InvoicePosition } from "./serviceSection";
 import { Therapeut } from "@/models/therapeut";
@@ -26,6 +26,9 @@ export default function InvoiceViewer({ therapeut, invoiceNumber }: Props) {
 function Viewer({ therapeut, invoiceNumber }: Props) {
   const timeoutId = useRef<null | ReturnType<typeof setTimeout>>(null);
   const [data, setData] = useState<string | null>(null);
+  const {
+    input: { onChange },
+  } = useField<string>("base64Pdf");
   const mutation = useMutation({
     mutationFn: (postData: CreatePdfParams) => {
       return fetch("/api/invoices/generate", {
@@ -34,6 +37,7 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
       }).then(async (res) => {
         const data = await res.blob();
         setData(URL.createObjectURL(data));
+        onChange(await blobToBase64(data));
       });
     },
   });
@@ -85,4 +89,12 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
   return (
     <iframe key={values?.patient?.id} src={data} className="w-full h-full" />
   );
+}
+
+function blobToBase64(blob: Blob) {
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
 }

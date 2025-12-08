@@ -42,7 +42,6 @@ export interface InvoicePositionsTable {
   invoiceId: number;
   serviceId: number;
   serviceDate: string;
-  pageBreak: number;
   amount: number;
   factor: "1.0" | "1.8" | "2.3";
 }
