@@ -17,6 +17,7 @@ import { InvoiceSave } from "@/repositories/invoicesRepository";
 import { useSnackbar } from "@/contexts/snackbarProvider";
 import { Invoice } from "@/models/invoice";
 import { useRouter } from "next/navigation";
+import { InvoiceAmount } from "./invoiceAmount";
 
 interface Props {
   invoiceId?: number;
@@ -63,7 +64,6 @@ export default function InvoiceForm({
     };
   }, [invoiceNumber, initialValuesProps]);
 
-
   const onSubmit = useCallback(
     async (values: FormInvoice) => {
       const invoice = await action({
@@ -71,16 +71,14 @@ export default function InvoiceForm({
         patient: values.patient!,
         invoiceNumber: values.invoiceNumber,
         base64Pdf: values.base64Pdf!,
-        invoiceAmount: values.invoicePositions.reduce(
-          (sum, pos) => sum + pos.price!,
-          0
-        ),
+        invoiceAmount: values.invoiceAmount!,
         status: "pending",
         positions: values.invoicePositions.map((position) => ({
           serviceDate: position.serviceDate!,
           service: position.service!,
           amount: position.amount,
           factor: position.factor!,
+          price: position.price!,
         })),
       });
       showSuccessMessage("Rechnung wurde gespeichert");
@@ -115,6 +113,7 @@ export default function InvoiceForm({
                 <h1>Rechnung erstellen</h1>
                 <PatientSection patients={patients} />
                 <ServiceSection services={services} />
+                <InvoiceAmount />
                 <SubmitButton
                   submitting={!!submitting}
                   className="justify-self-start self-center"

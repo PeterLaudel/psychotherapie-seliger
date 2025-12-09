@@ -141,6 +141,7 @@ export class InvoicesRepository {
           this.selectService(ref("invoicePositions.serviceId"))
             .$notNull()
             .as("service"),
+          "invoicePositions.price as price",
         ])
         .whereRef("invoicePositions.invoiceId", "=", invoiceId)
     );
@@ -172,6 +173,7 @@ export class InvoicesRepository {
             amount: position.amount,
             factor: position.factor,
             invoiceId: invoiceId,
+            price: position.price,
           })
           .execute()
       )

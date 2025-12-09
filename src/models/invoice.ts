@@ -6,6 +6,7 @@ export interface InvoicePosition {
   service: Service;
   amount: number;
   factor: Factor;
+  price: number;
 }
 
 export interface Invoice {

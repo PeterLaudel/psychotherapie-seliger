@@ -44,6 +44,7 @@ export interface InvoicePositionsTable {
   serviceDate: string;
   amount: number;
   factor: "1.0" | "1.8" | "2.3";
+  price: number;
 }
 
 export interface PatientInvoiceTable {
