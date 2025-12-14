@@ -37,7 +37,8 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
       }).then(async (res) => {
         const data = await res.blob();
         setData(URL.createObjectURL(data));
-        onChange(await blobToBase64(data));
+        const base64 = await blobToBase64(data);
+        onChange(base64.split(',')[1]);
       });
     },
   });
