@@ -36,8 +36,7 @@ function SendButton({ invoice }: { invoice: Invoice }) {
         <div className="p-4 flex flex-col gap-4">
           <h2 className="text-lg font-semibold">Rechnung senden?</h2>
           <p>
-            Sind Sie sicher, dass Sie diese Rechnung per E-Mail an den Patienten
-            senden möchten?
+            {`Sind Sie sicher, dass Sie diese Rechnung per E-Mail an ${invoice.patient.billingInfo.email} senden möchten?`}
           </p>
           <div className="flex justify-end gap-4">
             <Button onClick={() => setOpen(false)} disabled={isPending}>
