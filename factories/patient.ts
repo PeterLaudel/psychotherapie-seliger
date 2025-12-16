@@ -17,6 +17,7 @@ export const patientFactory = Factory.define<
   address: addressFactory.build(),
   billingInfo: billingInfoFactory.build(),
   diagnosis: null,
+  invoicePassword: faker.internet.password(),
 })).onCreate(async (patient) => {
   const { address, billingInfo, ...rest } = patient;
   const {
@@ -28,6 +29,7 @@ export const patientFactory = Factory.define<
     street,
     city,
     zip,
+    invoicePassword,
     diagnosis,
     billingName,
     billingSurname,
@@ -56,6 +58,7 @@ export const patientFactory = Factory.define<
     email,
     birthdate,
     diagnosis,
+    invoicePassword,
     address: {
       street,
       city,

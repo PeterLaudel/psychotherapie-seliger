@@ -26,6 +26,7 @@ interface PatientTable {
   billingStreet: string;
   billingCity: string;
   billingZip: string;
+  invoicePassword: string | null;
 }
 
 export interface InvoicesTable {

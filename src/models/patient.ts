@@ -16,4 +16,5 @@ export interface Patient {
   address: Address;
   diagnosis: string | null;
   billingInfo: BillingInfo;
+  invoicePassword: string | null;
 }

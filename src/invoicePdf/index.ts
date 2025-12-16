@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */ 
+/* eslint-disable no-param-reassign */
 import { InvoicePosition } from "@/models/invoice";
 import { Therapeut } from "@/models/therapeut";
 import PDFDocument from "pdfkit";
@@ -6,11 +6,15 @@ import logoBuffer from "./logo";
 import { Patient } from "@/models/patient";
 import { generateSepaQrBase64PngBuffer } from "./generateSepaQrBase64Png";
 import blobStream from "blob-stream";
+
 export interface CreatePdfParams {
   patient?: Patient;
   therapeut: Therapeut;
   invoiceNumber: string;
   positions: (InvoicePosition & { price: number })[];
+  options?: {
+    invoicePassword?: string;
+  };
 }
 
 const STANDARD_MARGINS = 48;
@@ -25,11 +29,12 @@ const currencyFormatter = new Intl.NumberFormat("de-DE", {
   currency: "EUR",
 });
 
-export async function generateInvoice({
+export async function generateInvoiceBlob({
   patient,
   therapeut,
   invoiceNumber,
   positions,
+  options,
 }: CreatePdfParams) {
   const doc = new PDFDocument({
     margins: {
@@ -40,6 +45,8 @@ export async function generateInvoice({
     },
     size: "A4",
     autoFirstPage: false,
+    pdfVersion: "1.7",
+    userPassword: options?.invoicePassword,
   });
   const stream = doc.pipe(blobStream());
   pageFooter(doc, therapeut);
@@ -68,6 +75,10 @@ export async function generateInvoice({
       resolve(blob);
     });
   });
+}
+
+export function generateInvoiceBase64(params: CreatePdfParams) {
+  return generateInvoiceBlob(params).then((blob) => blobToBase64(blob));
 }
 
 function pageFooter(doc: typeof PDFDocument, therapeut: Therapeut) {
@@ -327,4 +338,10 @@ function ensureSpace(doc: typeof PDFDocument, neededHeight: number) {
     doc.addPage();
     doc.y = doc.page.margins.top; // reset cursor
   }
+}
+
+function blobToBase64(blob: Blob) {
+  return blob
+    .arrayBuffer()
+    .then((buffer) => Buffer.from(buffer).toString("base64"));
 }

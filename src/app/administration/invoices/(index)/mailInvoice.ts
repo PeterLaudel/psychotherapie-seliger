@@ -4,8 +4,7 @@ import { Therapeut } from "@/models/therapeut";
 import { getServerSession } from "next-auth";
 import * as nodemailer from "nodemailer";
 
-const isTestEmail = () =>
-  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+const isTestEmail = () => process.env.NODE_ENV === "test";
 
 export default async function mailInvoice(
   therapeut: Therapeut,
@@ -25,7 +24,7 @@ export default async function mailInvoice(
       },
     ],
   });
-
+  
   if (transporter.transporter.name === "JSONTransport") {
     global.lastEmailPreviewUrl = JSON.stringify(info);
   }
