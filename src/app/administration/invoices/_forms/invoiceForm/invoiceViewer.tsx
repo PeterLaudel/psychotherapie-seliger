@@ -8,12 +8,14 @@ import {
   QueryClientProvider,
   useMutation,
 } from "@tanstack/react-query";
-import { CreatePdfParams } from "./_hooks/createPdf";
+import { CreatePdfParams } from "@/invoicePdf";
 
 interface Props {
   therapeut: Therapeut;
   invoiceNumber: string;
 }
+
+const MUTATE_TIMEOUT = 250;
 
 export default function InvoiceViewer({ therapeut, invoiceNumber }: Props) {
   return (
@@ -38,7 +40,7 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
         const data = await res.blob();
         setData(URL.createObjectURL(data));
         const base64 = await blobToBase64(data);
-        onChange(base64.split(',')[1]);
+        onChange(base64.split(",")[1]);
       });
     },
   });
@@ -78,7 +80,7 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
           patient: values?.patient,
           positions: mappedPositions,
         }),
-      500
+      MUTATE_TIMEOUT
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [therapeut, invoiceNumber, values?.patient, stringifiedMappedPositions]);
