@@ -42,7 +42,7 @@ export default function ServiceSection({ services }: Props) {
   return (
     <Section>
       <h2 className="mb-4">Leistungen</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-4 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
         <FieldArray<Partial<InvoicePosition>> name="invoicePositions">
           {({ fields }) =>
             fields.map((name, index) => (

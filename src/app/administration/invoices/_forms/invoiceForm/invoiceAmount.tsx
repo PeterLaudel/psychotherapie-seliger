@@ -1,22 +1,26 @@
-import { useField, useFormState } from "react-final-form";
+import { useField } from "react-final-form";
 import { useEffect } from "react";
-import { FormInvoice } from ".";
+import { Invoice } from "@/models/invoice";
 
 export function InvoiceAmount() {
-  const { values } = useFormState<FormInvoice>();
+  const {
+    input: { value: invoicePositions },
+  } = useField<Partial<Invoice["positions"]>>("invoicePositions", {
+    subscription: { value: true },
+  });
   const {
     input: { onChange },
-  } = useField<number>("invoiceAmount");
+  } = useField<Invoice["invoiceAmount"]>("invoiceAmount");
 
-  const stringifiedPositions = JSON.stringify(values?.invoicePositions);
+  const stringifiedPositions = JSON.stringify(invoicePositions);
 
   useEffect(() => {
-    const total = (values?.invoicePositions || []).reduce(
-      (prev, { price }) => prev + (price || 0),
+    const total = (invoicePositions || []).reduce(
+      (prev, entry) => prev + (entry?.price || 0),
       0
     );
     onChange(total);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stringifiedPositions, onChange]);
 
   return <></>;

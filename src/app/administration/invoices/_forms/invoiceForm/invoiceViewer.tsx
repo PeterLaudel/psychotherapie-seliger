@@ -79,11 +79,18 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
           invoiceNumber,
           patient: values?.patient,
           positions: mappedPositions,
+          invoiceAmount: values?.invoiceAmount || 0,
         }),
       MUTATE_TIMEOUT
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [therapeut, invoiceNumber, values?.patient, stringifiedMappedPositions]);
+  }, [
+    therapeut,
+    invoiceNumber,
+    values?.patient,
+    stringifiedMappedPositions,
+    values?.invoiceAmount,
+  ]);
 
   if (!data) {
     return null;

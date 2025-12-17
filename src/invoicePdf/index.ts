@@ -6,12 +6,15 @@ import logoBuffer from "./logo";
 import { Patient } from "@/models/patient";
 import { generateSepaQrBase64PngBuffer } from "./generateSepaQrBase64Png";
 import blobStream from "blob-stream";
+import { createZugferdXml } from "@/zugferd";
+import dayjs from "dayjs";
 
 export interface CreatePdfParams {
   patient?: Patient;
   therapeut: Therapeut;
   invoiceNumber: string;
-  positions: (InvoicePosition & { price: number })[];
+  positions: InvoicePosition[];
+  invoiceAmount: number;
   options?: {
     invoicePassword?: string;
   };
@@ -29,13 +32,7 @@ const currencyFormatter = new Intl.NumberFormat("de-DE", {
   currency: "EUR",
 });
 
-export async function generateInvoiceBlob({
-  patient,
-  therapeut,
-  invoiceNumber,
-  positions,
-  options,
-}: CreatePdfParams) {
+export async function generateInvoiceBlob(params: CreatePdfParams) {
   const doc = new PDFDocument({
     margins: {
       left: STANDARD_MARGINS,
@@ -46,26 +43,26 @@ export async function generateInvoiceBlob({
     size: "A4",
     autoFirstPage: false,
     pdfVersion: "1.7",
-    userPassword: options?.invoicePassword,
+    userPassword: params.options?.invoicePassword,
   });
   const stream = doc.pipe(blobStream());
-  pageFooter(doc, therapeut);
+  pageFooter(doc, params);
 
   doc.addPage();
 
-  const total = positions.reduce((prev, position) => prev + position.price, 0);
-
   invoiceLogo(doc);
 
-  addressPart(doc, therapeut, patient);
-  practicePart(doc, therapeut);
+  addressPart(doc, params);
+  practicePart(doc, params);
   doc.y = doc.y + 30;
 
-  invoiceContext(doc, therapeut, invoiceNumber, patient);
-  positionsPart(doc, total, positions);
+  invoiceContext(doc, params);
+  positionsPart(doc, params);
   doc.moveDown(2);
 
-  await addPaymentInfo(doc, invoiceNumber, total, therapeut);
+  await addPaymentInfo(doc, params);
+
+  attachZugferXml(doc, params);
 
   doc.end();
 
@@ -81,7 +78,7 @@ export function generateInvoiceBase64(params: CreatePdfParams) {
   return generateInvoiceBlob(params).then((blob) => blobToBase64(blob));
 }
 
-function pageFooter(doc: typeof PDFDocument, therapeut: Therapeut) {
+function pageFooter(doc: typeof PDFDocument, { therapeut }: CreatePdfParams) {
   doc.on("pageAdded", () => {
     const bottom = doc.page.margins.bottom;
     doc.page.margins.bottom = 0;
@@ -116,8 +113,7 @@ function invoiceLogo(doc: typeof PDFDocument) {
 
 function addressPart(
   doc: typeof PDFDocument,
-  therapeut: Therapeut,
-  patient?: Patient
+  { therapeut, patient }: CreatePdfParams
 ) {
   doc.y = 150;
   doc
@@ -143,7 +139,7 @@ function addressPart(
     );
 }
 
-function practicePart(doc: typeof PDFDocument, therapeut: Therapeut) {
+function practicePart(doc: typeof PDFDocument, { therapeut }: CreatePdfParams) {
   doc.x = 370;
   doc.y = 150;
 
@@ -169,9 +165,7 @@ function practicePart(doc: typeof PDFDocument, therapeut: Therapeut) {
 
 function invoiceContext(
   doc: typeof PDFDocument,
-  therapeut: Therapeut,
-  invoiceNumber: string,
-  patient?: Patient
+  { invoiceNumber, patient, therapeut }: CreatePdfParams
 ) {
   const invTop = doc.y;
 
@@ -214,8 +208,7 @@ function invoiceContext(
 
 function positionsPart(
   doc: typeof PDFDocument,
-  total: number,
-  positions: (InvoicePosition & { price: number })[]
+  { invoiceAmount, positions }: CreatePdfParams
 ) {
   const table = doc.fontSize(11).table({
     rowStyles: (i) => {
@@ -268,16 +261,14 @@ function positionsPart(
   doc
     .font("Helvetica-Bold")
     .fontSize(11)
-    .text(`Gesamtsumme ${currencyFormatter.format(total)}`, {
+    .text(`Gesamtsumme ${currencyFormatter.format(invoiceAmount)}`, {
       align: "right",
     });
 }
 
 async function addPaymentInfo(
   doc: typeof PDFDocument,
-  invoiceNumber: string,
-  total: number,
-  therapeut: Therapeut
+  { invoiceNumber, therapeut, invoiceAmount }: CreatePdfParams
 ) {
   doc.font("Helvetica").moveDown(2);
 
@@ -292,7 +283,7 @@ async function addPaymentInfo(
     recipient: `${therapeut.name} ${therapeut.surname}`,
     bic: therapeut.bic,
     iban: therapeut.iban,
-    amount: total,
+    amount: invoiceAmount,
     purposeCode: "MEDI",
     remittanceInfo: invoiceNumber,
   });
@@ -338,6 +329,44 @@ function ensureSpace(doc: typeof PDFDocument, neededHeight: number) {
     doc.addPage();
     doc.y = doc.page.margins.top; // reset cursor
   }
+}
+
+function attachZugferXml(doc: typeof PDFDocument, params: CreatePdfParams) {
+  const zugferdXml = createZugferdXml({
+    invoiceDate: dayjs().format("YYYYMMDD"),
+    invoiceNumber: params.invoiceNumber,
+    positions: params.positions.map((p, index) => ({
+      id: index.toString(),
+      description: p.service.description,
+      price: p.price,
+      quantity: p.amount,
+      tax: 0.0, // Assuming no tax for medical services
+    })),
+    buyer: {
+      name: params.patient?.name || "",
+      street: params.patient?.billingInfo.address.street || "",
+      city: params.patient?.billingInfo.address.city || "",
+      zip: params.patient?.billingInfo.address.zip || "",
+      country: "DE",
+    },
+    seller: {
+      name: `${params.therapeut.name} ${params.therapeut.surname}`,
+      street: params.therapeut.street,
+      city: params.therapeut.city,
+      zip: params.therapeut.zip,
+      country: "DE",
+      vatId: params.therapeut.taxId,
+    },
+  });
+
+  const xmlBytes = Buffer.from(zugferdXml, "utf-8");
+
+  doc.file(xmlBytes, {
+    name: "zugferInvoice.xml",
+    type: "application/xml",
+    description: "ZUGFeRD Invoice XML",
+    creationDate: new Date(),
+  });
 }
 
 function blobToBase64(blob: Blob) {
