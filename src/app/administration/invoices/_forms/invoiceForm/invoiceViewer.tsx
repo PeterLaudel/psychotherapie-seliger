@@ -1,25 +1,54 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useField, useFormState } from "react-final-form";
 import type { FormInvoice } from ".";
-import { usePdf } from "./_hooks/usePdf";
 import type { InvoicePosition } from "./serviceSection";
 import { Therapeut } from "@/models/therapeut";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+} from "@tanstack/react-query";
+import { CreatePdfParams } from "@/invoicePdf";
 
 interface Props {
   therapeut: Therapeut;
   invoiceNumber: string;
 }
 
-export default function InvoiceViewer({
-  therapeut,
-  invoiceNumber,
-}: Props) {
+const MUTATE_TIMEOUT = 250;
+
+export default function InvoiceViewer({ therapeut, invoiceNumber }: Props) {
+  return (
+    <QueryClientProvider client={new QueryClient()}>
+      <Viewer therapeut={therapeut} invoiceNumber={invoiceNumber} />
+    </QueryClientProvider>
+  );
+}
+
+function Viewer({ therapeut, invoiceNumber }: Props) {
+  const timeoutId = useRef<null | ReturnType<typeof setTimeout>>(null);
+  const [data, setData] = useState<string | null>(null);
   const {
     input: { onChange },
   } = useField<string>("base64Pdf");
+  const mutation = useMutation({
+    mutationFn: (postData: CreatePdfParams) => {
+      return fetch("/api/invoices/generate", {
+        method: "POST",
+        body: JSON.stringify(postData),
+      }).then(async (res) => {
+        const data = await res.blob();
+        setData(URL.createObjectURL(data));
+        const base64 = await blobToBase64(data);
+        onChange(base64.split(",")[1]);
+      });
+    },
+  });
   const { values } = useFormState<FormInvoice>({
     subscription: { values: true },
   });
+
+  const stringifiedPositions = JSON.stringify(values?.invoicePositions);
   const mappedPositions = useMemo(
     () =>
       values?.invoicePositions
@@ -32,34 +61,50 @@ export default function InvoiceViewer({
             !!position.amount &&
             !!position.price
         )
-        .map((position, index) => (
-          {
-            id: index,
-            ...position,
-          }
-        )),
-    [values?.invoicePositions]
+        .map((position, index) => ({
+          id: index,
+          ...position,
+        })) || [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [stringifiedPositions]
   );
 
-  const base64Pdf = usePdf({
+  const stringifiedMappedPositions = JSON.stringify(mappedPositions);
+  useEffect(() => {
+    if (timeoutId.current !== null) clearTimeout(timeoutId.current);
+    timeoutId.current = setTimeout(
+      () =>
+        mutation.mutate({
+          therapeut,
+          invoiceNumber,
+          patient: values?.patient,
+          positions: mappedPositions,
+          invoiceAmount: values?.invoiceAmount || 0,
+        }),
+      MUTATE_TIMEOUT
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
     therapeut,
-    invoiceNumber: invoiceNumber,
-    patient: values?.patient,
-    positions: mappedPositions || [],
-  });
+    invoiceNumber,
+    values?.patient,
+    stringifiedMappedPositions,
+    values?.invoiceAmount,
+  ]);
 
-  const url = useMemo(() => {
-    if (!base64Pdf) return null;
-    const buffer = Buffer.from(base64Pdf, "base64");
-    const blobWithXml = new Blob([buffer], { type: "application/pdf" });
-    return URL.createObjectURL(blobWithXml);
-  }, [base64Pdf]);
-
-  useEffect(() => onChange(base64Pdf || ""), [base64Pdf, onChange]);
-
-  if (base64Pdf === null || url === null) {
+  if (!data) {
     return null;
   }
 
-  return <iframe className="w-full h-full" key={values?.patient?.id} src={url} />;
+  return (
+    <iframe key={values?.patient?.id} src={data} className="w-full h-full" />
+  );
+}
+
+function blobToBase64(blob: Blob) {
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
 }

@@ -15,9 +15,11 @@ import { useSnackbar } from "@/contexts/snackbarProvider";
 import { useRouter } from "next/navigation";
 import { PatientSave } from "@/repositories/patientsRepository";
 import { billingInfoIsPatient } from "./billingInfoIsPatient";
+import InvoiceSection from "./invoiceSection";
 
 type PatientFormData = PatientSave & {
   billingInfoIsPatient: boolean;
+  enableInvoiceEncryption: boolean;
 };
 
 interface Props {
@@ -36,14 +38,24 @@ export default function PatientForm({
     () => ({
       ...initialValuesProps,
       billingInfoIsPatient: billingInfoIsPatient(initialValuesProps),
+      enableInvoiceEncryption: initialValuesProps?.invoicePassword !== null,
     }),
     [initialValuesProps]
   );
 
   const onSubmit = useCallback(
     (values: PatientFormData) => {
-      const { billingInfoIsPatient, ...patientData } = values;
-      action({ id: values.id, ...patientData });
+      const {
+        billingInfoIsPatient,
+        enableInvoiceEncryption,
+        invoicePassword,
+        ...patientData
+      } = values;
+      action({
+        id: values.id,
+        invoicePassword: invoicePassword || null,
+        ...patientData,
+      });
       showSuccessMessage("Patient wurde angelegt");
       router.push("/administration/patients");
     },
@@ -67,6 +79,7 @@ export default function PatientForm({
             <h1>Patient anlegen</h1>
             <PatientSection />
             <BillingSection />
+            <InvoiceSection />
             <SubmitButton
               submitting={!!submitting || !!submitSucceeded}
               className="justify-self-start self-center"

@@ -5,7 +5,7 @@ import { jsonObjectFrom } from "kysely/helpers/sqlite";
 export function patientSelector(database = getDb()) {
   return database
     .selectFrom("patients")
-    .select(["id", "name", "surname", "email", "birthdate", "diagnosis"])
+    .select(["id", "name", "surname", "email", "birthdate", "diagnosis", "invoicePassword"])
     .select((eb) => [
       address(eb.ref("patients.id"), database).as("address"),
       billingInfo(eb.ref("patients.id"), database).as("billingInfo"),

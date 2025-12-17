@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import * as nodemailer from "nodemailer";
 
 const isTestEmail = () =>
-  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+  process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development";
 
 export default async function mailInvoice(
   therapeut: Therapeut,

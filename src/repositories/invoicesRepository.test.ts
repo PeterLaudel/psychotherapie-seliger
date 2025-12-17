@@ -6,7 +6,7 @@ import { InvoicesRepository } from "./invoicesRepository";
 import { invoiceFactory } from "factories/invoice";
 import { patientInvoiceFactory } from "factories/patientInvoice";
 import { serviceFactory } from "factories/service";
-import { invoicePositionFactory } from "factories/invoicePoistion";
+import { invoicePositionFactory } from "factories/invoicePosition";
 
 describe("InvoicesRepository", () => {
   const invoicesRepository = new InvoicesRepository();
@@ -26,9 +26,9 @@ describe("InvoicesRepository", () => {
           {
             amount: 2,
             factor: "1.0",
-            pageBreak: false,
             service,
             serviceDate: "2020-01-01",
+            price: 100.1,
           },
         ],
       });
@@ -44,9 +44,9 @@ describe("InvoicesRepository", () => {
           {
             amount: 2,
             factor: "1.0",
-            pageBreak: 0,
             service,
             serviceDate: "2020-01-01",
+            price: 100.1,
           },
         ],
       });
@@ -77,9 +77,9 @@ describe("InvoicesRepository", () => {
           {
             amount: 10,
             factor: "1.0",
-            pageBreak: true,
             service,
             serviceDate: "2020-01-01",
+            price: 100.1,
           },
         ],
       });
@@ -95,9 +95,9 @@ describe("InvoicesRepository", () => {
           {
             amount: 10,
             factor: "1.0",
-            pageBreak: 1,
             service,
             serviceDate: "2020-01-01",
+            price: 100.1,
           },
         ],
       });

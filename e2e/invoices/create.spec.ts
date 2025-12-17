@@ -31,8 +31,12 @@ test("createas an invoice", async ({ page }) => {
   await page.getByRole("combobox", { name: "Leistung" }).click();
   await page.getByRole("option", { name: service.short }).click();
 
+  await page.waitForTimeout(1000);
+
   await page.getByRole("button", { name: "Anlegen" }).click();
 
   const succesAlert = page.getByRole("alert");
-  await expect(succesAlert.getByText("Rechnung wurde gespeichert")).toBeVisible();
+  await expect(
+    succesAlert.getByText("Rechnung wurde gespeichert")
+  ).toBeVisible();
 });
