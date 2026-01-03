@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.3.0
+
+### Minor Changes
+
+- 71ef735: Add the possibility to encrypt patient pdfs with a given password.
+
 ## 0.2.2
 
 ### Patch Changes
