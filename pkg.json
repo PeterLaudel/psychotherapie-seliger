@@ -8,6 +8,7 @@
     "assets": [
       ".next/**/*",
       "public/**/*",
+      "node_modules/pdfkit/**/*",
       ".env",
       "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
       "tmp/psychotherapie_seliger.sqlite"
