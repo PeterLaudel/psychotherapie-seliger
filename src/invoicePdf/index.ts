@@ -22,15 +22,18 @@ export interface CreatePdfParams {
 
 const STANDARD_MARGINS = 48;
 
-const dateFormatter = new Intl.DateTimeFormat("de-DE", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-const currencyFormatter = new Intl.NumberFormat("de-DE", {
-  style: "currency",
-  currency: "EUR",
-});
+function formatDate(date: string) {
+  const d = Date.parse(date) ? new Date(date) : new Date();
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
+function formatCurrency(amount: number) {
+  return amount.toFixed(2).replace(".", ",") + " €";
+}
+
 
 export async function generateInvoiceBlob(params: CreatePdfParams) {
   const doc = new PDFDocument({
@@ -180,7 +183,7 @@ function invoiceContext(
     .fontSize(11)
     .font("Helvetica")
     .text(
-      `${therapeut.city}, ${dateFormatter.format(new Date())}`,
+      `${therapeut.city}, ${formatDate((new Date()).toISOString())}`,
       doc.page.margins.left,
       invTop,
       {
@@ -198,7 +201,7 @@ function invoiceContext(
     .text(
       `Behandelt wurde: ${patient?.surname}, ${patient?.name}, geb.: ${
         patient?.birthdate &&
-        dateFormatter.format(Date.parse(patient?.birthdate))
+        formatDate(patient?.birthdate)
       }\n\n` +
         `${patient?.diagnosis}\n\n` +
         "Sehr geehrte Damen und Herren,\n\n" +
@@ -238,7 +241,7 @@ function positionsPart(
   positions.forEach((position) =>
     table.row([
       {
-        text: dateFormatter.format(Date.parse(position.serviceDate)),
+        text: formatDate(position.serviceDate),
         align: { x: "center", y: "top" },
       },
       {
@@ -252,7 +255,7 @@ function positionsPart(
       { text: position.factor, align: { x: "center", y: "top" } },
       { text: String(position.amount), align: { x: "center", y: "top" } },
       {
-        text: currencyFormatter.format(position.price),
+        text: formatCurrency(position.price),
         align: { x: "right", y: "top" },
       },
     ])
@@ -261,7 +264,7 @@ function positionsPart(
   doc
     .font("Helvetica-Bold")
     .fontSize(11)
-    .text(`Gesamtsumme ${currencyFormatter.format(invoiceAmount)}`, {
+    .text(`Gesamtsumme ${formatCurrency(invoiceAmount)}`, {
       align: "right",
     });
 }
