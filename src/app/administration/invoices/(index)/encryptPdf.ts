@@ -36,7 +36,11 @@ export async function encryptPdfBase64(
     p.stderr?.on("data", (d) => (stderr += d));
 
     p.on("close", (code) => {
-      code === 0 ? resolve() : reject(new Error(`qpdf failed: ${stderr}`));
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`qpdf failed: ${stderr}`));
+      }
     });
   });
 

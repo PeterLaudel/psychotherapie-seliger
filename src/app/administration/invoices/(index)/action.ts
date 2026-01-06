@@ -4,7 +4,6 @@ import { getInvoicesRepository, getTherapeutsRepository } from "@/server";
 import { revalidatePath } from "next/cache";
 import mailInvoice from "./mailInvoice";
 import { encryptPdfBase64 } from "./encryptPdf";
-import { pdfOwnerPassword } from "@/environment";
 
 export async function sendInvoiceEmail(invoiceId: number) {
   const invoicesRepository = await getInvoicesRepository();
