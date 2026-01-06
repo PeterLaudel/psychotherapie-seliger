@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.4.0
+
+### Minor Changes
+
+- 09de066: Add encryption with qpdf
+
 ## 0.3.0
 
 ### Minor Changes
