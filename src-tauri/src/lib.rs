@@ -19,7 +19,17 @@ pub fn run() {
             // --- Start your sidecar ---
             let sidecar_command = app.shell().sidecar("psychotherapie-seliger").unwrap();
 
-            let (mut rx, sidecar_child) = sidecar_command.spawn().expect("Failed to spawn sidecar");
+            let qpdf_path = std::env::current_exe()
+                .unwrap()
+                .parent()
+                .unwrap()
+                .join("qpdf");
+            log::info!("Using qpdf at path: {:?}", qpdf_path);
+
+            let (mut rx, sidecar_child) = sidecar_command
+                .env("QPDF_PATH", qpdf_path)
+                .spawn()
+                .expect("Failed to spawn sidecar");
             let child = Arc::new(Mutex::new(Some(sidecar_child)));
 
             tauri::async_runtime::spawn(async move {

@@ -3,7 +3,7 @@
 import { getInvoicesRepository, getTherapeutsRepository } from "@/server";
 import { revalidatePath } from "next/cache";
 import mailInvoice from "./mailInvoice";
-import { generateInvoiceBase64 } from "@/invoicePdf";
+import { encryptPdfBase64 } from "./encryptPdf";
 
 export async function sendInvoiceEmail(invoiceId: number) {
   const invoicesRepository = await getInvoicesRepository();
@@ -12,15 +12,11 @@ export async function sendInvoiceEmail(invoiceId: number) {
   const therapistsRepository = await getTherapeutsRepository();
   const therapeut = await therapistsRepository.all().then((t) => t[0]);
 
-  const base64Pdf = invoice.patient.invoicePassword
-    ? await generateInvoiceBase64({
-        ...invoice,
-        therapeut,
-        options: {
-          invoicePassword: invoice.patient.invoicePassword ?? undefined,
-        },
-      })
-    : invoice.base64Pdf;
+  const base64Pdf = await encryptPdfBase64(
+    invoice.base64Pdf,
+    invoice.patient.invoicePassword || "",
+    process.env.PDF_OWNER_PASSWORD || '',
+  );
 
   await mailInvoice(therapeut, { ...invoice, base64Pdf });
 

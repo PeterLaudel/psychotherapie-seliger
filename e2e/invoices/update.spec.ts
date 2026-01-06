@@ -6,7 +6,9 @@ import { therapeutFactory } from "factories/therapeut";
 
 test("sents an invoice email", async ({ page }) => {
   const therapeut = await therapeutFactory.create();
-  const patient = await patientFactory.create();
+  const patient = await patientFactory.create({
+    invoicePassword: null,
+  });
   const invoice = await invoiceFactory.create({ status: "pending" });
   await patientInvoiceFactory.create({
     patientId: patient.id,

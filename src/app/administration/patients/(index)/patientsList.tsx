@@ -34,16 +34,18 @@ export default function PatientsList({ patients }: Props) {
             </Button>
           </div>
           <NoSsr>
-            <DataGrid
-              rows={patients}
-              columns={columns}
-              disableColumnMenu
-              hideFooter
-              onRowClick={(params) => {
-                router.push(`/administration/patients/${params.row.id}`);
-              }}
-              getRowId={(row) => row.id}
-            />
+            <div className="h-full w-full">
+              <DataGrid
+                rows={patients}
+                columns={columns}
+                disableColumnMenu
+                hideFooter
+                onRowClick={(params) => {
+                  router.push(`/administration/patients/${params.row.id}`);
+                }}
+                getRowId={(row) => row.id}
+              />
+            </div>
           </NoSsr>
         </div>
       </Section>

@@ -69,19 +69,21 @@ export function InvoicesList({ invoices }: Props) {
             </Button>
           </div>
           <NoSsr>
-            <DataGrid<Invoice>
-              rows={invoices}
-              columns={columns}
-              disableColumnMenu
-              hideFooter
-              onRowClick={(params, event) => {
-                const tartget = event.target as HTMLElement;
-                if (tartget.closest("button") || tartget.closest("a")) {
-                  return;
-                }
-                router.push(`/administration/invoices/${params.row.id}`);
-              }}
-            />
+            <div className="h-full w-full">
+              <DataGrid<Invoice>
+                rows={invoices}
+                columns={columns}
+                disableColumnMenu
+                hideFooter
+                onRowClick={(params, event) => {
+                  const tartget = event.target as HTMLElement;
+                  if (tartget.closest("button") || tartget.closest("a")) {
+                    return;
+                  }
+                  router.push(`/administration/invoices/${params.row.id}`);
+                }}
+              />
+            </div>
           </NoSsr>
         </div>
       </Section>

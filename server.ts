@@ -2,6 +2,7 @@
 import path from "path";
 import fs from "fs";
 import * as dotenv from "dotenv";
+import 'pdfkit'; // ensure pdfkit is included in the bundle
 
 const homeDir = path.join(
   process.env.HOME || "",
