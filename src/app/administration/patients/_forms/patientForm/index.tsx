@@ -38,7 +38,7 @@ export default function PatientForm({
     () => ({
       ...initialValuesProps,
       billingInfoIsPatient: billingInfoIsPatient(initialValuesProps),
-      enableInvoiceEncryption: initialValuesProps?.invoicePassword !== null,
+      enableInvoiceEncryption: initialValuesProps && initialValuesProps.invoicePassword !== null,
     }),
     [initialValuesProps]
   );
