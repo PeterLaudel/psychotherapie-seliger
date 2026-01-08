@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.4.1
+
+### Patch Changes
+
+- 4716d87: Fix qpdf execution
+
 ## 0.4.0
 
 ### Minor Changes
