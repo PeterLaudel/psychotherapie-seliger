@@ -31,7 +31,9 @@
       "binary/qpdf",
       "binary/libqpdf.dylib",
       "binary/libqpdf.30.dylib",
-      "binary/libqpdf.30.2.0.dylib"
+      "binary/libqpdf.30.2.0.dylib",
+      "binary/libjpeg.8.dylib",
+      "binary/libcrypto.3.dylib"
     ],
     "icon": [
       "icons/32x32.png",
