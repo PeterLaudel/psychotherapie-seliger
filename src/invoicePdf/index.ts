@@ -120,7 +120,7 @@ function addressPart(
 ) {
   doc.y = 150;
   doc
-    .fontSize(11)
+    .fontSize(10)
     .text(
       `${therapeut.name} ${therapeut.surname} • ${therapeut.street} • ${therapeut.zip} ${therapeut.city}`,
       doc.page.margins.left,
