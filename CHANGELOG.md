@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.4.2
+
+### Patch Changes
+
+- a0ee5d8: Fix patient form initial password
+
 ## 0.4.1
 
 ### Patch Changes
