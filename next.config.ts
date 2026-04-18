@@ -1,6 +1,8 @@
 import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // ESM-only; required so Jest (next/jest) transpiles this package from node_modules
+  transpilePackages: ["@faker-js/faker"],
   redirects: () => {
     return Promise.resolve([
       {
@@ -11,9 +13,6 @@ const nextConfig: NextConfig = {
     ]);
   },
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },

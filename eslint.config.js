@@ -1,25 +1,11 @@
-const {
-    defineConfig,
-    globalIgnores,
-} = require("eslint/config");
-
-const globals = require("globals");
-
-const tsParser = require("@typescript-eslint/parser");
-const typescriptEslint = require("@typescript-eslint/eslint-plugin");
+const { defineConfig, globalIgnores } = require("eslint/config");
 const js = require("@eslint/js");
-
-const {
-    FlatCompat,
-} = require("@eslint/eslintrc");
-
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
+const globals = require("globals");
+const tseslint = require("typescript-eslint");
+const nextCoreWebVitals = require("eslint-config-next/core-web-vitals");
 
 module.exports = defineConfig([
+    js.configs.recommended,
     {
         languageOptions: {
             globals: {
@@ -27,9 +13,7 @@ module.exports = defineConfig([
                 ...globals.node,
             },
             ecmaVersion: 2023,
-            parserOptions: {},
         },
-        extends: compat.extends("eslint:recommended"),
         linterOptions: {
             reportUnusedDisableDirectives: true,
         },
@@ -39,42 +23,37 @@ module.exports = defineConfig([
             "no-param-reassign": ["error", { props: true }],
         },
     },
-    ...compat.extends("next/core-web-vitals"),
+    ...nextCoreWebVitals,
     globalIgnores(["**/*.d.ts", "playwright-report/**", ".next/**", "**/*.js"]),
-    {
-        files: ["**/*.ts", "**/*.tsx"],
-        languageOptions: {
-            parser: tsParser,
-            parserOptions: {
-                project: true,
-                tsconfigRootDir: process.cwd(),
+    ...tseslint.config(
+        ...tseslint.configs.recommendedTypeChecked,
+        {
+            languageOptions: {
+                parserOptions: {
+                    project: true,
+                    tsconfigRootDir: __dirname,
+                },
+            },
+            rules: {
+                "@typescript-eslint/no-unsafe-argument": "off",
+                "@typescript-eslint/no-unsafe-member-access": "off",
+                "@typescript-eslint/no-unsafe-assignment": "off",
+                "@typescript-eslint/no-unsafe-return": "off",
+                "@typescript-eslint/no-unsafe-call": "off",
+                "@typescript-eslint/no-misused-promises": "off",
+                "@typescript-eslint/unbound-method": "off",
+                "@typescript-eslint/no-unused-vars": [
+                    "error",
+                    { ignoreRestSiblings: true },
+                ],
             },
         },
-        plugins: {
-            "@typescript-eslint": typescriptEslint,
+        {
+            files: ["**/tasks/**/*.{js,ts}"],
+            rules: {
+                "no-console": "off",
+                "@typescript-eslint/no-floating-promises": "off",
+            },
         },
-        extends: compat.extends("plugin:@typescript-eslint/recommended-type-checked"),
-        rules: {
-            "@typescript-eslint/no-unsafe-argument": "off",
-            "@typescript-eslint/no-unsafe-member-access": "off",
-            "@typescript-eslint/no-unsafe-assignment": "off",
-            "@typescript-eslint/no-unsafe-return": "off",
-            "@typescript-eslint/no-unsafe-call": "off",
-            "@typescript-eslint/no-misused-promises": "off",
-            "@typescript-eslint/unbound-method": "off",
-            "@typescript-eslint/no-unused-vars": ["error", { ignoreRestSiblings: true }],
-        },
-    },
-    {
-        files: ["**/tasks/**/*.{js,ts}"],
-        rules: {
-            "no-console": "off",
-        },
-    },
-    {
-        files: ["**/tasks/**/*.{js,ts}"],
-        rules: {
-            "@typescript-eslint/no-floating-promises": "off",
-        },
-    },
+    ),
 ]);

@@ -14,28 +14,22 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
+    "types": ["node", "jest"],
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "factories/*": [
-        "factories/*"
-      ],
-      "tasks/*": [
-        "tasks/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "factories/*": ["./factories/*"],
+      "tasks/*": ["./tasks/*"],
+      "@/*": ["./src/*"]
     },
     "target": "ES2017"
   },
@@ -47,7 +41,8 @@
     "docker-entrypoint.js",
     "types/**/*.ts",
     ".config/**/*.ts",
-    "next.config.ts"
+    "next.config.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
