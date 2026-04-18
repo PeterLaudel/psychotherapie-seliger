@@ -2,7 +2,7 @@ import { Invoice } from "@/models/invoice";
 import { CheckCircle, Email, HourglassEmpty } from "@mui/icons-material";
 import { Button, Menu, MenuItem } from "@mui/material";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   markInvoiceAsPaid,
   markInvoiceAsPending,
@@ -14,13 +14,14 @@ interface Props {
 }
 
 export function InvoiceStatus({ invoice }: Props) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   return (
     <>
       <Button
-        ref={ref}
-        onClick={() => setOpen((isOpen) => !isOpen)}
+        onClick={(e) =>
+          setAnchorEl((prev) => (prev ? null : e.currentTarget))
+        }
         className="flex items-center gap-1"
       >
         {invoice.status === "pending" && (
@@ -47,8 +48,8 @@ export function InvoiceStatus({ invoice }: Props) {
       </Button>
       <Menu
         open={open}
-        onClose={() => setOpen(false)}
-        anchorEl={ref.current}
+        onClose={() => setAnchorEl(null)}
+        anchorEl={anchorEl}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -63,7 +64,7 @@ export function InvoiceStatus({ invoice }: Props) {
           className="gap-2 flex items-center"
           onClick={async () => {
             await markInvoiceAsPending(invoice.id);
-            setOpen(false);
+            setAnchorEl(null);
           }}
         >
           <HourglassEmpty className="text-amber-400" />
@@ -74,7 +75,7 @@ export function InvoiceStatus({ invoice }: Props) {
           className="gap-2 flex items-center"
           onClick={async () => {
             await markInvoiceAsSent(invoice.id);
-            setOpen(false);
+            setAnchorEl(null);
           }}
         >
           <Email className="text-blue-500" />
@@ -85,7 +86,7 @@ export function InvoiceStatus({ invoice }: Props) {
           className="gap-2 flex items-center"
           onClick={async () => {
             await markInvoiceAsPaid(invoice.id);
-            setOpen(false);
+            setAnchorEl(null);
           }}
         >
           <CheckCircle className="text-green-500" />
