@@ -1,5 +1,12 @@
 # psychotherapie-seliger
 
+## 0.4.3
+
+### Patch Changes
+
+- fbc7cf9: Update dependencies
+- 5f0527c: Improve invoice rendering to DIN style
+
 ## 0.4.2
 
 ### Patch Changes
