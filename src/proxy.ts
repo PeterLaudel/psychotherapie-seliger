@@ -26,15 +26,15 @@ const auth_Middleware = withAuth(
     pages: {
       signIn: "/api/auth/signin",
     },
-  }
+  },
 );
 
 const default_Middleware = () => {
   return NextResponse.next();
 };
 
-const middleware = isDevMode ? default_Middleware : auth_Middleware;
-export default middleware;
+const proxy = isDevMode ? default_Middleware : auth_Middleware;
+export default proxy;
 
 export const config = {
   matcher: ["/administration/:path*"],
