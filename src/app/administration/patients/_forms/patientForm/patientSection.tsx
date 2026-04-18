@@ -62,7 +62,6 @@ export default function PatientSection() {
               onChange={(newValue) =>
                 input.onChange(newValue ? newValue.format("YYYY-MM-DD") : null)
               }
-              enableAccessibleFieldDOMStructure={false}
               slotProps={{
                 textField: {
                   helperText: touched && error,
