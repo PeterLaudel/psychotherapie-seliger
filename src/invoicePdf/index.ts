@@ -20,7 +20,64 @@ export interface CreatePdfParams {
   };
 }
 
-const STANDARD_MARGINS = 48;
+/** PDF points from millimetres (DIN / Fensterbrief layout). */
+function mm(n: number) {
+  return (n * 72) / 25.4;
+}
+
+/** Page margins and DIN 5008–oriented zones (window envelope–friendly). */
+const PAGE_MARGIN = mm(20);
+/** Sender / return line — sits in upper part of address window. */
+const RETURN_ADDRESS_TOP = mm(27);
+/** First line of recipient address (Form A, common for business mail). */
+const RECIPIENT_ADDRESS_TOP = mm(50.8);
+/** Max width for address block (fits typical C6/5 window). */
+const ADDRESS_FIELD_WIDTH = mm(85);
+/** Right column for logo + practice (outside left window). */
+const RIGHT_COLUMN_WIDTH = mm(72);
+
+/**
+ * Font sizes in PDF points (aligned with common DE business letters / DIN 5008).
+ * - 11 pt body matches typical Word “Standard” for letters.
+ * - 12 pt for the invoice title (slightly below default 14 pt Word heading).
+ * - 10 pt in tables keeps columns readable without crowding.
+ * - 9 pt for footer / practice block is usual for bank / legal lines.
+ * - 8 pt return line above the address window is typical.
+ */
+const FS = {
+  title: 12,
+  body: 11,
+  table: 10,
+  fine: 9,
+  returnLine: 8,
+} as const;
+
+const BODY_LINE_GAP = 2;
+
+type PdfDoc = InstanceType<typeof PDFDocument>;
+
+function footerContent(therapeut: CreatePdfParams["therapeut"]) {
+  return (
+    `${therapeut.bankName}\n` +
+    `IBAN: ${therapeut.iban} • Swift/BIC: ${therapeut.bic}\n` +
+    `Steuernummer: ${therapeut.taxId}`
+  );
+}
+
+function footerTextWidth(doc: PdfDoc) {
+  return doc.page.width - doc.page.margins.left - doc.page.margins.right;
+}
+
+/** Reserve bottom margin so body text never runs into the footer (must match wrapped height). */
+function reserveBottomMarginForFooter(doc: PdfDoc, therapeut: CreatePdfParams["therapeut"]) {
+  const content = footerContent(therapeut);
+  const w = footerTextWidth(doc);
+  const textHeight = doc
+    .font("Helvetica")
+    .fontSize(FS.fine)
+    .heightOfString(content, { width: w });
+  doc.page.margins.bottom = textHeight + PAGE_MARGIN + mm(2);
+}
 
 function formatDate(date: string) {
   const d = Date.parse(date) ? new Date(date) : new Date();
@@ -38,10 +95,10 @@ function formatCurrency(amount: number) {
 export async function generateInvoiceBlob(params: CreatePdfParams) {
   const doc = new PDFDocument({
     margins: {
-      left: STANDARD_MARGINS,
-      right: STANDARD_MARGINS,
-      top: STANDARD_MARGINS + 50,
-      bottom: STANDARD_MARGINS + 50,
+      left: PAGE_MARGIN,
+      right: PAGE_MARGIN,
+      top: PAGE_MARGIN,
+      bottom: PAGE_MARGIN,
     },
     size: "A4",
     autoFirstPage: false,
@@ -52,12 +109,11 @@ export async function generateInvoiceBlob(params: CreatePdfParams) {
   pageFooter(doc, params);
 
   doc.addPage();
+  reserveBottomMarginForFooter(doc, params.therapeut);
 
-  invoiceLogo(doc);
-
-  addressPart(doc, params);
-  practicePart(doc, params);
-  doc.y = doc.y + 30;
+  const rightColumnBottom = letterheadRight(doc, params);
+  const addressBottom = addressPart(doc, params);
+  doc.y = Math.max(rightColumnBottom, addressBottom) + mm(10);
 
   invoiceContext(doc, params);
   positionsPart(doc, params);
@@ -81,71 +137,47 @@ export function generateInvoiceBase64(params: CreatePdfParams) {
   return generateInvoiceBlob(params).then((blob) => blobToBase64(blob));
 }
 
-function pageFooter(doc: typeof PDFDocument, { therapeut }: CreatePdfParams) {
+function pageFooter(doc: PdfDoc, { therapeut }: CreatePdfParams) {
   doc.on("pageAdded", () => {
-    const bottom = doc.page.margins.bottom;
+    reserveBottomMarginForFooter(doc, therapeut);
+
+    const content = footerContent(therapeut);
+    const w = footerTextWidth(doc);
+    const textHeight = doc
+      .font("Helvetica")
+      .fontSize(FS.fine)
+      .heightOfString(content, { width: w });
+
+    const bottomInset = PAGE_MARGIN;
+    const y = doc.page.height - textHeight - bottomInset;
+
+    // Large margins.bottom lowers maxY(); footer Y sits below that limit, so
+    // doc.text() would paginate → addPage → pageAdded → infinite recursion.
+    const reservedBottom = doc.page.margins.bottom;
     doc.page.margins.bottom = 0;
-
-    const footerContent =
-      `${therapeut.bankName}\n` +
-      `IBAN: ${therapeut.iban} • Swift/BIC: ${therapeut.bic}\n` +
-      `Steuernummer: ${therapeut.taxId}`;
-
-    const textHeight = doc.fontSize(11).heightOfString(footerContent);
-
-    doc
-      .fontSize(11)
-      .text(
-        footerContent,
-        doc.page.margins.left,
-        doc.page.height - textHeight - STANDARD_MARGINS,
-        { align: "center" }
-      );
+    doc.text(content, doc.page.margins.left, y, {
+      width: w,
+      align: "center",
+    });
+    doc.page.margins.bottom = reservedBottom;
 
     doc.text("", doc.page.margins.left, doc.page.margins.top);
-    doc.page.margins.bottom = bottom;
   });
 }
 
-function invoiceLogo(doc: typeof PDFDocument) {
-  doc.image(logoBuffer, doc.page.margins.left, 48, {
-    height: 50,
-    align: "center",
+/** Logo + practice block on the right (outside the left address window). */
+function letterheadRight(doc: PdfDoc, { therapeut }: CreatePdfParams) {
+  const rightEdge = doc.page.width - doc.page.margins.right;
+  const colX = rightEdge - RIGHT_COLUMN_WIDTH;
+  const logoTop = mm(12);
+  const logoBoxW = mm(52);
+  const logoBoxH = mm(20);
+
+  doc.image(logoBuffer, colX + (RIGHT_COLUMN_WIDTH - logoBoxW) / 2, logoTop, {
+    fit: [logoBoxW, logoBoxH],
   });
-}
 
-function addressPart(
-  doc: typeof PDFDocument,
-  { therapeut, patient }: CreatePdfParams
-) {
-  doc.y = 150;
-  doc
-    .fontSize(10)
-    .text(
-      `${therapeut.name} ${therapeut.surname} • ${therapeut.street} • ${therapeut.zip} ${therapeut.city}`,
-      doc.page.margins.left,
-      doc.y,
-      {
-        underline: true,
-      }
-    );
-
-  if (!patient) return;
-  doc
-    .fontSize(11)
-    .text(
-      `${patient.billingInfo.name} ${patient.billingInfo.surname}\n` +
-        `${patient.billingInfo.address.street}\n` +
-        `${patient.billingInfo.address.zip} ${patient.billingInfo.address.city}\n`,
-      doc.page.margins.left,
-      doc.y + 20
-    );
-}
-
-function practicePart(doc: typeof PDFDocument, { therapeut }: CreatePdfParams) {
-  doc.x = 370;
-  doc.y = 150;
-
+  const practiceTop = logoTop + logoBoxH + mm(5);
   const practiceContent =
     `${therapeut.title} ${therapeut.name} ${therapeut.surname}\n` +
     "Psychologische Psychotherapeutin\n" +
@@ -154,33 +186,88 @@ function practicePart(doc: typeof PDFDocument, { therapeut }: CreatePdfParams) {
     `${therapeut.zip} ${therapeut.city}\n\n` +
     `${therapeut.email}`;
 
-  // Draw the vertical line BEFORE the text
-  const height = doc.heightOfString(practiceContent);
+  doc.font("Helvetica").fontSize(FS.fine);
+  const height = doc.heightOfString(practiceContent, {
+    width: RIGHT_COLUMN_WIDTH,
+  });
 
   doc
-    .lineWidth(2)
-    .moveTo(doc.x - 10, doc.y - 10) // start slightly left of the text
-    .lineTo(doc.x - 10, doc.y + height + 10) // adjust height as needed
-    .stroke();
+    .lineWidth(0.75)
+    .moveTo(colX - mm(3), practiceTop - mm(2))
+    .lineTo(colX - mm(3), practiceTop + height + mm(2))
+    .strokeColor("#333333")
+    .stroke()
+    .strokeColor("black");
 
-  doc.text(practiceContent, doc.x, doc.y);
+  doc.font("Helvetica").fontSize(FS.fine).text(practiceContent, colX, practiceTop, {
+    width: RIGHT_COLUMN_WIDTH,
+    align: "left",
+    lineGap: 1,
+  });
+
+  return practiceTop + height + mm(2);
+}
+
+/**
+ * DIN-oriented address field: return line in window zone, recipient from ~50.8 mm.
+ * Returns bottom Y of the address block (for continuing body text).
+ */
+function addressPart(doc: PdfDoc, { therapeut, patient }: CreatePdfParams) {
+  const left = doc.page.margins.left;
+  const returnLine =
+    `${therapeut.name} ${therapeut.surname} · ${therapeut.street} · ${therapeut.zip} ${therapeut.city}`;
+
+  doc.font("Helvetica").fontSize(FS.returnLine).fillColor("#222222");
+  doc.text(returnLine, left, RETURN_ADDRESS_TOP, {
+    width: ADDRESS_FIELD_WIDTH,
+    lineGap: 0,
+  });
+  doc.fillColor("black");
+
+  const returnBottom =
+    RETURN_ADDRESS_TOP +
+    doc.heightOfString(returnLine, { width: ADDRESS_FIELD_WIDTH });
+
+  if (!patient) {
+    return returnBottom + mm(4);
+  }
+
+  const recipientTop = Math.max(RECIPIENT_ADDRESS_TOP, returnBottom + mm(4));
+  const recipient =
+    `${patient.billingInfo.name} ${patient.billingInfo.surname}\n` +
+    `${patient.billingInfo.address.street}\n` +
+    `${patient.billingInfo.address.zip} ${patient.billingInfo.address.city}`;
+
+  doc.font("Helvetica").fontSize(FS.body);
+  doc.text(recipient, left, recipientTop, {
+    width: ADDRESS_FIELD_WIDTH,
+    lineGap: BODY_LINE_GAP,
+  });
+
+  return (
+    recipientTop +
+    doc.heightOfString(recipient, {
+      width: ADDRESS_FIELD_WIDTH,
+      lineGap: BODY_LINE_GAP,
+    })
+  );
 }
 
 function invoiceContext(
-  doc: typeof PDFDocument,
+  doc: PdfDoc,
   { invoiceNumber, patient, therapeut }: CreatePdfParams
 ) {
   const invTop = doc.y;
 
   doc
     .font("Helvetica-Bold")
-    .fontSize(14)
+    .fontSize(FS.title)
     .text(`Rechnung Nr. ${invoiceNumber}`, doc.page.margins.left, invTop, {
       align: "left",
     });
 
   doc
-    .fontSize(11)
+    .fontSize(FS.table)
     .font("Helvetica")
     .text(
       `${therapeut.city}, ${formatDate((new Date()).toISOString())}`,
@@ -191,33 +278,31 @@ function invoiceContext(
       }
     );
 
-  doc.y = doc.y + 20;
+  doc.y = doc.y + mm(7);
 
-  // -------------------------------------------------------------
-  // PATIENT BLOCK
-  // -------------------------------------------------------------
-  doc
-    .fontSize(11)
-    .text(
-      `Behandelt wurde: ${patient?.surname}, ${patient?.name}, geb.: ${
-        patient?.birthdate &&
-        formatDate(patient?.birthdate)
-      }\n\n` +
-        `${patient?.diagnosis}\n\n` +
-        "Sehr geehrte Damen und Herren,\n\n" +
-        "vielen Dank für Ihr Vertrauen. Für meine Leistungen berechne ich den folgenden Betrag:\n\n"
-    );
+  const birth =
+    patient?.birthdate != null && patient.birthdate !== ""
+      ? formatDate(patient.birthdate)
+      : "—";
+
+  doc.font("Helvetica").fontSize(FS.body).lineGap(BODY_LINE_GAP);
+  doc.text(
+    `Behandelt wurde: ${patient?.surname ?? "—"}, ${patient?.name ?? "—"}, geb.: ${birth}\n\n` +
+      `${patient?.diagnosis ?? ""}\n\n` +
+      "Sehr geehrte Damen und Herren,\n\n" +
+      "vielen Dank für Ihr Vertrauen. Für meine Leistungen berechne ich den folgenden Betrag:\n\n"
+  );
 }
 
 function positionsPart(
-  doc: typeof PDFDocument,
+  doc: PdfDoc,
   { invoiceAmount, positions }: CreatePdfParams
 ) {
-  const table = doc.fontSize(11).table({
+  const table = doc.fontSize(FS.table).table({
     rowStyles: (i) => {
       return i < 1
-        ? { border: [0, 0, 1, 0], padding: [0, 0, 0, 0] }
-        : { border: false, padding: [10, 0, 0, 0] };
+        ? { border: [0, 0, 1, 0], padding: [0, 0, mm(1.5), 0] }
+        : { border: false, padding: [mm(2), 0, 0, 0] };
     },
     columnStyles: ["70", "*", "200", "*", "*", "*"],
   });
@@ -263,24 +348,22 @@ function positionsPart(
   table.end();
   doc
     .font("Helvetica-Bold")
-    .fontSize(11)
+    .fontSize(FS.table)
     .text(`Gesamtsumme ${formatCurrency(invoiceAmount)}`, {
       align: "right",
     });
 }
 
 async function addPaymentInfo(
-  doc: typeof PDFDocument,
+  doc: PdfDoc,
   { invoiceNumber, therapeut, invoiceAmount }: CreatePdfParams
 ) {
-  doc.font("Helvetica").moveDown(2);
+  doc.font("Helvetica").fontSize(FS.body).lineGap(BODY_LINE_GAP).moveDown(1.25);
 
-  doc
-    .fontSize(11)
-    .text(
-      "Leistungen gemäß Katalog: GOÄ | Heilbehandlung – daher von der Umsatzsteuer nach § Nr. 14a UStG befreit.\n\n" +
-        "Bitte überweisen Sie den Rechnungsbetrag innerhalb von 7 Tagen auf mein unten genanntes Konto. Geben Sie dabei bitte als Verwendungszweck die Rechnungsnummer an.\n\n"
-    );
+  doc.text(
+    "Leistungen gemäß Katalog: GOÄ | Heilbehandlung – daher von der Umsatzsteuer nach § 4 Nr. 14a UStG befreit.\n\n" +
+    "Bitte überweisen Sie den Rechnungsbetrag innerhalb von 7 Tagen auf mein unten genanntes Konto. Geben Sie dabei bitte als Verwendungszweck die Rechnungsnummer an.\n\n",
+  );
 
   const buffer = await generateSepaQrBase64PngBuffer({
     recipient: `${therapeut.name} ${therapeut.surname}`,
@@ -298,6 +381,7 @@ async function addPaymentInfo(
   const currentY = doc.y;
   doc
     .font("Helvetica-Bold")
+    .fontSize(FS.fine)
     .text("Überweisen per Code", currentX - 175 - 75, currentY + 30, {
       width: 175,
       height: 75,
@@ -305,6 +389,7 @@ async function addPaymentInfo(
     });
   doc
     .font("Helvetica")
+    .fontSize(FS.fine)
     .text(
       "Code mit der Banking-App scannen",
       currentX - 175 - 75,
@@ -325,7 +410,7 @@ async function addPaymentInfo(
     .stroke();
 }
 
-function ensureSpace(doc: typeof PDFDocument, neededHeight: number) {
+function ensureSpace(doc: PdfDoc, neededHeight: number) {
   const bottom = doc.page.height - doc.page.margins.bottom;
 
   if (doc.y + neededHeight > bottom) {
@@ -334,7 +419,7 @@ function ensureSpace(doc: typeof PDFDocument, neededHeight: number) {
   }
 }
 
-function attachZugferXml(doc: typeof PDFDocument, params: CreatePdfParams) {
+function attachZugferXml(doc: PdfDoc, params: CreatePdfParams) {
   const zugferdXml = createZugferdXml({
     invoiceDate: dayjs().format("YYYYMMDD"),
     invoiceNumber: params.invoiceNumber,
