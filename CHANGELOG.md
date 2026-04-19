@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.4.6
+
+### Patch Changes
+
+- Fix tauri build
+
 ## 0.4.5
 
 ### Patch Changes
