@@ -1,4 +1,4 @@
-FROM node:24 AS builder
+FROM node:24.14.1 AS builder
 
 # Disable telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
