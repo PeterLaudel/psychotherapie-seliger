@@ -2,17 +2,18 @@
   "name": "psychotherapie-seliger",
   "version": "0.1.0",
   "private": true,
-  "bin": "server.js",
+  "bin": ".next/standalone/server.js",
   "pkg": {
-    "scripts": ["server.js", "migrations/*.js"],
+    "scripts": [".next/standalone/server.js"],
     "assets": [
-      ".next/**/*",
-      "public/**/*",
+      ".next/standalone/**/*",
+      ".next/standalone/node_modules/sharp/build/Release/**/*",
+      ".next/standalone/node_modules/sharp/vendor/**/*",
       "node_modules/pdfkit/**/*",
       ".env",
       "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
       "tmp/psychotherapie_seliger.sqlite"
     ],
-    "targets": ["node22-macos-arm64"]
+    "targets": ["node24-macos-arm64"]
   }
 }
