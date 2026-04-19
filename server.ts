@@ -1,4 +1,5 @@
 //load environment
+import "./inspector-polyfill";
 import path from "path";
 import fs from "fs";
 import * as dotenv from "dotenv";
