@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.4.4
+
+### Patch Changes
+
+- b71ab29: Update tauri rust version
+
 ## 0.4.3
 
 ### Patch Changes
