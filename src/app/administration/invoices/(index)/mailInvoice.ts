@@ -4,12 +4,11 @@ import { Therapeut } from "@/models/therapeut";
 import { getServerSession } from "next-auth";
 import * as nodemailer from "nodemailer";
 
-const isTestEmail = () =>
-  process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development";
+const isTestEmail = () => process.env.NODE_ENV === "test";
 
 export default async function mailInvoice(
   therapeut: Therapeut,
-  invoice: Invoice
+  invoice: Invoice,
 ): Promise<void> {
   const transporter = await createTransport();
   const info = await transporter.sendMail({

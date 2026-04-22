@@ -1,55 +1,19 @@
-import { execFile } from "child_process";
-import { writeFile, readFile, unlink } from "fs/promises";
-import path from "path";
-import os from "os";
-import crypto from "crypto";
-import { qpdfPath } from "@/environment";
+import { PDF } from "@libpdf/core";
 
-export async function encryptPdfBase64(
+export async function encryptPdf(
   base64Pdf: string,
   userPw: string,
-  ownerPw: string
-): Promise<string> {
-  if(userPw.length === 0) return base64Pdf;
-
-  const id = crypto.randomUUID();
-  const tmpDir = os.tmpdir();
-
-  const input = path.join(tmpDir, `${id}-input.pdf`);
-  const output = path.join(tmpDir, `${id}-output.pdf`);
-
-  await writeFile(input, Buffer.from(base64Pdf, "base64"));
-  const qpath = qpdfPath();
-
-  await new Promise<void>((resolve, reject) => {
-    const p = execFile(qpath, [
-      "--encrypt",
-      userPw,
-      ownerPw,
-      "256",
-      "--",
-      input,
-      output,
-    ]);
-
-    let stderr = "";
-    p.stderr?.on("data", (d) => (stderr += d));
-
-    p.on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`qpdf failed: ${stderr}`));
-      }
-    });
+  ownerPw: string,
+) {
+  //base64 to bytes
+  const pdfBytes = Buffer.from(base64Pdf, "base64");
+  const pdf = await PDF.load(pdfBytes);
+  pdf.setProtection({
+    userPassword: userPw,
+    ownerPassword: ownerPw,
+    algorithm: "AES-256", // Recommended
   });
-
-  const encrypted = await readFile(output);
-
-  await Promise.all([
-    unlink(input).catch(() => {}),
-    unlink(output).catch(() => {}),
-  ]);
-
-  return encrypted.toString("base64");
+  const encrypted = await pdf.save();
+  const buffer = Buffer.from(encrypted);
+  return buffer.toString("base64");
 }

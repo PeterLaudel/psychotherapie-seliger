@@ -18,9 +18,6 @@ export function isDevelopment(): boolean {
   return environment() === "development";
 }
 
-export function qpdfPath(): string {
-  return process.env.QPDF_PATH || "qpdf";
-}
 
 export function pdfOwnerPassword(): string {
   return process.env.PDF_OWNER_PASSWORD || ''
