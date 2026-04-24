@@ -4,3 +4,11 @@ services:
       context: .
       target: builder
     image: "${IMAGE:-psychotherapie-seliger:dev}"
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"

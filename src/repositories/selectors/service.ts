@@ -1,6 +1,6 @@
 import { type Database } from "@/initialize";
 import { Expression } from "kysely";
-import { jsonArrayFrom } from "kysely/helpers/sqlite";
+import { jsonArrayFrom } from "@/database";
 
 export function serviceSelector(database: Database) {
   return database

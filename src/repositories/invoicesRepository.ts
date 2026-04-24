@@ -1,11 +1,10 @@
 import { type Database } from "@/initialize";
 import { InvoicePosition, type Invoice } from "@/models/invoice";
 import { Expression } from "kysely";
-import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
 import { patientSelector } from "./selectors/patient";
 import { Patient } from "@/models/patient";
 import { serviceSelector } from "./selectors/service";
-
+import { jsonObjectFrom, jsonArrayFrom } from "@/database";
 export type InvoiceSave = Omit<Invoice, "id"> & { id?: number };
 
 export class InvoicesRepository {
@@ -60,7 +59,7 @@ export class InvoicesRepository {
     return `${isoDate.replace(/-/g, "")}${next_id}`;
   }
 
-  private modelSelector(transaction: Database= this.database) {
+  private modelSelector(transaction: Database = this.database) {
     return transaction
       .selectFrom("invoices")
       .innerJoin("patientInvoices", "invoices.id", "patientInvoices.invoiceId")
@@ -78,8 +77,8 @@ export class InvoicesRepository {
           patientSelector(this.database).whereRef(
             "patients.id",
             "=",
-            ref("patientInvoices.patientId")
-          )
+            ref("patientInvoices.patientId"),
+          ),
         )
           .$notNull()
           .as("patient"),
@@ -88,7 +87,7 @@ export class InvoicesRepository {
 
   private async upsertInvoice(
     invoice: InvoiceSave,
-    transaction: Database = this.database
+    transaction: Database = this.database,
   ) {
     const data = {
       invoiceNumber: invoice.invoiceNumber,
@@ -114,7 +113,7 @@ export class InvoicesRepository {
   private async upsertPatient(
     invoiceId: number,
     patient: Patient,
-    transaction: Database = this.database
+    transaction: Database = this.database,
   ) {
     await transaction
       .deleteFrom("patientInvoices")
@@ -143,20 +142,20 @@ export class InvoicesRepository {
             .as("service"),
           "invoicePositions.price as price",
         ])
-        .whereRef("invoicePositions.invoiceId", "=", invoiceId)
+        .whereRef("invoicePositions.invoiceId", "=", invoiceId),
     );
   }
 
   private selectService(serviceId: Expression<number>) {
     return jsonObjectFrom(
-      serviceSelector(this.database).whereRef(serviceId, "=", "services.id")
+      serviceSelector(this.database).whereRef(serviceId, "=", "services.id"),
     );
   }
 
   private async upsertPositions(
     invoiceId: number,
     positions: InvoicePosition[],
-    transaction = this.database
+    transaction = this.database,
   ) {
     await transaction
       .deleteFrom("invoicePositions")
@@ -175,8 +174,8 @@ export class InvoicesRepository {
             invoiceId: invoiceId,
             price: position.price,
           })
-          .execute()
-      )
+          .execute(),
+      ),
     );
   }
 }

@@ -1,11 +1,11 @@
 import { Database as DatabaseDescription } from "@/db";
-import { type Database } from "@/initialize";
+
+import { clearDatabase as clearDatabaseOrigin } from "@/database";
+import { getDb } from "@/initialize";
 
 type DatabaseRecord = Record<keyof DatabaseDescription, undefined>;
 
-export async function clearSqliteDatabase(
-  database: Database
-) {
+export async function clearDatabase() {
   const allRecords: DatabaseRecord = {
     invoicePositions: undefined,
     invoices: undefined,
@@ -16,12 +16,9 @@ export async function clearSqliteDatabase(
     therapeuts: undefined,
   };
 
-  const tables: {name: keyof DatabaseRecord}[] = Object.keys(allRecords).map((key) => ({
-    name: key,
-  })) as {name: keyof DatabaseRecord}[];
-
-
-  for (const { name } of tables) {
-    await database.deleteFrom(name).execute();
-  }
+  const tables: (keyof DatabaseRecord)[] = Object.keys(
+    allRecords,
+  ) as (keyof DatabaseRecord)[];
+  const db = await getDb();
+  await clearDatabaseOrigin(db, tables);
 }

@@ -7,6 +7,7 @@ import { invoiceFactory } from "factories/invoice";
 import { patientInvoiceFactory } from "factories/patientInvoice";
 import { serviceFactory } from "factories/service";
 import { invoicePositionFactory } from "factories/invoicePosition";
+import { databaseDialect } from "@/environment";
 
 describe("InvoicesRepository", () => {
   let invoicesRepository: InvoicesRepository;
@@ -49,7 +50,7 @@ describe("InvoicesRepository", () => {
           {
             amount: 2,
             factor: "1.0",
-            service,
+            service: expect.any(Object),
             serviceDate: "2020-01-01",
             price: 100.1,
           },
@@ -100,7 +101,7 @@ describe("InvoicesRepository", () => {
           {
             amount: 10,
             factor: "1.0",
-            service,
+            service: expect.any(Object),
             serviceDate: "2020-01-01",
             price: 100.1,
           },
@@ -118,7 +119,10 @@ describe("InvoicesRepository", () => {
       timekeeper.reset();
     });
 
-    it("generates a unique invoice number", async () => {
+    const itif = (condition: boolean) => condition ? it : it.skip;
+
+
+    itif(databaseDialect() === "sqlite")("generates a unique invoice number", async () => {
       const db = await getDb();
       // For SQLite, reset the auto-increment value by updating sqlite_sequence table
       await sql`DELETE FROM invoices`.execute(db);

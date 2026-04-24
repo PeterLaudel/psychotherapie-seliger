@@ -1,6 +1,6 @@
 import { type Database } from "@/initialize";
 import { Expression } from "kysely";
-import { jsonObjectFrom } from "kysely/helpers/sqlite";
+import { jsonObjectFrom } from "@/database";
 
 export function patientSelector(database: Database) {
   return database

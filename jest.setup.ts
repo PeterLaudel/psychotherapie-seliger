@@ -1,7 +1,12 @@
-import { getDb } from "@/initialize";
-import { clearSqliteDatabase } from "./tasks/dbUtils";
+import { getDb } from "./src/initialize";
+import { clearDatabase } from "tasks/dbUtils";
 
-beforeEach(async () => {
+
+afterEach(async () => {
+  await clearDatabase();
+});
+
+afterAll(async () => {
   const db = await getDb();
-  await clearSqliteDatabase(db);
+  await db.destroy();
 });
