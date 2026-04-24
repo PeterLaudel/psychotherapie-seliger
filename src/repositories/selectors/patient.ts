@@ -1,8 +1,8 @@
-import { getDb } from "@/initialize";
+import { type Database } from "@/initialize";
 import { Expression } from "kysely";
 import { jsonObjectFrom } from "kysely/helpers/sqlite";
 
-export function patientSelector(database = getDb()) {
+export function patientSelector(database: Database) {
   return database
     .selectFrom("patients")
     .select(["id", "name", "surname", "email", "birthdate", "diagnosis", "invoicePassword"])
@@ -14,7 +14,7 @@ export function patientSelector(database = getDb()) {
 
 function address(
   patientId: Expression<number>,
-  database: ReturnType<typeof getDb>
+  database: Database
 ) {
   return jsonObjectFrom(
     database
@@ -27,7 +27,7 @@ function address(
 
 function billingInfo(
   patientId: Expression<number>,
-  database: ReturnType<typeof getDb>
+  database: Database
 ) {
   return jsonObjectFrom(
     database
@@ -46,7 +46,7 @@ function billingInfo(
 
 function billingAddress(
   patientId: Expression<number>,
-  database: ReturnType<typeof getDb>
+  database: Database
 ) {
   return jsonObjectFrom(
     database

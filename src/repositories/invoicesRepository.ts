@@ -1,4 +1,4 @@
-import { getDb } from "@/initialize";
+import { type Database } from "@/initialize";
 import { InvoicePosition, type Invoice } from "@/models/invoice";
 import { Expression } from "kysely";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
@@ -9,7 +9,7 @@ import { serviceSelector } from "./selectors/service";
 export type InvoiceSave = Omit<Invoice, "id"> & { id?: number };
 
 export class InvoicesRepository {
-  constructor(private readonly database = getDb()) {}
+  constructor(private readonly database: Database) {}
 
   public async save(invoice: InvoiceSave): Promise<Invoice> {
     return await this.database.transaction().execute(async (trx) => {
@@ -60,7 +60,7 @@ export class InvoicesRepository {
     return `${isoDate.replace(/-/g, "")}${next_id}`;
   }
 
-  private modelSelector(transaction: ReturnType<typeof getDb> = this.database) {
+  private modelSelector(transaction: Database= this.database) {
     return transaction
       .selectFrom("invoices")
       .innerJoin("patientInvoices", "invoices.id", "patientInvoices.invoiceId")
@@ -88,7 +88,7 @@ export class InvoicesRepository {
 
   private async upsertInvoice(
     invoice: InvoiceSave,
-    transaction: ReturnType<typeof getDb> = this.database
+    transaction: Database = this.database
   ) {
     const data = {
       invoiceNumber: invoice.invoiceNumber,
@@ -114,7 +114,7 @@ export class InvoicesRepository {
   private async upsertPatient(
     invoiceId: number,
     patient: Patient,
-    transaction: ReturnType<typeof getDb> = this.database
+    transaction: Database = this.database
   ) {
     await transaction
       .deleteFrom("patientInvoices")

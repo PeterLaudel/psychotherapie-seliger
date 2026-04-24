@@ -15,7 +15,8 @@ export const invoicePositionFactory = Factory.define<
   factor: faker.helpers.arrayElement(["1.0", "1.8", "2.3"]),
   price: faker.number.float({ min: 100, max: 200 }),
 })).onCreate(async (invoicePosition) => {
-  return await getDb()
+  const db = await getDb();
+  return await db
     .insertInto("invoicePositions")
     .values(invoicePosition)
     .returningAll()

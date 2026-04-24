@@ -3,9 +3,9 @@ import { promises as fs } from "fs";
 import { getDb } from "../src/initialize";
 import * as path from "path";
 
-export function dbMigrate() {
+export async function dbMigrate() {
   const migration = new Migrator({
-    db: getDb(),
+    db: await getDb(),
     provider: new FileMigrationProvider({
       fs,
       path,

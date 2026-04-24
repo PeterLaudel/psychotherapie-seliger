@@ -1,22 +1,42 @@
-import { Kysely, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
-import Database from "better-sqlite3";
+import { Kysely, ParseJSONResultsPlugin } from "kysely";
 import { Database as DatabaseDescription } from "./db";
-import { sqliteUrl } from "./environment";
+import { sqliteUrl, databaseDialect, postgresUrl } from "./environment";
 
-let dbInstance: Kysely<DatabaseDescription> | null = null;
+export type Database = Kysely<DatabaseDescription>;
+let dbInstance: Database | null = null;
 
-export function getDb(): Kysely<DatabaseDescription> {
-  if (!dbInstance) {
-    dbInstance = new Kysely<DatabaseDescription>({
-      dialect: new SqliteDialect({
-        database: new Database(sqliteUrl()),
-      }),
-      plugins: [new ParseJSONResultsPlugin()],
-    });
-  } 
-  return dbInstance;
+async function createPostgresDb() {
+  const { Pool } = await import("pg");
+  const { PostgresDialect } = await import("kysely");
+  const pool = new Pool({
+    connectionString: postgresUrl(),
+  });
+  return new Kysely<DatabaseDescription>({
+    dialect: new PostgresDialect({
+      pool,
+    }),
+    plugins: [new ParseJSONResultsPlugin()],
+  });
 }
 
-export function setDbInstance(db: Kysely<DatabaseDescription>) {
-  dbInstance = db;
+async function createSqliteDb() {
+  const Database = (await import("better-sqlite3")).default;
+  const { SqliteDialect } = await import("kysely");
+  return new Kysely<DatabaseDescription>({
+    dialect: new SqliteDialect({
+      database: new Database(sqliteUrl()),
+    }),
+    plugins: [new ParseJSONResultsPlugin()],
+  });
+}
+
+export async function getDb(): Promise<Kysely<DatabaseDescription>> {
+  if (databaseDialect() === "sqlite") {
+    dbInstance = await createSqliteDb();
+  } else if (databaseDialect() === "postgres") {
+    dbInstance = await createPostgresDb();
+  } else {
+    throw new Error("Unsupported database dialect");
+  }
+  return dbInstance;
 }

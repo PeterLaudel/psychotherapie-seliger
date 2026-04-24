@@ -18,7 +18,14 @@ export function isDevelopment(): boolean {
   return environment() === "development";
 }
 
-
 export function pdfOwnerPassword(): string {
   return process.env.PDF_OWNER_PASSWORD || ''
+}
+
+export function databaseDialect(): string {
+  return process.env.DATABASE_DIALECT || ''
+}
+
+export function postgresUrl(): string {
+  return process.env.POSTGRES_URL || ''
 }

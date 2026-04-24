@@ -1,10 +1,10 @@
-import { Kysely } from "kysely";
 import { Database as DatabaseDescription } from "@/db";
+import { type Database } from "@/initialize";
 
 type DatabaseRecord = Record<keyof DatabaseDescription, undefined>;
 
 export async function clearSqliteDatabase(
-  database: Kysely<DatabaseDescription>
+  database: Database
 ) {
   const allRecords: DatabaseRecord = {
     invoicePositions: undefined,

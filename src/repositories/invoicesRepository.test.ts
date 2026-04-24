@@ -9,7 +9,12 @@ import { serviceFactory } from "factories/service";
 import { invoicePositionFactory } from "factories/invoicePosition";
 
 describe("InvoicesRepository", () => {
-  const invoicesRepository = new InvoicesRepository();
+  let invoicesRepository: InvoicesRepository;
+
+  beforeEach(async () => {
+    const db = await getDb();
+    invoicesRepository = new InvoicesRepository(db);
+  });
 
   describe("#save", () => {
     it("creates a new invoice", async () => {
@@ -114,10 +119,11 @@ describe("InvoicesRepository", () => {
     });
 
     it("generates a unique invoice number", async () => {
+      const db = await getDb();
       // For SQLite, reset the auto-increment value by updating sqlite_sequence table
-      await sql`DELETE FROM invoices`.execute(getDb());
+      await sql`DELETE FROM invoices`.execute(db);
       await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(
-        getDb()
+        db,
       );
       await invoiceFactory.createList(3, {});
 

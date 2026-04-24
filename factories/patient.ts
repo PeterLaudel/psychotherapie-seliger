@@ -19,6 +19,7 @@ export const patientFactory = Factory.define<
   diagnosis: null,
   invoicePassword: faker.internet.password(),
 })).onCreate(async (patient) => {
+  const database = await getDb();
   const { address, billingInfo, ...rest } = patient;
   const {
     id,
@@ -37,7 +38,7 @@ export const patientFactory = Factory.define<
     billingStreet,
     billingCity,
     billingZip,
-  } = await getDb()
+  } = await database
     .insertInto("patients")
     .values({
       ...rest,

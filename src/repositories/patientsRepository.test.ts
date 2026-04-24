@@ -3,7 +3,12 @@ import { PatientsRepository } from "./patientsRepository";
 import { patientFactory } from "factories/patient";
 
 describe("PatientsRepository", () => {
-  const patientRepository = new PatientsRepository();
+  let patientRepository: PatientsRepository;
+
+  beforeEach(async () => {
+    const db = await getDb();
+    patientRepository = new PatientsRepository(db);
+  });
 
   describe("#all", () => {
     it("returns a list of all patients", async () => {
@@ -59,7 +64,7 @@ describe("PatientsRepository", () => {
 
   describe("#delete", () => {
     it("deletes the patient from the database", async () => {
-      const database = getDb();
+      const database = await getDb();
       const patient = await patientFactory.create();
 
       await patientRepository.delete(patient.id);

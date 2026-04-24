@@ -23,7 +23,8 @@ export const therapeutFactory = Factory.define<
   website: faker.internet.url(),
   enr: faker.string.numeric(10),
 })).onCreate(async (therapeut) => {
-  const createdTherapeut = await getDb()
+  const db = await getDb();
+  const createdTherapeut = await db
     .insertInto("therapeuts")
     .values(therapeut)
     .returningAll()

@@ -5,7 +5,7 @@ import { patientSelector } from "./selectors/patient";
 export type PatientSave = Omit<Patient, "id"> & { id?: number };
 
 export class PatientsRepository {
-  constructor(private readonly database = getDb()) {}
+  constructor(private readonly database = await getDb()) {}
 
   async find(id: number): Promise<Patient> {
     return await patientSelector(this.database)
