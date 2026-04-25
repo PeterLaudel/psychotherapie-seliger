@@ -15,7 +15,7 @@ import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
 
 export { jsonArrayFrom, jsonObjectFrom };
 
-export async function postgresDb() {
+export function postgresDb() {
   const pool = new Pool({
     connectionString: postgresUrl(),
   });
@@ -59,7 +59,7 @@ export async function dbDrop() {
 
 export async function dbMigrate() {
   const migration = new Migrator({
-    db: await postgresDb(),
+    db: postgresDb(),
     provider: new FileMigrationProvider({
       fs: promises,
       path,
@@ -67,7 +67,7 @@ export async function dbMigrate() {
     }),
   });
 
-  migration.migrateToLatest().then(({ error, results }) => {
+  await migration.migrateToLatest().then(({ error, results }) => {
     results?.forEach((it) => {
       if (it.status === "Success") {
         console.log(

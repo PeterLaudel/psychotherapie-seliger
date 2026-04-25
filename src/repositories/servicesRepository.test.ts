@@ -5,8 +5,8 @@ import { serviceFactory } from "factories/service";
 describe("ServicesRepository", () => {
   let servicesRepository: ServicesRepository;
 
-  beforeEach(async () => {
-    const db = await getDb();
+  beforeEach(() => {
+    const db = getDb();
     servicesRepository = new ServicesRepository(db);
   });
 
@@ -38,7 +38,7 @@ describe("ServicesRepository", () => {
 
   describe("#save", () => {
     it("creates a service when no id is provided", async () => {
-      const database = await getDb();
+      const database = getDb();
       const service = serviceFactory.build();
 
       const result = await servicesRepository.save(service);

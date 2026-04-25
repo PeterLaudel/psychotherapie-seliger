@@ -10,8 +10,7 @@ export const patientInvoiceFactory = Factory.define<
   patientId: sequence,
   invoiceId: sequence,
 })).onCreate(async (patientInvoice) => {
-  const db = await getDb();
-  return await db
+  return await getDb()
     .insertInto("patientInvoices")
     .values({
       patientId: patientInvoice.patientId,

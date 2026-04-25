@@ -17,8 +17,7 @@ export const invoiceFactory = Factory.define<
   invoiceAmount: faker.number.float({ min: 50, max: 500, fractionDigits: 2 }),
   status: "pending",
 })).onCreate(async (invoice) => {
-  const db = await getDb();
-  return await db
+  return await getDb()
     .insertInto("invoices")
     .values({
       invoiceNumber: invoice.invoiceNumber,

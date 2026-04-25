@@ -7,6 +7,6 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  const db = await getDb();
+  const db = getDb();
   await db.destroy();
 });

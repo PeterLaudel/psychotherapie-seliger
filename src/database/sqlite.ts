@@ -14,7 +14,7 @@ import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
 
 export { jsonArrayFrom, jsonObjectFrom };
 
-export async function sqliteDb() {
+export function sqliteDb() {
   return new Kysely<DatabaseDescription>({
     dialect: new SqliteDialect({
       database: new Database(sqliteUrl()),
@@ -23,21 +23,19 @@ export async function sqliteDb() {
   });
 }
 
-export async function dbCreate() {
-  return Promise.resolve(() => {
-    const filePath = sqliteUrl();
-    console.log(`Creating database file at: ${filePath}`);
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, "");
-      console.log(`Created file: ${filePath}`);
-    } else {
-      console.log(`File already exists: ${filePath}`);
-    }
-  });
+export function dbCreate() {
+  const filePath = sqliteUrl();
+  console.log(`Creating database file at: ${filePath}`);
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, "");
+    console.log(`Created file: ${filePath}`);
+  } else {
+    console.log(`File already exists: ${filePath}`);
+  }
 }
 
 export function dbDrop() {
@@ -52,7 +50,7 @@ export function dbDrop() {
 
 export async function dbMigrate() {
   const migration = new Migrator({
-    db: await sqliteDb(),
+    db: sqliteDb(),
     provider: new FileMigrationProvider({
       fs: promises,
       path,
@@ -60,7 +58,7 @@ export async function dbMigrate() {
     }),
   });
 
-  migration.migrateToLatest().then(({ error, results }) => {
+  await migration.migrateToLatest().then(({ error, results }) => {
     results?.forEach((it) => {
       if (it.status === "Success") {
         console.log(

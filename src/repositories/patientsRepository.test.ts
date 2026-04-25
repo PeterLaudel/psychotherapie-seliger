@@ -5,8 +5,8 @@ import { patientFactory } from "factories/patient";
 describe("PatientsRepository", () => {
   let patientRepository: PatientsRepository;
 
-  beforeEach(async () => {
-    const db = await getDb();
+  beforeEach(() => {
+    const db = getDb();
     patientRepository = new PatientsRepository(db);
   });
 
@@ -64,7 +64,7 @@ describe("PatientsRepository", () => {
 
   describe("#delete", () => {
     it("deletes the patient from the database", async () => {
-      const database = await getDb();
+      const database = getDb();
       const patient = await patientFactory.create();
 
       await patientRepository.delete(patient.id);

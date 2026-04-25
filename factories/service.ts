@@ -27,7 +27,7 @@ export const serviceFactory = Factory.define<
     },
   ],
 })).onCreate(async ({ amounts, ...rest }) => {
-  const db = await getDb();
+  const db = getDb();
   const createdService = await db
     .insertInto("services")
     .values(rest)

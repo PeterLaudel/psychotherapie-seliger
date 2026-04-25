@@ -1,5 +1,5 @@
 import { Patient } from "@/models/patient";
-import { Database, getDb } from "@/initialize";
+import { Database } from "@/initialize";
 import { patientSelector } from "./selectors/patient";
 
 export type PatientSave = Omit<Patient, "id"> & { id?: number };

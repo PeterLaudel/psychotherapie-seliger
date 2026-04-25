@@ -12,8 +12,8 @@ import { databaseDialect } from "@/environment";
 describe("InvoicesRepository", () => {
   let invoicesRepository: InvoicesRepository;
 
-  beforeEach(async () => {
-    const db = await getDb();
+  beforeEach(() => {
+    const db = getDb();
     invoicesRepository = new InvoicesRepository(db);
   });
 
@@ -123,7 +123,7 @@ describe("InvoicesRepository", () => {
 
 
     itif(databaseDialect() === "sqlite")("generates a unique invoice number", async () => {
-      const db = await getDb();
+      const db = getDb();
       // For SQLite, reset the auto-increment value by updating sqlite_sequence table
       await sql`DELETE FROM invoices`.execute(db);
       await sql`DELETE FROM sqlite_sequence WHERE name = 'invoices'`.execute(

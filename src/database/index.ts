@@ -32,7 +32,7 @@ export function dbConnect() {
 
 export async function dbCreate() {
   if (databaseDialect() === "sqlite") {
-    return await sqliteDbCreate();
+    return sqliteDbCreate();
   } else if (databaseDialect() === "postgres") {
     return await postgresDbCreate();
   } else {
@@ -42,7 +42,7 @@ export async function dbCreate() {
 
 export async function dbDrop() {
   if (databaseDialect() === "sqlite") {
-    return await sqliteDbDrop();
+    return sqliteDbDrop();
   } else if (databaseDialect() === "postgres") {
     return await postgresDbDrop();
   } else {
@@ -60,10 +60,22 @@ export async function dbMigrate() {
   }
 }
 
-export async function clearDatabase(
-  db: Kysely<Database>,
-  tables: (keyof Database)[],
-) {
+type DatabaseRecord = Record<keyof Database, undefined>;
+
+export async function clearDatabase(db: Kysely<Database>) {
+  const allRecords: DatabaseRecord = {
+    invoicePositions: undefined,
+    invoices: undefined,
+    patientInvoices: undefined,
+    serviceAmounts: undefined,
+    services: undefined,
+    patients: undefined,
+    therapeuts: undefined,
+  };
+
+  const tables: (keyof DatabaseRecord)[] = Object.keys(
+    allRecords,
+  ) as (keyof DatabaseRecord)[];
   if (databaseDialect() === "sqlite") {
     await clearSqliteDatabase(db, tables);
   } else if (databaseDialect() === "postgres") {

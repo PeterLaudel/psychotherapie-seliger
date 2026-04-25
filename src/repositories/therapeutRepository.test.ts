@@ -5,8 +5,8 @@ import { getDb } from "@/initialize";
 describe("TherapeutRepository", () => {
   let therapeutRepository: TherapeutRepository;
 
-  beforeEach(async () => {
-    const db = await getDb();
+  beforeEach(() => {
+    const db = getDb();
     therapeutRepository = new TherapeutRepository(db);
   });
 
@@ -21,7 +21,7 @@ describe("TherapeutRepository", () => {
 
   describe("#save", () => {
     it("creates a new therapeut if id is not provided", async () => {
-      const db = await getDb();
+      const db = getDb();
       const therapeutData = therapeutFactory.build();
       const savedTherapeut = await therapeutRepository.save(therapeutData);
 
@@ -36,7 +36,7 @@ describe("TherapeutRepository", () => {
     });
 
     it("updates an existing therapeut if id is provided", async () => {
-      const db = await getDb();
+      const db = getDb();
       const therapeut = await therapeutFactory.create();
       const updatedData = { ...therapeut, name: "Updated Name" };
       const savedTherapeut = await therapeutRepository.save(updatedData);
