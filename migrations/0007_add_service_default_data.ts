@@ -183,7 +183,7 @@ export async function up(kysely: Kysely<Database>) {
     const { id } = await kysely
       .insertInto("services")
       .values(rest)
-      .returningAll()
+      .returning("id")
       .executeTakeFirstOrThrow();
 
     for (const amount of amounts) {
