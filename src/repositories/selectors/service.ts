@@ -1,8 +1,8 @@
-import { getDb } from "@/initialize";
+import { type Database } from "@/initialize";
 import { Expression } from "kysely";
-import { jsonArrayFrom } from "kysely/helpers/sqlite";
+import { jsonArrayFrom } from "@/database";
 
-export function serviceSelector(database = getDb()) {
+export function serviceSelector(database: Database) {
   return database
     .selectFrom("services")
     .select(({ ref }) => [
@@ -16,7 +16,7 @@ export function serviceSelector(database = getDb()) {
     ]);
 }
 
-function amounts(ref: Expression<number>, database: ReturnType<typeof getDb>) {
+function amounts(ref: Expression<number>, database: Database) {
   return jsonArrayFrom(
     database
       .selectFrom("serviceAmounts")

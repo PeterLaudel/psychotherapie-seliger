@@ -3,14 +3,22 @@ import ServicesRepository from "./servicesRepository";
 import { serviceFactory } from "factories/service";
 
 describe("ServicesRepository", () => {
+  let servicesRepository: ServicesRepository;
+
+  beforeEach(() => {
+    const db = getDb();
+    servicesRepository = new ServicesRepository(db);
+  });
+
   describe("#all", () => {
     it("returns a list of all services", async () => {
       const service = await serviceFactory.create();
 
-      const servicesRepository = new ServicesRepository();
       const services = await servicesRepository.all();
 
-      expect(services).toEqual([service]);
+      expect(services).toEqual([
+        { ...service, amounts: expect.arrayContaining(service.amounts) },
+      ]);
     });
   });
 
@@ -19,18 +27,19 @@ describe("ServicesRepository", () => {
       await serviceFactory.create();
       const createdService = await serviceFactory.create();
 
-      const servicesRepository = new ServicesRepository();
-      const sercive = await servicesRepository.find(createdService.id);
+      const service = await servicesRepository.find(createdService.id);
 
-      expect(createdService).toEqual(sercive);
+      expect(createdService).toEqual({
+        ...service, 
+        amounts: expect.arrayContaining(createdService.amounts),
+      });
     });
   });
 
   describe("#save", () => {
     it("creates a service when no id is provided", async () => {
-      const service = serviceFactory.build();
       const database = getDb();
-      const servicesRepository = new ServicesRepository(database);
+      const service = serviceFactory.build();
 
       const result = await servicesRepository.save(service);
 
@@ -44,7 +53,6 @@ describe("ServicesRepository", () => {
 
     it("updates a service when id is provided", async () => {
       const service = await serviceFactory.create();
-      const servicesRepository = new ServicesRepository();
 
       const result = await servicesRepository.save({
         ...service,

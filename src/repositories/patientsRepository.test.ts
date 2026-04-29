@@ -3,7 +3,12 @@ import { PatientsRepository } from "./patientsRepository";
 import { patientFactory } from "factories/patient";
 
 describe("PatientsRepository", () => {
-  const patientRepository = new PatientsRepository();
+  let patientRepository: PatientsRepository;
+
+  beforeEach(() => {
+    const db = getDb();
+    patientRepository = new PatientsRepository(db);
+  });
 
   describe("#all", () => {
     it("returns a list of all patients", async () => {

@@ -1,6 +1,6 @@
 import { TherapeutRepository } from "@/repositories/therapeutRepository";
+import { getDb } from "@/initialize";
 
-
-export function getTherapeutsRepository() {
-    return Promise.resolve(new TherapeutRepository());
+export async function getTherapeutsRepository() {
+  return Promise.resolve(new TherapeutRepository(getDb()));
 }

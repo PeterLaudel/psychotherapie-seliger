@@ -1,7 +1,7 @@
 import { test as baseTest } from "@playwright/test";
 import { encode } from "next-auth/jwt";
 import { getDb } from "@/initialize";
-import { clearSqliteDatabase } from "tasks/dbUtils";
+import { clearDatabase } from "@/database";
 
 export const test = baseTest.extend<NonNullable<unknown>>({
   page: async ({ page, context }, use) => {
@@ -36,7 +36,7 @@ export const test = baseTest.extend<NonNullable<unknown>>({
     // eslint-disable-next-line react-hooks/rules-of-hooks
     await use(page);
 
-    await clearSqliteDatabase(getDb());
+    await clearDatabase(getDb());
   },
 });
 
