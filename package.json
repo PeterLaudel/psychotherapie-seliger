@@ -9,6 +9,8 @@
     "lint": "eslint --ignore-pattern=.gitignore --max-warnings=0 .",
     "typecheck": "tsc --incremental false",
     "test": "jest --runInBand",
+    "test:sqlite": "DATABASE_DIALECT=sqlite jest --runInBand",
+    "test:postgres": "DATABASE_DIALECT=postgres jest --runInBand",
     "test:ci": "npm run test && npm run lint && npm run typecheck",
     "ci": "npm run typecheck && npm run lint && npm run test",
     "db:create": "tsx ./tasks/dbCreate.ts",
