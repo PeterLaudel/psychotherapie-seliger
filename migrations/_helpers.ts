@@ -6,7 +6,7 @@ export function isPostgres(db: Kysely<unknown>): boolean {
 
 export function addIdColumn(
   db: Kysely<unknown>,
-  builder: CreateTableBuilder<any, any>,
+  builder: CreateTableBuilder<string, string>,
 ) {
   if (isPostgres(db)) {
     return builder.addColumn("id", "serial", (col) => col.primaryKey());
