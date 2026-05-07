@@ -1,11 +1,11 @@
-import { getDb } from "@/initialize";
+import { type Database } from "@/initialize";
 import { Amount, Service } from "@/models/service";
 import { serviceSelector } from "./selectors/service";
 
 type SaveService = Omit<Service, "id"> & { id?: number };
 
 export default class ServicesRepository {
-  constructor(private readonly database = getDb()) {}
+  constructor(private readonly database: Database) {}
 
   public async all(): Promise<Service[]> {
     return await serviceSelector(this.database).$castTo<Service>().execute();

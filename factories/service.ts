@@ -27,7 +27,8 @@ export const serviceFactory = Factory.define<
     },
   ],
 })).onCreate(async ({ amounts, ...rest }) => {
-  const createdService = await getDb()
+  const db = getDb();
+  const createdService = await db
     .insertInto("services")
     .values(rest)
     .returningAll()
@@ -35,7 +36,7 @@ export const serviceFactory = Factory.define<
 
   const serviceAmounts = await Promise.all(
     amounts.map(async (amount) => {
-      return await getDb()
+      return await db
         .insertInto("serviceAmounts")
         .values({
           serviceId: createdService.id,

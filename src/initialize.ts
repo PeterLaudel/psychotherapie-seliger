@@ -1,22 +1,13 @@
-import { Kysely, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
-import Database from "better-sqlite3";
+import { Kysely } from "kysely";
 import { Database as DatabaseDescription } from "./db";
-import { sqliteUrl } from "./environment";
+import { dbConnect } from "./database";
 
-let dbInstance: Kysely<DatabaseDescription> | null = null;
+export type Database = Kysely<DatabaseDescription>;
+let dbInstance: Database | null = null;
 
 export function getDb(): Kysely<DatabaseDescription> {
-  if (!dbInstance) {
-    dbInstance = new Kysely<DatabaseDescription>({
-      dialect: new SqliteDialect({
-        database: new Database(sqliteUrl()),
-      }),
-      plugins: [new ParseJSONResultsPlugin()],
-    });
-  } 
-  return dbInstance;
-}
+  if (dbInstance) return dbInstance;
 
-export function setDbInstance(db: Kysely<DatabaseDescription>) {
-  dbInstance = db;
+  dbInstance = dbConnect();
+  return dbInstance;
 }

@@ -11,7 +11,7 @@ export const invoicePositionFactory = Factory.define<
   serviceDate: faker.date.birthdate().toISOString().split("T")[0],
   serviceId: sequence,
   invoiceId: sequence,
-  amount: faker.number.int(),
+  amount: faker.number.int({ min: 1, max: 5 }),
   factor: faker.helpers.arrayElement(["1.0", "1.8", "2.3"]),
   price: faker.number.float({ min: 100, max: 200 }),
 })).onCreate(async (invoicePosition) => {

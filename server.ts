@@ -23,7 +23,7 @@ dotenv.config({ path: path.join(homeDir, ".env"), quiet: true });
 import { dbMigrate } from "./tasks/dbMigrate";
 
 process.env.SQLITE_URL = path.join(homeDir, "psychotherapie_seliger.sqlite");
-dbMigrate();
+await dbMigrate();
 
 //start next.js server
 import next from "next";
