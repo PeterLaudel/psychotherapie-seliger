@@ -7,6 +7,7 @@ import { defineConfig, devices } from "@playwright/test";
  * https://github.com/motdotla/dotenv
  */
 dotenv.config({ path: path.resolve(__dirname, ".env.e2e"), quiet: true });
+dotenv.config({ path: path.resolve(__dirname, ".env.e2e.local"), override: true, quiet: true });
 
 /**
  * See https://playwright.dev/docs/test-configuration.

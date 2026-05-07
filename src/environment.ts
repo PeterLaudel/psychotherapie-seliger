@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: [`.env.${process.env.NODE_ENV}`], quiet: true });
+dotenv.config({ path: [`.env.${process.env.NODE_ENV}.local`], override: true, quiet: true });
 
 export function sqliteUrl(): string {
   return process.env.SQLITE_URL || "";
