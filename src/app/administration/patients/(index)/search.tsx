@@ -16,7 +16,7 @@ export function Search() {
     <Input
       value={searchParams.get("search") || ""}
       onChange={(e) => handleSearch(e.target.value)}
-      placeholder="Search patients"
+      placeholder="Suche"
     />
   );
 }

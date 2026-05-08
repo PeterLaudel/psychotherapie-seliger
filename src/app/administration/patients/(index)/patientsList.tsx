@@ -22,16 +22,10 @@ export default function PatientsList() {
   const searchParams = useSearchParams();
   const search = searchParams.get("search") ?? "";
 
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(timer);
-  }, [search]);
-
   const { data: patients = [] } = useQuery({
-    queryKey: patientsQueryKey(debouncedSearch),
-    queryFn: () => fetchPatients(debouncedSearch),
-    placeholderData: keepPreviousData,
+    queryKey: patientsQueryKey(search),
+    queryFn: () => fetchPatients(search),
+    
   });
 
   return (
@@ -40,7 +34,7 @@ export default function PatientsList() {
 
       <Section>
         <div className="grid grid-flow-row gap-4">
-          <div className="w-full flex justify-end">
+          <div className="w-full flex justify-end gap-4">
             <Search />
             <Button
               onClick={() => router.push("/administration/patients/create")}
