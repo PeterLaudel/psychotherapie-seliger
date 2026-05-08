@@ -3,7 +3,7 @@
 import { Input } from "@mui/material";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
-export function Search() {
+export function Filter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

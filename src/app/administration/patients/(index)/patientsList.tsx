@@ -7,7 +7,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Section from "@/components/section";
 import { Patient } from "@/models/patient";
-import { Search } from "./search";
+import { Filter } from "./filter";
 import { patientsQueryKey, fetchPatients } from "@/queries/patients";
 
 const columns: GridColDef<Patient>[] = [
@@ -35,7 +35,7 @@ export default function PatientsList() {
       <Section>
         <div className="grid grid-flow-row gap-4">
           <div className="w-full flex justify-end gap-4">
-            <Search />
+            <Filter />
             <Button
               onClick={() => router.push("/administration/patients/create")}
             >
