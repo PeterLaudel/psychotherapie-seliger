@@ -2,13 +2,13 @@
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button, NoSsr } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import Section from "@/components/section";
 import { Patient } from "@/models/patient";
-
-interface Props {
-  patients: Patient[];
-}
+import { Search } from "./search";
+import { patientsQueryKey, fetchPatients } from "@/queries/patients";
 
 const columns: GridColDef<Patient>[] = [
   { field: "name", headerName: "Name", width: 150 },
@@ -17,8 +17,22 @@ const columns: GridColDef<Patient>[] = [
   { field: "birthdate", headerName: "Birthdate", width: 150 },
 ];
 
-export default function PatientsList({ patients }: Props) {
+export default function PatientsList() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") ?? "";
+
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const { data: patients = [] } = useQuery({
+    queryKey: patientsQueryKey(debouncedSearch),
+    queryFn: () => fetchPatients(debouncedSearch),
+    placeholderData: keepPreviousData,
+  });
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
@@ -27,6 +41,7 @@ export default function PatientsList({ patients }: Props) {
       <Section>
         <div className="grid grid-flow-row gap-4">
           <div className="w-full flex justify-end">
+            <Search />
             <Button
               onClick={() => router.push("/administration/patients/create")}
             >

@@ -13,6 +13,20 @@ export class PatientsRepository {
       .executeTakeFirstOrThrow();
   }
 
+  async findBySearchTerm(searchTerm: string): Promise<Patient[]> {
+    if (!searchTerm) return await this.all();
+
+    return await patientSelector(this.database)
+      .where((eb) =>
+        eb.or([
+          eb("name", "like", `%${searchTerm}%`),
+          eb("surname", "like", `%${searchTerm}%`),
+          eb("email", "like", `%${searchTerm}%`),
+        ]),
+      )
+      .execute();
+  }
+
   async all(): Promise<Patient[]> {
     return await patientSelector(this.database).execute();
   }
