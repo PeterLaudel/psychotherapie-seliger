@@ -13,18 +13,20 @@ export class PatientsRepository {
       .executeTakeFirstOrThrow();
   }
 
-  async findBySearchTerm(searchTerm: string): Promise<Patient[]> {
-    if (!searchTerm) return await this.all();
+  async filter({search}: {search: string}): Promise<Patient[]> {
+    let query = patientSelector(this.database);
 
-    return await patientSelector(this.database)
-      .where((eb) =>
+    if (search) {
+      query = query.where((eb) =>
         eb.or([
-          eb("name", "like", `%${searchTerm}%`),
-          eb("surname", "like", `%${searchTerm}%`),
-          eb("email", "like", `%${searchTerm}%`),
+          eb("name", "like", `%${search}%`),
+          eb("surname", "like", `%${search}%`),
+          eb("email", "like", `%${search}%`),
         ]),
       )
-      .execute();
+    }
+
+    return query.execute();
   }
 
   async all(): Promise<Patient[]> {

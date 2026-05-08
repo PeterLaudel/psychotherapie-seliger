@@ -19,7 +19,7 @@ export default async function Page({
     queryFn: async () => {
       const search = (await searchParams).search || "";
       const repo = await getPatientsRepository();
-      return repo.findBySearchTerm(search);
+      return repo.filter({ search });
     },
   });
 

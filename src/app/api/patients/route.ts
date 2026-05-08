@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
-  const searchTerm = searchParams.get("search") || "";
+  const search = searchParams.get("search") || "";
 
   const patientsRepository = await getPatientsRepository();
-  const patients = await patientsRepository.findBySearchTerm(searchTerm);
+  const patients = await patientsRepository.filter({ search });
 
   return NextResponse.json(patients);
 };
