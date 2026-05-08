@@ -22,6 +22,21 @@ export class InvoicesRepository {
     });
   }
 
+  public async filter({ search }: { search?: string }): Promise<Invoice[]> {
+    let query = this.modelSelector();
+
+    if (search) {
+      query = query.where((eb) =>
+        eb.or([
+          eb("patients.name", "like", `%${search}%`),
+          eb("patients.surname", "like", `%${search}%`),
+        ]),
+      );
+    }
+
+    return query.execute();
+  }
+
   public async find(id: number): Promise<Invoice> {
     return this.modelSelector()
       .where("invoices.id", "=", id)

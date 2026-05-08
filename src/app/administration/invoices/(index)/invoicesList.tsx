@@ -1,16 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button, NoSsr } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
 import { InvoiceAction } from "./invoiceAction";
 import { InvoiceStatus } from "./invoiceStatus";
-
-interface Props {
-  invoices: Invoice[];
-}
+import { Filter } from "./filter";
+import { useQuery } from "@tanstack/react-query";
+import { fetchInvoices, invoicesQueryKey } from "@/queries/invoices";
 
 const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -53,15 +52,24 @@ const columns: GridColDef<Invoice>[] = [
   },
 ];
 
-export function InvoicesList({ invoices }: Props) {
+export function InvoicesList() {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") ?? "";
+
+  const { data: invoices } = useQuery({
+    queryKey: invoicesQueryKey(search),
+    queryFn: () => fetchInvoices(search),
+  });
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
       <h1>Invoices</h1>
       <Section>
         <div className="grid grid-flow-row gap-4">
-          <div className="w-full flex justify-end">
+          <div className="w-full flex justify-end gap-4">
+            <Filter />
             <Button
               onClick={() => router.push("/administration/invoices/create")}
             >
