@@ -9,7 +9,7 @@ import { InvoiceAction } from "./invoiceAction";
 import { InvoiceStatus } from "./invoiceStatus";
 import { Filter } from "./filter";
 import { useQuery } from "@tanstack/react-query";
-import { fetchInvoices, invoicesQueryKey } from "@/queries/invoices";
+import { fetchInvoices, InvoicesQueryKey, invoicesQueryKey } from "@/queries/invoices";
 
 const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -56,11 +56,14 @@ export function InvoicesList() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const search = searchParams.get("search") ?? "";
+  const query = {
+    search: searchParams.get("search") ?? "",
+    status: searchParams.get("status") as Invoice["status"] ?? undefined,
+  };
 
   const { data: invoices } = useQuery({
-    queryKey: invoicesQueryKey(search),
-    queryFn: () => fetchInvoices(search),
+    queryKey: invoicesQueryKey(query),
+    queryFn: () => fetchInvoices(query),
   });
 
   return (

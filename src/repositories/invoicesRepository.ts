@@ -22,7 +22,7 @@ export class InvoicesRepository {
     });
   }
 
-  public async filter({ search }: { search?: string }): Promise<Invoice[]> {
+  public async filter({ search, status }: { search?: string, status?: Invoice["status"] }): Promise<Invoice[]> {
     let query = this.modelSelector();
 
     if (search) {
@@ -32,6 +32,10 @@ export class InvoicesRepository {
           eb("patients.surname", "like", `%${search}%`),
         ]),
       );
+    }
+
+    if (status) {
+      query = query.where("invoices.status", "=", status);
     }
 
     return query.execute();

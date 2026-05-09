@@ -5,21 +5,22 @@ import {
 } from "@tanstack/react-query";
 import { InvoicesList } from "./invoicesList";
 import { getInvoicesRepository } from "@/server";
-import { invoicesQueryKey } from "@/queries/invoices";
+import { InvoicesQueryKey, invoicesQueryKey } from "@/queries/invoices";
+import { Invoice } from "@/models/invoice";
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<InvoicesQueryKey>;
 }) {
   const queryClient = new QueryClient();
 
+  const query = await searchParams;
   await queryClient.prefetchQuery({
-    queryKey: invoicesQueryKey(),
+    queryKey: invoicesQueryKey(query),
     queryFn: async () => {
-      const search = (await searchParams).search || "";
       const repo = await getInvoicesRepository();
-      return repo.filter({ search });
+      return repo.filter(query);
     },
   });
 
