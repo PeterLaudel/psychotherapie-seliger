@@ -14,7 +14,7 @@ export default async function Page({
 }) {
   const queryClient = new QueryClient();
 
-  const query = await searchParams;
+  const query = { ...await searchParams, page: 0, pageSize: 25 };
   await queryClient.prefetchQuery({
     queryKey: invoicesQueryKey(query),
     queryFn: async () => {

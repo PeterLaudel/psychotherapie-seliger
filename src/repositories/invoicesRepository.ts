@@ -22,11 +22,32 @@ export class InvoicesRepository {
     });
   }
 
-  public async filter({ search, status }: { search?: string, status?: Invoice["status"] }): Promise<Invoice[]> {
+  public async filter({
+    search,
+    status,
+    page = 0,
+    pageSize = 25,
+  }: {
+    search?: string;
+    status?: Invoice["status"];
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ rows: Invoice[]; total: number }> {
     let query = this.modelSelector();
+    let countQuery = this.database
+      .selectFrom("invoices")
+      .innerJoin("patientInvoices", "invoices.id", "patientInvoices.invoiceId")
+      .innerJoin("patients", "patientInvoices.patientId", "patients.id")
+      .select(this.database.fn.countAll<number>().as("total"));
 
     if (search) {
       query = query.where((eb) =>
+        eb.or([
+          eb("patients.name", "like", `%${search}%`),
+          eb("patients.surname", "like", `%${search}%`),
+        ]),
+      );
+      countQuery = countQuery.where((eb) =>
         eb.or([
           eb("patients.name", "like", `%${search}%`),
           eb("patients.surname", "like", `%${search}%`),
@@ -36,9 +57,15 @@ export class InvoicesRepository {
 
     if (status) {
       query = query.where("invoices.status", "=", status);
+      countQuery = countQuery.where("invoices.status", "=", status);
     }
 
-    return query.execute();
+    const [rows, countResult] = await Promise.all([
+      query.limit(pageSize).offset(page * pageSize).execute(),
+      countQuery.executeTakeFirstOrThrow(),
+    ]);
+
+    return { rows, total: Number(countResult.total) };
   }
 
   public async find(id: number): Promise<Invoice> {

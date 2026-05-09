@@ -2,14 +2,15 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, NoSsr } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
 import { InvoiceAction } from "./invoiceAction";
 import { InvoiceStatus } from "./invoiceStatus";
 import { Filter } from "./filter";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchInvoices, invoicesQueryKey } from "@/queries/invoices";
+import { useState, useEffect } from "react";
 
 const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -52,18 +53,32 @@ const columns: GridColDef<Invoice>[] = [
   },
 ];
 
+const DEFAULT_PAGE_SIZE = 10;
+
 export function InvoicesList() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const query = {
+  const filters = {
     search: searchParams.get("search") ?? "",
     status: searchParams.get("status") as Invoice["status"] ?? undefined,
   };
 
-  const { data: invoices } = useQuery({
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  useEffect(() => {
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+  }, [filters.search, filters.status]);
+
+  const query = { ...filters, ...paginationModel };
+
+  const { data } = useQuery({
     queryKey: invoicesQueryKey(query),
     queryFn: () => fetchInvoices(query),
+    placeholderData: keepPreviousData,
   });
 
   return (
@@ -82,10 +97,13 @@ export function InvoicesList() {
           <NoSsr>
             <div className="h-full w-full">
               <DataGrid<Invoice>
-                rows={invoices}
+                rows={data?.rows ?? []}
+                rowCount={data?.total ?? 0}
                 columns={columns}
                 disableColumnMenu
-                hideFooter
+                paginationMode="server"
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
                 onRowClick={(params, event) => {
                   const tartget = event.target as HTMLElement;
                   if (tartget.closest("button") || tartget.closest("a")) {
