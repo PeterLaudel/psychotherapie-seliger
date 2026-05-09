@@ -3,8 +3,7 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button, NoSsr } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Section from "@/components/section";
 import { Patient } from "@/models/patient";
 import { Filter } from "./filter";

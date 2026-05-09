@@ -6,7 +6,6 @@ import {
 import { InvoicesList } from "./invoicesList";
 import { getInvoicesRepository } from "@/server";
 import { InvoicesQueryKey, invoicesQueryKey } from "@/queries/invoices";
-import { Invoice } from "@/models/invoice";
 
 export default async function Page({
   searchParams,

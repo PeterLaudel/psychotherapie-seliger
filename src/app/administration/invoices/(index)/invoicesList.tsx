@@ -9,7 +9,7 @@ import { InvoiceAction } from "./invoiceAction";
 import { InvoiceStatus } from "./invoiceStatus";
 import { Filter } from "./filter";
 import { useQuery } from "@tanstack/react-query";
-import { fetchInvoices, InvoicesQueryKey, invoicesQueryKey } from "@/queries/invoices";
+import { fetchInvoices, invoicesQueryKey } from "@/queries/invoices";
 
 const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
   style: "currency",

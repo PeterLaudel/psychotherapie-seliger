@@ -1,12 +1,10 @@
-import { Database } from "../src/db";
 import { billingInfoFactory } from "../factories/billingInfo";
 import { invoiceFactory } from "../factories/invoice";
 import { patientFactory } from "../factories/patient";
 import { patientInvoiceFactory } from "../factories/patientInvoice";
 import { therapeutFactory } from "../factories/therapeut";
-import { Kysely } from "kysely";
 
-export async function seed(kysely: Kysely<Database>) {
+export async function seed() {
   await therapeutFactory.create();
 
   const patient1 = await patientFactory.create({
