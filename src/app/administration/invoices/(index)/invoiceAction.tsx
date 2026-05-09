@@ -3,7 +3,7 @@ import { Button, CircularProgress, Dialog, IconButton } from "@mui/material";
 import { Delete, Download, Send } from "@mui/icons-material";
 import { deleteInvoice, sendInvoiceEmail } from "./action";
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   invoice: Invoice;
@@ -22,7 +22,7 @@ export function InvoiceAction({ invoice }: Props) {
 function SendButton({ invoice }: { invoice: Invoice }) {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -49,7 +49,7 @@ function SendButton({ invoice }: { invoice: Invoice }) {
                 startTransition(async () => {
                   await sendInvoiceEmail(invoice.id);
                   setOpen(false);
-                  router.refresh();
+                  await queryClient.invalidateQueries({ queryKey: ["invoices"] });
                 })
               }
               disabled={isPending}
@@ -79,7 +79,7 @@ function DownloadButton({ invoice }: { invoice: Invoice }) {
 function DeleteButton({ invoice }: { invoice: Invoice }) {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -100,7 +100,7 @@ function DeleteButton({ invoice }: { invoice: Invoice }) {
                 startTransition(async () => {
                   await deleteInvoice(invoice.id);
                   setOpen(false);
-                  router.refresh();
+                  await queryClient.invalidateQueries({ queryKey: ["invoices"] });
                 })
               }
               disabled={isPending}

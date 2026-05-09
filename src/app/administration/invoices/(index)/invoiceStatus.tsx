@@ -8,7 +8,7 @@ import {
   markInvoiceAsPending,
   markInvoiceAsSent,
 } from "./action";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   invoice: Invoice;
@@ -17,7 +17,7 @@ interface Props {
 export function InvoiceStatus({ invoice }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const router = useRouter();
+  const queryClient = useQueryClient();
   return (
     <>
       <Button
@@ -67,7 +67,7 @@ export function InvoiceStatus({ invoice }: Props) {
           onClick={async () => {
             await markInvoiceAsPending(invoice.id);
             setAnchorEl(null);
-            router.refresh();
+            await queryClient.invalidateQueries({ queryKey: ["invoices"] });
           }}
         >
           <HourglassEmpty className="text-amber-400" />
@@ -79,7 +79,7 @@ export function InvoiceStatus({ invoice }: Props) {
           onClick={async () => {
             await markInvoiceAsSent(invoice.id);
             setAnchorEl(null);
-            router.refresh();
+            await queryClient.invalidateQueries({ queryKey: ["invoices"] });
           }}
         >
           <Email className="text-blue-500" />
@@ -91,7 +91,7 @@ export function InvoiceStatus({ invoice }: Props) {
           onClick={async () => {
             await markInvoiceAsPaid(invoice.id);
             setAnchorEl(null);
-            router.refresh();
+            await queryClient.invalidateQueries({ queryKey: ["invoices"] });
           }}
         >
           <CheckCircle className="text-green-500" />

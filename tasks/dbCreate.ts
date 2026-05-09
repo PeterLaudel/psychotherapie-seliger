@@ -1,4 +1,4 @@
-import { dbCreate } from "@/database";
+import { dbCreate } from "../src/database";
 
 export { dbCreate };
 
