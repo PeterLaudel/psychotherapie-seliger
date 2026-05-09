@@ -8,6 +8,7 @@ import {
   markInvoiceAsPending,
   markInvoiceAsSent,
 } from "./action";
+import { useRouter } from "next/navigation";
 
 interface Props {
   invoice: Invoice;
@@ -16,6 +17,7 @@ interface Props {
 export function InvoiceStatus({ invoice }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const router = useRouter();
   return (
     <>
       <Button
@@ -65,6 +67,7 @@ export function InvoiceStatus({ invoice }: Props) {
           onClick={async () => {
             await markInvoiceAsPending(invoice.id);
             setAnchorEl(null);
+            router.refresh();
           }}
         >
           <HourglassEmpty className="text-amber-400" />
@@ -76,6 +79,7 @@ export function InvoiceStatus({ invoice }: Props) {
           onClick={async () => {
             await markInvoiceAsSent(invoice.id);
             setAnchorEl(null);
+            router.refresh();
           }}
         >
           <Email className="text-blue-500" />
@@ -87,6 +91,7 @@ export function InvoiceStatus({ invoice }: Props) {
           onClick={async () => {
             await markInvoiceAsPaid(invoice.id);
             setAnchorEl(null);
+            router.refresh();
           }}
         >
           <CheckCircle className="text-green-500" />
