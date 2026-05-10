@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, NoSsr } from "@mui/material";
-import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Invoice } from "@/models/invoice";
 import Section from "@/components/section";
 import { InvoiceAction } from "./invoiceAction";
@@ -10,7 +10,7 @@ import { InvoiceStatus } from "./invoiceStatus";
 import { Filter } from "./filter";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchInvoices, invoicesQueryKey } from "@/queries/invoices";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const GermanyCurrencyFormatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -64,16 +64,11 @@ export function InvoicesList() {
     status: searchParams.get("status") as Invoice["status"] ?? undefined,
   };
 
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
-    page: 0,
-    pageSize: DEFAULT_PAGE_SIZE,
-  });
+  const filterKey = `${filters.search}|${filters.status}`;
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: DEFAULT_PAGE_SIZE, filterKey });
 
-  useEffect(() => {
-    setPaginationModel((prev) => ({ ...prev, page: 0 }));
-  }, [filters.search, filters.status]);
-
-  const query = { ...filters, ...paginationModel };
+  const page = paginationModel.filterKey !== filterKey ? 0 : paginationModel.page;
+  const query = { ...filters, page, pageSize: paginationModel.pageSize };
 
   const { data } = useQuery({
     queryKey: invoicesQueryKey(query),
@@ -103,7 +98,8 @@ export function InvoicesList() {
                 disableColumnMenu
                 paginationMode="server"
                 paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
+                pageSizeOptions={[DEFAULT_PAGE_SIZE]}
+                onPaginationModelChange={(model) => setPaginationModel({ ...model, filterKey })}
                 onRowClick={(params, event) => {
                   const tartget = event.target as HTMLElement;
                   if (tartget.closest("button") || tartget.closest("a")) {

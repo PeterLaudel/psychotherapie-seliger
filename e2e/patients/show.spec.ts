@@ -10,7 +10,7 @@ test("filter patients", async ({ page }) => {
   await expect(page.getByText("Jane")).toBeVisible();
   await expect(page.getByText("John")).toBeVisible();
 
-  await page.getByPlaceholder("Suche").fill("Jane");
+  await page.getByRole("textbox", { name: "Suche" }).fill("Jane");
 
   await page.waitForResponse("/api/patients*");
 

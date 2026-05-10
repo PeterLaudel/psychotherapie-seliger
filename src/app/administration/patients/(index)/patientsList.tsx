@@ -1,6 +1,6 @@
 "use client";
 
-import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button, NoSsr } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -8,7 +8,7 @@ import Section from "@/components/section";
 import { Patient } from "@/models/patient";
 import { Filter } from "./filter";
 import { patientsQueryKey, fetchPatients } from "@/queries/patients";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const columns: GridColDef<Patient>[] = [
   { field: "name", headerName: "Name", width: 150 },
@@ -26,16 +26,10 @@ export default function PatientsList() {
   const page = Number(searchParams.get("page")) || 0;
   const pageSize = Number(searchParams.get("pageSize")) || DEFAULT_PAGE_SIZE;
 
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
-    page,
-    pageSize,
-  });
+  const [paginationModel, setPaginationModel] = useState({ page, pageSize, filterKey: search });
 
-  useEffect(() => {
-    setPaginationModel((prev) => ({ ...prev, page: 0 }));
-  }, [search]);
-
-  const query = { search, ...paginationModel };
+  const currentPage = paginationModel.filterKey !== search ? 0 : paginationModel.page;
+  const query = { search, page: currentPage, pageSize: paginationModel.pageSize };
 
   const { data } = useQuery({
     queryKey: patientsQueryKey(query),
@@ -66,7 +60,8 @@ export default function PatientsList() {
                 disableColumnMenu
                 paginationMode="server"
                 paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
+                pageSizeOptions={[DEFAULT_PAGE_SIZE]}
+                onPaginationModelChange={(model) => setPaginationModel({ ...model, filterKey: search })}
                 onRowClick={(params) => {
                   router.push(`/administration/patients/${params.row.id}`);
                 }}

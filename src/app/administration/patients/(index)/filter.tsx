@@ -11,7 +11,11 @@ export function Filter() {
 
   const setSearch = (value: string) => {
     const params = new URLSearchParams(searchParams);
-    value ? params.set("search", value) : params.delete("search");
+    if(value) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
     replace(`${pathname}?${params.toString()}`);
   };
 
