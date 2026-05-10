@@ -1,9 +1,8 @@
 "use client";
 
-import { HourglassEmpty, Send, CheckCircle } from "@mui/icons-material";
-import { Autocomplete, TextField } from "@mui/material";
+import { HourglassEmpty, Send, CheckCircle, Close } from "@mui/icons-material";
+import { Autocomplete, IconButton, InputAdornment, TextField } from "@mui/material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Invoice } from "@/models/invoice";
 
 type InvoiceStatus = Invoice["status"];
@@ -14,42 +13,45 @@ const statusOptions: { value: InvoiceStatus; label: string; icon: React.ReactNod
   { value: "paid", label: "Bezahlt", icon: <CheckCircle className="text-green-400" fontSize="small" /> },
 ];
 
-interface FilterParams {
-  search?: string;
-  status?: InvoiceStatus;
-}
-
 export function Filter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const [filter, setFilter] = useState<FilterParams>({
-    search: searchParams.get("search") || undefined,
-    status: (searchParams.get("status") as InvoiceStatus) || undefined,
-  });
 
-  useEffect(() => {
-    const newSearchParams = new URLSearchParams();
-    if (filter.search) newSearchParams.set("search", filter.search);
-    if (filter.status) newSearchParams.set("status", filter.status);
-    replace(`${pathname}?${newSearchParams.toString()}`);
-  }, [filter, pathname, replace]);
+  const setParam = (key: string, value: string | null) => {
+    const params = new URLSearchParams(searchParams);
+    value ? params.set(key, value) : params.delete(key);
+    replace(`${pathname}?${params.toString()}`);
+  };
 
-  const selectedOption = statusOptions.find((o) => o.value === filter.status) ?? null;
+  const selectedOption = statusOptions.find((o) => o.value === searchParams.get("status"));
 
   return (
     <div className="flex items-center gap-4">
       <TextField
         value={searchParams.get("search") || ""}
-        onChange={(e) => setFilter((prev) => ({ ...prev, search: e.target.value }))}
+        onChange={(e) => setParam("search", e.target.value)}
         label="Suche"
         size="small"
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  size="small"
+                  onClick={() => setParam("search", null)}
+                  sx={{ visibility: searchParams.get("search") ? "visible" : "hidden" }}
+                >
+                  <Close fontSize="small" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
       />
       <Autocomplete
         value={selectedOption}
-        onChange={(_, option) =>
-          setFilter((prev) => ({ ...prev, status: option?.value ?? undefined }))
-        }
+        onChange={(_, option) => setParam("status", option?.value ?? null)}
         options={statusOptions}
         getOptionLabel={(o) => o.label}
         renderOption={(props, option) => (

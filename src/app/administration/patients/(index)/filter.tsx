@@ -1,6 +1,7 @@
 "use client";
 
-import { Input } from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { Close } from "@mui/icons-material";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export function Filter() {
@@ -8,15 +9,35 @@ export function Filter() {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const handleSearch = (query: string) => {
-    replace(`${pathname}?search=${query}`);
+  const setSearch = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    value ? params.set("search", value) : params.delete("search");
+    replace(`${pathname}?${params.toString()}`);
   };
 
+  const search = searchParams.get("search") || "";
+
   return (
-    <Input
-      value={searchParams.get("search") || ""}
-      onChange={(e) => handleSearch(e.target.value)}
-      placeholder="Suche"
+    <TextField
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      label="Suche"
+      size="small"
+      slotProps={{
+        input: {
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                size="small"
+                onClick={() => setSearch("")}
+                sx={{ visibility: search ? "visible" : "hidden" }}
+              >
+                <Close fontSize="small" />
+              </IconButton>
+            </InputAdornment>
+          ),
+        },
+      }}
     />
   );
 }

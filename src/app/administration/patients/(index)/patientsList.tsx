@@ -1,13 +1,14 @@
 "use client";
 
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { Button, NoSsr } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Section from "@/components/section";
 import { Patient } from "@/models/patient";
 import { Filter } from "./filter";
 import { patientsQueryKey, fetchPatients } from "@/queries/patients";
+import { useState, useEffect } from "react";
 
 const columns: GridColDef<Patient>[] = [
   { field: "name", headerName: "Name", width: 150 },
@@ -16,15 +17,30 @@ const columns: GridColDef<Patient>[] = [
   { field: "birthdate", headerName: "Birthdate", width: 150 },
 ];
 
+const DEFAULT_PAGE_SIZE = 10;
+
 export default function PatientsList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") ?? "";
+  const page = Number(searchParams.get("page")) || 0;
+  const pageSize = Number(searchParams.get("pageSize")) || DEFAULT_PAGE_SIZE;
 
-  const { data: patients = [] } = useQuery({
-    queryKey: patientsQueryKey(search),
-    queryFn: () => fetchPatients(search),
-    
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page,
+    pageSize,
+  });
+
+  useEffect(() => {
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+  }, [search]);
+
+  const query = { search, ...paginationModel };
+
+  const { data } = useQuery({
+    queryKey: patientsQueryKey(query),
+    queryFn: () => fetchPatients(query),
+    placeholderData: keepPreviousData,
   });
 
   return (
@@ -44,10 +60,13 @@ export default function PatientsList() {
           <NoSsr>
             <div className="h-full w-full">
               <DataGrid
-                rows={patients}
+                rows={data?.rows ?? []}
+                rowCount={data?.total ?? 0}
                 columns={columns}
                 disableColumnMenu
-                hideFooter
+                paginationMode="server"
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
                 onRowClick={(params) => {
                   router.push(`/administration/patients/${params.row.id}`);
                 }}

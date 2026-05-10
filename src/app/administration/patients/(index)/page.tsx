@@ -14,12 +14,14 @@ export default async function Page({
 }) {
   const queryClient = new QueryClient();
 
+  const search = (await searchParams).search || "";
+  const query = { search, page: 0, pageSize: 10 };
+
   await queryClient.prefetchQuery({
-    queryKey: patientsQueryKey(),
+    queryKey: patientsQueryKey(query),
     queryFn: async () => {
-      const search = (await searchParams).search || "";
       const repo = await getPatientsRepository();
-      return repo.filter({ search });
+      return repo.filter(query);
     },
   });
 
