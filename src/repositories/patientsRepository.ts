@@ -23,9 +23,6 @@ export class PatientsRepository {
     pageSize?: number;
   }): Promise<{ rows: Patient[]; total: number }> {
     let query = patientSelector(this.database);
-    let countQuery = this.database
-      .selectFrom("patients")
-      .select(this.database.fn.countAll<number>().as("total"));
 
     if (search) {
       query = query.where((eb) =>
@@ -35,18 +32,17 @@ export class PatientsRepository {
           eb("email", "like", `%${search}%`),
         ]),
       );
-      countQuery = countQuery.where((eb) =>
-        eb.or([
-          eb("name", "like", `%${search}%`),
-          eb("surname", "like", `%${search}%`),
-          eb("email", "like", `%${search}%`),
-        ]),
-      );
     }
 
     const [rows, countResult] = await Promise.all([
-      query.limit(pageSize).offset(page * pageSize).execute(),
-      countQuery.executeTakeFirstOrThrow(),
+      query
+        .orderBy("patients.id", "desc")
+        .limit(pageSize)
+        .offset(page * pageSize)
+        .execute(),
+      query
+        .select(this.database.fn.countAll<number>().as("total"))
+        .executeTakeFirstOrThrow(),
     ]);
 
     return { rows, total: Number(countResult.total) };
