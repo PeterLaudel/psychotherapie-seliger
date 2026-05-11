@@ -11,6 +11,20 @@ export default class ServicesRepository {
     return await serviceSelector(this.database).$castTo<Service>().execute();
   }
 
+  public async filter({
+    page = 0,
+    pageSize = 10,
+  }: {
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ rows: Service[]; total: number }> {
+    const [rows, countResult] = await Promise.all([
+      serviceSelector(this.database).$castTo<Service>().limit(pageSize).offset(page * pageSize).execute(),
+      this.database.selectFrom("services").select(this.database.fn.countAll<number>().as("total")).executeTakeFirstOrThrow(),
+    ]);
+    return { rows, total: Number(countResult.total) };
+  }
+
   public async find(serviceId: number): Promise<Service> {
     return await serviceSelector(this.database)
       .where("id", "=", serviceId)
