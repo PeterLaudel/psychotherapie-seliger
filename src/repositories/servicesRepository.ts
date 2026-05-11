@@ -2,7 +2,7 @@ import { type Database } from "@/initialize";
 import { Amount, Service } from "@/models/service";
 import { serviceSelector } from "./selectors/service";
 
-type SaveService = Omit<Service, "id"> & { id?: number };
+export type ServiceSave = Omit<Service, "id"> & { id?: number };
 
 export default class ServicesRepository {
   constructor(private readonly database: Database) {}
@@ -32,7 +32,7 @@ export default class ServicesRepository {
       .executeTakeFirstOrThrow();
   }
 
-  public async save(service: SaveService): Promise<Service> {
+  public async save(service: ServiceSave): Promise<Service> {
     return await this.database.transaction().execute(async (trx) => {
       const { id } = await this.upsertService(service, trx);
       await this.upsertAmounts(id, service.amounts, trx);
@@ -43,7 +43,7 @@ export default class ServicesRepository {
     });
   }
 
-  private async upsertService(service: SaveService, database = this.database) {
+  private async upsertService(service: ServiceSave, database = this.database) {
     const { id, amounts, ...rest } = service;
     if (id) {
       return await database

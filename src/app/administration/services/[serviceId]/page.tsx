@@ -1,5 +1,6 @@
 import { getServicesRepository } from "@/server";
-import ServiceForm from "./serviceForm";
+import ServiceForm from "../_forms/serviceForm";
+import { updateService } from "./action";
 
 interface Props {
   params: Promise<{ serviceId: number }>;
@@ -11,5 +12,5 @@ export default async function Page(props: Props) {
   const serviceRepository = await getServicesRepository();
   const service = await serviceRepository.find(serviceId);
 
-  return <ServiceForm service={service} />;
+  return <ServiceForm action={updateService} initialValues={service} />;
 }

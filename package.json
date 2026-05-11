@@ -24,6 +24,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@libpdf/core": "^0.2.4",
     "@material-tailwind/react": "^2.1.10",
     "@mui/icons-material": "^9.0.0",
@@ -51,6 +52,7 @@
     "react-dom": "19.2.5",
     "react-final-form": "^7.0.0",
     "react-final-form-arrays": "^4.0.0",
+    "react-hook-form": "^7.75.0",
     "schema-dts": "^2.0.0",
     "xmlbuilder2": "^4.0.3",
     "zod": "^4.3.6"
