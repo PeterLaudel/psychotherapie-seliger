@@ -40,7 +40,8 @@ export class PatientsRepository {
         .limit(pageSize)
         .offset(page * pageSize)
         .execute(),
-      query
+      this.database
+        .selectFrom(query.as("filtered"))
         .select(this.database.fn.countAll<number>().as("total"))
         .executeTakeFirstOrThrow(),
     ]);

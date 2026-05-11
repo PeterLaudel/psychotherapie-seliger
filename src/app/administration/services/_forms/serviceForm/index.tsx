@@ -139,17 +139,17 @@ export default function ServiceForm({ action, initialValues }: Props) {
   );
 }
 
-function determineDefaultValues(initialValues: ServiceFormData | undefined): ServiceFormData | undefined {
-  if(!initialValues) return undefined;
+function determineDefaultValues(initialValues?: Service): ServiceFormData {
   return {
-    short: initialValues.short,
-    originalGopNr: initialValues.originalGopNr,
-    description: initialValues.description,
-    note: initialValues.note,
-    points: initialValues.points,
+    id: initialValues?.id,
+    short: initialValues?.short ?? "",
+    originalGopNr: initialValues?.originalGopNr ?? "",
+    description: initialValues?.description ?? "",
+    note: initialValues?.note,
+    points: initialValues?.points ?? 0,
     amounts: factorArray.map((factor) => ({
       factor,
-      price: initialValues.amounts.find((a) => a.factor === factor)?.price,
+      price: initialValues?.amounts.find((a) => a.factor === factor)?.price,
     })),
   };
 }

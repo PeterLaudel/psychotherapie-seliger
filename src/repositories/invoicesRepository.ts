@@ -50,7 +50,10 @@ export class InvoicesRepository {
 
     const [rows, countResult] = await Promise.all([
       query.orderBy("invoices.id", "desc").limit(pageSize).offset(page * pageSize).execute(),
-      query.select(this.database.fn.countAll<number>().as("total")).executeTakeFirstOrThrow(),
+      this.database
+        .selectFrom(query.as("filtered"))
+        .select(this.database.fn.countAll<number>().as("total"))
+        .executeTakeFirstOrThrow(),
     ]);
 
     return { rows, total: Number(countResult.total) };
