@@ -1,4 +1,4 @@
-import { dbDrop } from "@/database";
+import { dbDrop } from "../src/database";
 export { dbDrop };
 
 

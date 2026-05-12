@@ -2,15 +2,27 @@
 
 import Section from "@/components/section";
 import { Service, factorArray } from "@/models/service";
-import { NoSsr } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Button, NoSsr, Tooltip } from "@mui/material";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { fetchServices, servicesQueryKey } from "@/queries/services";
+import { useState } from "react";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 90 },
   { field: "short", headerName: "Kürzel", width: 200 },
   { field: "originalGopNr", headerName: "GopNr", width: 150 },
-  { field: "description", headerName: "Beschreibung", width: 400 },
+  {
+    field: "description",
+    headerName: "Beschreibung",
+    width: 400,
+    renderCell: (params) => (
+      <Tooltip title={params.value} placement="top-start">
+        <span className="truncate">{params.value}</span>
+      </Tooltip>
+    ),
+  },
   { field: "points", headerName: "Punkte", width: 110 },
   ...factorArray.map<GridColDef>((factor) => ({
     field: `${factor}`,
@@ -19,14 +31,25 @@ const columns: GridColDef[] = [
   })),
 ];
 
-interface Props {
-  services: Service[];
-}
+const DEFAULT_PAGE_SIZE = 10;
 
-export default function ServiceList({ services }: Props) {
+export default function ServiceList() {
   const router = useRouter();
 
-  const servicesMapped = services.map((service) => ({
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  const query = { ...paginationModel };
+
+  const { data } = useQuery({
+    queryKey: servicesQueryKey(query),
+    queryFn: () => fetchServices(query),
+    placeholderData: keepPreviousData,
+  });
+
+  const rows = (data?.rows ?? []).map((service: Service) => ({
     ...service,
     ...service.amounts.reduce((acc, amount) => {
       return { [amount.factor]: amount.price, ...acc };
@@ -37,18 +60,28 @@ export default function ServiceList({ services }: Props) {
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
       <h1>Leistungen</h1>
       <Section>
-        <NoSsr>
-          <DataGrid
-            getRowHeight={() => "auto"}
-            rows={servicesMapped}
-            columns={columns}
-            disableColumnMenu
-            hideFooter
-            onRowClick={(params) =>
-              router.push(`/administration/services/${params.row.id}`)
-            }
-          />
-        </NoSsr>
+        <div className="grid grid-flow-row gap-4">
+          <div className="w-full flex justify-end">
+            <Button onClick={() => router.push("/administration/services/create")}>
+              Leistung anlegen
+            </Button>
+          </div>
+          <NoSsr>
+            <DataGrid
+              rows={rows}
+              rowCount={data?.total ?? 0}
+              columns={columns}
+              disableColumnMenu
+              paginationMode="server"
+              paginationModel={paginationModel}
+              pageSizeOptions={[DEFAULT_PAGE_SIZE]}
+              onPaginationModelChange={setPaginationModel}
+              onRowClick={(params) =>
+                router.push(`/administration/services/${params.row.id}`)
+              }
+            />
+          </NoSsr>
+        </div>
       </Section>
     </div>
   );

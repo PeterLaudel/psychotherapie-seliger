@@ -13,6 +13,42 @@ export class PatientsRepository {
       .executeTakeFirstOrThrow();
   }
 
+  async filter({
+    search,
+    page = 0,
+    pageSize = 10,
+  }: {
+    search: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ rows: Patient[]; total: number }> {
+    let query = patientSelector(this.database);
+
+    if (search) {
+      query = query.where((eb) =>
+        eb.or([
+          eb("name", "like", `%${search}%`),
+          eb("surname", "like", `%${search}%`),
+          eb("email", "like", `%${search}%`),
+        ]),
+      );
+    }
+
+    const [rows, countResult] = await Promise.all([
+      query
+        .orderBy("patients.id", "desc")
+        .limit(pageSize)
+        .offset(page * pageSize)
+        .execute(),
+      this.database
+        .selectFrom(query.as("filtered"))
+        .select(this.database.fn.countAll<number>().as("total"))
+        .executeTakeFirstOrThrow(),
+    ]);
+
+    return { rows, total: Number(countResult.total) };
+  }
+
   async all(): Promise<Patient[]> {
     return await patientSelector(this.database).execute();
   }

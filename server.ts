@@ -4,6 +4,10 @@ import path from "path";
 import fs from "fs";
 import * as dotenv from "dotenv";
 import 'pdfkit'; // ensure pdfkit is included in the bundle
+//start next.js server
+import next from "next";
+import * as http from "http";
+import { dbMigrate } from "./tasks/dbMigrate";
 
 const homeDir = path.join(
   process.env.HOME || "",
@@ -18,25 +22,19 @@ if (!fs.existsSync(homeDir)) {
 }
 
 dotenv.config({ path: path.join(homeDir, ".env"), quiet: true });
-
-// mgiraate database
-import { dbMigrate } from "./tasks/dbMigrate";
-
 process.env.SQLITE_URL = path.join(homeDir, "psychotherapie_seliger.sqlite");
-await dbMigrate();
 
-//start next.js server
-import next from "next";
-import * as http from "http";
 
-const dev = false; // we always run production mode
-const app = next({ dev, dir: __dirname });
-const handle = app.getRequestHandler();
+void (async () => {
+  await dbMigrate();
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-app.prepare().then(() => {
+  const dev = false; // we always run production mode
+  const app = next({ dev, dir: __dirname });
+  const handle = app.getRequestHandler();
+
+  await app.prepare();
   http
-  .createServer((req, res) => {
+    .createServer((req, res) => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handle(req, res);
     })
@@ -44,4 +42,4 @@ app.prepare().then(() => {
       // eslint-disable-next-line no-console
       console.log("🚀 Next.js server running on http://localhost:3000");
     });
-});
+})();

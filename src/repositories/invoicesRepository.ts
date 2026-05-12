@@ -22,6 +22,43 @@ export class InvoicesRepository {
     });
   }
 
+  public async filter({
+    search,
+    status,
+    page = 0,
+    pageSize = 25,
+  }: {
+    search?: string;
+    status?: Invoice["status"];
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ rows: Invoice[]; total: number }> {
+    let query = this.modelSelector();
+
+    if (search) {
+      query = query.where((eb) =>
+        eb.or([
+          eb("patients.name", "like", `%${search}%`),
+          eb("patients.surname", "like", `%${search}%`),
+        ]),
+      );
+    }
+
+    if (status) {
+      query = query.where("invoices.status", "=", status);
+    }
+
+    const [rows, countResult] = await Promise.all([
+      query.orderBy("invoices.id", "desc").limit(pageSize).offset(page * pageSize).execute(),
+      this.database
+        .selectFrom(query.as("filtered"))
+        .select(this.database.fn.countAll<number>().as("total"))
+        .executeTakeFirstOrThrow(),
+    ]);
+
+    return { rows, total: Number(countResult.total) };
+  }
+
   public async find(id: number): Promise<Invoice> {
     return this.modelSelector()
       .where("invoices.id", "=", id)

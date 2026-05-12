@@ -1,9 +1,33 @@
-import PatientsList from "./patientsList";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getPatientsRepository } from "@/server";
+import { patientsQueryKey } from "@/queries/patients";
+import PatientsList from "./patientsList";
 
-export default async function Page() {
-  const patientsRepository = await getPatientsRepository();
-  const patients = await patientsRepository.all();
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ search: string }>;
+}) {
+  const queryClient = new QueryClient();
 
-  return <PatientsList patients={patients} />;
+  const search = (await searchParams).search || "";
+  const query = { search, page: 0, pageSize: 10 };
+
+  await queryClient.prefetchQuery({
+    queryKey: patientsQueryKey(query),
+    queryFn: async () => {
+      const repo = await getPatientsRepository();
+      return repo.filter(query);
+    },
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PatientsList />
+    </HydrationBoundary>
+  );
 }

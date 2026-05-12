@@ -1,4 +1,4 @@
-import { dbMigrate } from "@/database";
+import { dbMigrate } from "../src/database";
 
 export { dbMigrate };
 
