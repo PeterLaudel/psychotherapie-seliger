@@ -1,7 +1,7 @@
-import { Therapeut } from "@/models/therapeut";
 import * as z from "zod";
 
-const schema = z.object({
+export const therapeutSchema = z.object({
+  id: z.number().optional(),
   title: z.string().min(1, "Titel ist erforderlich"),
   name: z.string().min(1, "Name ist erforderlich"),
   surname: z.string().min(1, "Vorname ist erforderlich"),
@@ -18,14 +18,4 @@ const schema = z.object({
   enr: z.string().min(1, "ENR ist erforderlich"),
 });
 
-export function validateTherapeut(data: FormData) {
-  const object = Object.fromEntries(data.entries());
-  const result = schema.safeParse(object);
-  if (result.success) return;
-  const treeifiedErrors = z.treeifyError(result.error);
-  const entries = Object.entries(treeifiedErrors.properties || {});
-  return entries.reduce<Partial<Therapeut>>(
-    (current, [key, value]) => ({ ...current, [key]: value.errors[0] }),
-    {}
-  );
-}
+export type TherapeutFormData = z.infer<typeof therapeutSchema>;

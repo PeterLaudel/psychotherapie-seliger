@@ -1,9 +1,10 @@
 import { getTherapeutsRepository } from "@/server";
 import { TherapeutForm } from "./therapeutForm";
+import { saveTherapeut } from "./action";
 
 export default async function Page() {
     const therapeutRepository = await getTherapeutsRepository();
     const therapeuts = await therapeutRepository.all();
 
-    return <TherapeutForm therapeut={therapeuts[0]} />
+    return <TherapeutForm action={saveTherapeut} therapeut={therapeuts[0]} />
 }
