@@ -1,27 +1,20 @@
-import { useField } from "react-final-form";
+"use client";
+
 import { useEffect } from "react";
-import { Invoice } from "@/models/invoice";
+import { useFormContext, useWatch } from "react-hook-form";
+import type { FormInvoice } from ".";
 
 export function InvoiceAmount() {
-  const {
-    input: { value: invoicePositions },
-  } = useField<Partial<Invoice["positions"]>>("invoicePositions", {
-    subscription: { value: true },
-  });
-  const {
-    input: { onChange },
-  } = useField<Invoice["invoiceAmount"]>("invoiceAmount");
+  const { control, setValue } = useFormContext<FormInvoice>();
+  const invoicePositions = useWatch({ control, name: "invoicePositions" });
 
   const stringifiedPositions = JSON.stringify(invoicePositions);
 
   useEffect(() => {
-    const total = (invoicePositions || []).reduce(
-      (prev, entry) => prev + (entry?.price || 0),
-      0
-    );
-    onChange(total);
+    const total = invoicePositions.reduce((prev, entry) => prev + (entry?.price ?? 0), 0);
+    setValue("invoiceAmount", total);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stringifiedPositions, onChange]);
+  }, [stringifiedPositions, setValue]);
 
-  return <></>;
+  return null;
 }

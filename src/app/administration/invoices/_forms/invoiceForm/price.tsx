@@ -1,25 +1,27 @@
-import { useField } from "react-final-form";
-import type { InvoicePosition } from "./serviceSection";
+"use client";
+
 import { useEffect } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
+import type { FormInvoice } from ".";
 
 interface Props {
-    name: string;
+  index: number;
 }
 
-export function Price({ name }: Props) {
-    const { input: { value: factor } } = useField<InvoicePosition['factor']>(`${name}.factor`, { subscription: { value: true } });
-    const { input: { value: service } } = useField<InvoicePosition['service']>(`${name}.service`, { subscription: { value: true } });
-    const { input: { value: amount } } = useField<InvoicePosition['amount']>(`${name}.amount`, { subscription: { value: true } });
-    const { input: { onChange } } = useField<InvoicePosition['price']>(`${name}.price`);
+export function Price({ index }: Props) {
+  const { control, setValue } = useFormContext<FormInvoice>();
+  const factor = useWatch({ control, name: `invoicePositions.${index}.factor` });
+  const service = useWatch({ control, name: `invoicePositions.${index}.service` });
+  const amount = useWatch({ control, name: `invoicePositions.${index}.amount` });
 
-    useEffect(() => {
-        if (service && factor) {
-            const price = service.amounts.find(amount => amount.factor === factor)?.price || 0;
-            onChange(price * amount);
-        } else {
-            onChange(undefined)
-        }
-    }, [service, factor, amount, onChange]);
+  useEffect(() => {
+    if (service && factor) {
+      const unitPrice = service.amounts.find((a) => a.factor === factor)?.price ?? 0;
+      setValue(`invoicePositions.${index}.price`, unitPrice * amount);
+    } else {
+      setValue(`invoicePositions.${index}.price`, undefined);
+    }
+  }, [service, factor, amount, index, setValue]);
 
-    return <></>
+  return null;
 }
