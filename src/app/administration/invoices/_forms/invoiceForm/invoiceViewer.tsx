@@ -77,6 +77,7 @@ function Viewer({ therapeut, invoiceNumber }: Props) {
         }),
       MUTATE_TIMEOUT
     );
+    return () => { if (timeoutId.current !== null) clearTimeout(timeoutId.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [therapeut, invoiceNumber, patient, stringifiedMappedPositions, invoiceAmount]);
 

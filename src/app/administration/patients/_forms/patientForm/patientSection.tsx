@@ -8,7 +8,15 @@ import { Controller, useFormContext } from "react-hook-form";
 import { PatientFormData } from "./schema";
 
 export default function PatientSection() {
-  const { control } = useFormContext<PatientFormData>();
+  const { control, setValue, getValues } = useFormContext<PatientFormData>();
+
+  const mirrorToBilling = (key: "name" | "surname" | "email", value: string) => {
+    if (getValues("billingInfoIsPatient")) setValue(`billingInfo.${key}`, value);
+  };
+
+  const mirrorAddressToBilling = (key: "street" | "zip" | "city", value: string) => {
+    if (getValues("billingInfoIsPatient")) setValue(`billingInfo.address.${key}`, value);
+  };
 
   return (
     <Section>
@@ -18,21 +26,39 @@ export default function PatientSection() {
           name="name"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Vorname" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Vorname"
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorToBilling("name", e.target.value); }}
+            />
           )}
         />
         <Controller
           name="surname"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Nachname" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Nachname"
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorToBilling("surname", e.target.value); }}
+            />
           )}
         />
         <Controller
           name="email"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="E-Mail" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="E-Mail"
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorToBilling("email", e.target.value); }}
+            />
           )}
         />
         <Controller
@@ -70,21 +96,40 @@ export default function PatientSection() {
           name="address.street"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Straße" className="col-span-2" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Straße"
+              className="col-span-2"
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorAddressToBilling("street", e.target.value); }}
+            />
           )}
         />
         <Controller
           name="address.zip"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="PLZ" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="PLZ"
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorAddressToBilling("zip", e.target.value); }}
+            />
           )}
         />
         <Controller
           name="address.city"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Stadt" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Stadt"
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorAddressToBilling("city", e.target.value); }}
+            />
           )}
         />
       </div>

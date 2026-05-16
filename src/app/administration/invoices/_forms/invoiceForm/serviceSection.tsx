@@ -14,7 +14,6 @@ import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-
 import { Factor, Service } from "@/models/service";
 import Section from "@/components/section";
 import type { FormInvoice } from ".";
-import { Price } from "./price";
 
 export interface InvoicePosition {
   serviceDate?: string;
@@ -29,11 +28,22 @@ interface Props {
 }
 
 export default function ServiceSection({ services }: Props) {
-  const { control } = useFormContext<FormInvoice>();
+  const { control, getValues, setValue } = useFormContext<FormInvoice>();
   const { fields, append, remove } = useFieldArray({ control, name: "invoicePositions" });
+
+  const recomputeTotal = () => {
+    const positions = getValues("invoicePositions");
+    const total = positions.reduce((sum, p) => sum + (p.price ?? 0), 0);
+    setValue("invoiceAmount", total);
+  };
 
   const addEntry = () =>
     append({ serviceDate: undefined, service: undefined, amount: 1, factor: undefined });
+
+  const removeEntry = (index: number) => {
+    remove(index);
+    recomputeTotal();
+  };
 
   return (
     <Section>
@@ -44,10 +54,11 @@ export default function ServiceSection({ services }: Props) {
             <ServiceRow
               index={index}
               services={services}
-              onRemove={() => remove(index)}
+              onRemove={() => removeEntry(index)}
               isLast={index === fields.length - 1}
               onAdd={addEntry}
               canRemove={fields.length > 1}
+              onRecomputeTotal={recomputeTotal}
             />
           </Fragment>
         ))}
@@ -63,11 +74,20 @@ interface ServiceRowProps {
   isLast: boolean;
   onAdd: () => void;
   canRemove: boolean;
+  onRecomputeTotal: () => void;
 }
 
-function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: ServiceRowProps) {
-  const { control, setValue } = useFormContext<FormInvoice>();
+function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove, onRecomputeTotal }: ServiceRowProps) {
+  const { control, setValue, getValues } = useFormContext<FormInvoice>();
   const service = useWatch({ control, name: `invoicePositions.${index}.service` });
+
+  const computePrice = (svc: Service | null | undefined, factor: Factor | undefined, amount: number) => {
+    const price = svc && factor
+      ? (svc.amounts.find((a) => a.factor === factor)?.price ?? 0) * amount
+      : undefined;
+    setValue(`invoicePositions.${index}.price`, price);
+    onRecomputeTotal();
+  };
 
   return (
     <>
@@ -100,7 +120,10 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: Ser
             options={services}
             onChange={(_, value) => {
               field.onChange(value);
-              setValue(`invoicePositions.${index}.factor`, value?.amounts.at(-1)?.factor ?? undefined);
+              const newFactor = value?.amounts.at(-1)?.factor;
+              setValue(`invoicePositions.${index}.factor`, newFactor ?? undefined);
+              const amount = getValues(`invoicePositions.${index}.amount`);
+              computePrice(value, newFactor, amount);
             }}
             getOptionLabel={(option) => option.short}
             getOptionKey={(option) => option.id}
@@ -127,6 +150,12 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: Ser
             disabled={!service}
             label="Anzahl"
             slotProps={{ htmlInput: { min: 1 } }}
+            onChange={(e) => {
+              const newAmount = Number(e.target.value);
+              field.onChange(newAmount);
+              const factor = getValues(`invoicePositions.${index}.factor`);
+              computePrice(service, factor, newAmount);
+            }}
           />
         )}
       />
@@ -139,7 +168,12 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: Ser
             label="Faktor"
             disabled={!service}
             value={field.value ?? ""}
-            onChange={field.onChange}
+            onChange={(e) => {
+              const newFactor = e.target.value as Factor;
+              field.onChange(newFactor);
+              const amount = getValues(`invoicePositions.${index}.amount`);
+              computePrice(service, newFactor, amount);
+            }}
             onBlur={field.onBlur}
           >
             {(service?.amounts ?? []).map(({ factor }) => (
@@ -150,7 +184,6 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: Ser
           </TextField>
         )}
       />
-      <Price index={index} />
       <div className="flex min-h-14 items-center">
         <IconButton onClick={onRemove} disabled={!canRemove}>
           <DeleteIcon />

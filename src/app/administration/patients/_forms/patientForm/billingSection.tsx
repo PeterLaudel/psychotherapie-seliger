@@ -2,28 +2,12 @@
 
 import Section from "@/components/section";
 import { Checkbox, FormControlLabel, TextField } from "@mui/material";
-import { useEffect } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { PatientFormData } from "./schema";
 
 export default function BillingSection() {
-  const { control, setValue } = useFormContext<PatientFormData>();
-
+  const { control, setValue, getValues } = useFormContext<PatientFormData>();
   const billingIsPatient = useWatch({ control, name: "billingInfoIsPatient" });
-  const [name, surname, email, street, zip, city] = useWatch({
-    control,
-    name: ["name", "surname", "email", "address.street", "address.zip", "address.city"],
-  });
-
-  useEffect(() => {
-    if (!billingIsPatient) return;
-    setValue("billingInfo.name", name);
-    setValue("billingInfo.surname", surname);
-    setValue("billingInfo.email", email);
-    setValue("billingInfo.address.street", street);
-    setValue("billingInfo.address.zip", zip);
-    setValue("billingInfo.address.city", city);
-  }, [billingIsPatient, name, surname, email, street, zip, city, setValue]);
 
   return (
     <Section>
@@ -35,7 +19,23 @@ export default function BillingSection() {
             control={control}
             render={({ field }) => (
               <FormControlLabel
-                control={<Checkbox checked={field.value} onChange={field.onChange} />}
+                control={
+                  <Checkbox
+                    checked={field.value}
+                    onChange={(e) => {
+                      const enabled = e.target.checked;
+                      field.onChange(enabled);
+                      if (enabled) {
+                        setValue("billingInfo.name", getValues("name"));
+                        setValue("billingInfo.surname", getValues("surname"));
+                        setValue("billingInfo.email", getValues("email"));
+                        setValue("billingInfo.address.street", getValues("address.street"));
+                        setValue("billingInfo.address.zip", getValues("address.zip"));
+                        setValue("billingInfo.address.city", getValues("address.city"));
+                      }
+                    }}
+                  />
+                }
                 label="Rechnung an Patienten"
               />
             )}

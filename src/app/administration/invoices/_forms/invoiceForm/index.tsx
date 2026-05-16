@@ -16,7 +16,6 @@ import { InvoiceSave } from "@/repositories/invoicesRepository";
 import { useSnackbar } from "@/contexts/snackbarProvider";
 import { Invoice } from "@/models/invoice";
 import { useRouter } from "next/navigation";
-import { InvoiceAmount } from "./invoiceAmount";
 import type { InvoicePosition } from "./serviceSection";
 
 interface Props {
@@ -32,7 +31,7 @@ interface Props {
 export type FormInvoice = {
   patient?: Patient;
   invoicePositions: InvoicePosition[];
-  invoiceAmount?: number;
+  invoiceAmount: number;
   base64Pdf?: string;
   invoiceNumber: string;
 };
@@ -56,6 +55,7 @@ export default function InvoiceForm({
       invoicePositions: [
         { serviceDate: undefined, service: undefined, amount: 1, factor: undefined },
       ],
+      invoiceAmount: 0,
     },
   });
 
@@ -68,7 +68,7 @@ export default function InvoiceForm({
         patient: values.patient!,
         invoiceNumber: values.invoiceNumber,
         base64Pdf: values.base64Pdf!,
-        invoiceAmount: values.invoiceAmount!,
+        invoiceAmount: values.invoiceAmount,
         status: "pending",
         positions: values.invoicePositions.map((position) => ({
           serviceDate: position.serviceDate!,
@@ -96,7 +96,6 @@ export default function InvoiceForm({
               <h1>Rechnung erstellen</h1>
               <PatientSection patients={patients} />
               <ServiceSection services={services} />
-              <InvoiceAmount />
               <SubmitButton
                 submitting={isSubmitting || isPending}
                 className="justify-self-start self-center"
