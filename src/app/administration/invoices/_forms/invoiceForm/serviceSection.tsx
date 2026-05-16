@@ -9,7 +9,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment } from "react";
 import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { Factor, Service } from "@/models/service";
 import Section from "@/components/section";
@@ -68,15 +68,6 @@ interface ServiceRowProps {
 function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: ServiceRowProps) {
   const { control, setValue } = useFormContext<FormInvoice>();
   const service = useWatch({ control, name: `invoicePositions.${index}.service` });
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    setValue(`invoicePositions.${index}.factor`, service?.amounts.at(-1)?.factor ?? undefined);
-  }, [service?.id, index, setValue]);
 
   return (
     <>
@@ -107,7 +98,10 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove }: Ser
         render={({ field, fieldState: { error } }) => (
           <Autocomplete
             options={services}
-            onChange={(_, value) => field.onChange(value)}
+            onChange={(_, value) => {
+              field.onChange(value);
+              setValue(`invoicePositions.${index}.factor`, value?.amounts.at(-1)?.factor ?? undefined);
+            }}
             getOptionLabel={(option) => option.short}
             getOptionKey={(option) => option.id}
             value={services.find((s) => s.id === field.value?.id) ?? null}
