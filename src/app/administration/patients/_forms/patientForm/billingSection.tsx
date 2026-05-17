@@ -9,6 +9,21 @@ export default function BillingSection() {
   const { control, setValue, getValues } = useFormContext<PatientFormData>();
   const billingIsPatient = useWatch({ control, name: "billingInfoIsPatient" });
 
+  const syncBillingFromPatient = () => {
+    const name = getValues("name");
+    const surname = getValues("surname");
+    const email = getValues("email");
+    const street = getValues("address.street");
+    const zip = getValues("address.zip");
+    const city = getValues("address.city");
+    setValue("billingInfo.name", name);
+    setValue("billingInfo.surname", surname);
+    setValue("billingInfo.email", email);
+    setValue("billingInfo.address.street", street);
+    setValue("billingInfo.address.zip", zip);
+    setValue("billingInfo.address.city", city);
+  };
+
   return (
     <Section>
       <h2 className="mb-4">Rechnungsdaten</h2>
@@ -25,14 +40,7 @@ export default function BillingSection() {
                     onChange={(e) => {
                       const enabled = e.target.checked;
                       field.onChange(enabled);
-                      if (enabled) {
-                        setValue("billingInfo.name", getValues("name"));
-                        setValue("billingInfo.surname", getValues("surname"));
-                        setValue("billingInfo.email", getValues("email"));
-                        setValue("billingInfo.address.street", getValues("address.street"));
-                        setValue("billingInfo.address.zip", getValues("address.zip"));
-                        setValue("billingInfo.address.city", getValues("address.city"));
-                      }
+                      if (enabled) syncBillingFromPatient();
                     }}
                   />
                 }

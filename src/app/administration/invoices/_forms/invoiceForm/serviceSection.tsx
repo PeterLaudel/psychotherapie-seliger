@@ -81,7 +81,10 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove, onRec
   const { control, setValue, getValues } = useFormContext<FormInvoice>();
   const service = useWatch({ control, name: `invoicePositions.${index}.service` });
 
-  const computePrice = (svc: Service | null | undefined, factor: Factor | undefined, amount: number) => {
+  const computePrice = () => {
+    const svc = getValues(`invoicePositions.${index}.service`);
+    const factor = getValues(`invoicePositions.${index}.factor`);
+    const amount = getValues(`invoicePositions.${index}.amount`);
     const price = svc && factor
       ? (svc.amounts.find((a) => a.factor === factor)?.price ?? 0) * amount
       : undefined;
@@ -120,10 +123,8 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove, onRec
             options={services}
             onChange={(_, value) => {
               field.onChange(value);
-              const newFactor = value?.amounts.at(-1)?.factor;
-              setValue(`invoicePositions.${index}.factor`, newFactor ?? undefined);
-              const amount = getValues(`invoicePositions.${index}.amount`);
-              computePrice(value, newFactor, amount);
+              setValue(`invoicePositions.${index}.factor`, value?.amounts.at(-1)?.factor ?? undefined);
+              computePrice();
             }}
             getOptionLabel={(option) => option.short}
             getOptionKey={(option) => option.id}
@@ -151,10 +152,8 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove, onRec
             label="Anzahl"
             slotProps={{ htmlInput: { min: 1 } }}
             onChange={(e) => {
-              const newAmount = Number(e.target.value);
-              field.onChange(newAmount);
-              const factor = getValues(`invoicePositions.${index}.factor`);
-              computePrice(service, factor, newAmount);
+              field.onChange(Number(e.target.value));
+              computePrice();
             }}
           />
         )}
@@ -169,10 +168,8 @@ function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove, onRec
             disabled={!service}
             value={field.value ?? ""}
             onChange={(e) => {
-              const newFactor = e.target.value as Factor;
-              field.onChange(newFactor);
-              const amount = getValues(`invoicePositions.${index}.amount`);
-              computePrice(service, newFactor, amount);
+              field.onChange(e.target.value as Factor);
+              computePrice();
             }}
             onBlur={field.onBlur}
           >
