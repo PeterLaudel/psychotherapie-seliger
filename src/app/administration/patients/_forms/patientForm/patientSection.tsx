@@ -1,118 +1,137 @@
+"use client";
+
+import Section from "@/components/section";
 import { TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { Field } from "react-final-form";
-import {
-  validateCity,
-  validateDate,
-  validateEmail,
-  validateName,
-  validateStreet,
-  validateSurname,
-  validateZip,
-} from "./validation";
-import Section from "@/components/section";
+import { Controller, useFormContext } from "react-hook-form";
+import { PatientFormData } from "./schema";
 
 export default function PatientSection() {
+  const { control, setValue, getValues } = useFormContext<PatientFormData>();
+
+  const mirrorToBilling = (key: "name" | "surname" | "email", value: string) => {
+    if (getValues("billingInfoIsPatient")) setValue(`billingInfo.${key}`, value);
+  };
+
+  const mirrorAddressToBilling = (key: "street" | "zip" | "city", value: string) => {
+    if (getValues("billingInfoIsPatient")) setValue(`billingInfo.address.${key}`, value);
+  };
+
   return (
     <Section>
       <h2 className="mb-4">Patientendaten</h2>
       <div className="grid grid-cols-2 gap-4">
-        <Field name="name" validate={validateName}>
-          {({ input, meta: { touched, error } }) => (
+        <Controller
+          name="name"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
               label="Vorname"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorToBilling("name", e.target.value); }}
             />
           )}
-        </Field>
-        <Field name="surname" validate={validateSurname}>
-          {({ input, meta: { touched, error } }) => (
+        />
+        <Controller
+          name="surname"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
               label="Nachname"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorToBilling("surname", e.target.value); }}
             />
           )}
-        </Field>
-        <Field name="email" validate={validateEmail}>
-          {({ input, meta: { touched, error } }) => (
+        />
+        <Controller
+          name="email"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
               label="E-Mail"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorToBilling("email", e.target.value); }}
             />
           )}
-        </Field>
-        <Field name="birthdate" validate={validateDate}>
-          {({ input, meta: { touched, error } }) => (
+        />
+        <Controller
+          name="birthdate"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <DatePicker
               label="Geburtsdatum"
-              value={
-                input.value
-                  ? dayjs(input.value).isValid()
-                    ? dayjs(input.value)
-                    : null
-                  : null
-              }
-              onChange={(newValue) =>
-                input.onChange(newValue ? newValue.format("YYYY-MM-DD") : null)
-              }
+              value={field.value ? dayjs(field.value) : null}
+              onChange={(newValue) => field.onChange(newValue ? newValue.format("YYYY-MM-DD") : "")}
               slotProps={{
                 textField: {
-                  helperText: touched && error,
-                  error: touched && !!error,
-                  onBlur: input.onBlur,
+                  error: !!error,
+                  helperText: error?.message,
+                  onBlur: field.onBlur,
                 },
               }}
             />
           )}
-        </Field>
-        <Field name="diagnosis">
-          {({ input, meta: { touched, error } }) => (
+        />
+        <Controller
+          name="diagnosis"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
+              value={field.value ?? ""}
               label="Diagnose"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
             />
           )}
-        </Field>
-        <Field name="address.street" validate={validateStreet}>
-          {({ input, meta: { touched, error } }) => (
+        />
+        <Controller
+          name="address.street"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
               label="Straße"
               className="col-span-2"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorAddressToBilling("street", e.target.value); }}
             />
           )}
-        </Field>
-        <Field name="address.zip" validate={validateZip}>
-          {({ input, meta: { error, touched } }) => (
+        />
+        <Controller
+          name="address.zip"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
               label="PLZ"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorAddressToBilling("zip", e.target.value); }}
             />
           )}
-        </Field>
-        <Field name="address.city" validate={validateCity}>
-          {({ input, meta: { touched, error } }) => (
+        />
+        <Controller
+          name="address.city"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
             <TextField
-              {...input}
+              {...field}
               label="Stadt"
-              helperText={touched && error}
-              error={touched && !!error}
+              error={!!error}
+              helperText={error?.message}
+              onChange={(e) => { field.onChange(e); mirrorAddressToBilling("city", e.target.value); }}
             />
           )}
-        </Field>
+        />
       </div>
     </Section>
   );

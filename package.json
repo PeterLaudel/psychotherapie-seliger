@@ -50,8 +50,6 @@
     "qrcode": "^1.5.4",
     "react": "19.2.5",
     "react-dom": "19.2.5",
-    "react-final-form": "^7.0.0",
-    "react-final-form-arrays": "^4.0.0",
     "react-hook-form": "^7.75.0",
     "schema-dts": "^2.0.0",
     "xmlbuilder2": "^4.0.3",

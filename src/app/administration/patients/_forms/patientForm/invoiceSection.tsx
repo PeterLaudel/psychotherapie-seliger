@@ -1,73 +1,53 @@
+"use client";
+
 import Section from "@/components/section";
 import { Checkbox, FormControlLabel, TextField } from "@mui/material";
-import { ChangeEvent } from "react";
-import { Field, useField } from "react-final-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { PatientFormData } from "./schema";
 
 export default function InvoiceSection() {
-  const {
-    input: { onChange: onChangeInvoicePassword },
-  } = useField("invoicePassword");
-  const {
-    input: { onChange: onChangeEnableInvoiceEncryption },
-  } = useField("enableInvoiceEncryption");
-  const {
-    input: { value: name },
-  } = useField("name");
-  const {
-    input: { value: surname },
-  } = useField("surname");
-  const {
-    input: { value: birthdate },
-  } = useField("birthdate");
+  const { control, setValue } = useFormContext<PatientFormData>();
 
-  const onEnableInvoiceEncryptionChanged = (
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    const enabled = e.target.checked;
-    if (enabled) {
-      const password = createPassword(name, surname, birthdate);
-      onChangeInvoicePassword(password);
-    } else {
-      onChangeInvoicePassword("");
-    }
-    onChangeEnableInvoiceEncryption(enabled);
+  const [enableInvoiceEncryption, name, surname, birthdate] = useWatch({
+    control,
+    name: ["enableInvoiceEncryption", "name", "surname", "birthdate"],
+  });
+
+  const onEnableChange = (enabled: boolean) => {
+    setValue("enableInvoiceEncryption", enabled);
+    setValue("invoicePassword", enabled ? createPassword(name, surname, birthdate) : null);
   };
 
   return (
     <Section>
       <h2 className="mb-4">Rechnungen</h2>
       <div className="grid grid-cols-2 gap-4">
-        <Field<boolean> name="enableInvoiceEncryption" type="checkbox">
-          {({ input: enableInvoiceEncryptionInput }) => (
-            <>
-              <FormControlLabel
-                label="Rechnung mit Passwort schützen"
-                control={
-                  <Checkbox
-                    {...enableInvoiceEncryptionInput}
-                    onChange={onEnableInvoiceEncryptionChanged}
-                  />
-                }
-              />
-              <Field<string> name="invoicePassword" defaultValue={null}>
-                {({ input: invoicePasswordInput }) => (
-                  <TextField
-                    {...invoicePasswordInput}
-                    disabled={!enableInvoiceEncryptionInput.checked}
-                    label="Rechnungspasswort"
-                  />
-                )}
-              </Field>
-            </>
+        <FormControlLabel
+          label="Rechnung mit Passwort schützen"
+          control={
+            <Checkbox
+              checked={enableInvoiceEncryption}
+              onChange={(e) => onEnableChange(e.target.checked)}
+            />
+          }
+        />
+        <Controller
+          name="invoicePassword"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              value={field.value ?? ""}
+              disabled={!enableInvoiceEncryption}
+              label="Rechnungspasswort"
+            />
           )}
-        </Field>
+        />
       </div>
     </Section>
   );
 }
 
 function createPassword(name?: string, surname?: string, birthdate?: string) {
-  return `${name?.at(0) || ""}${surname?.at(0) || ""}${
-    birthdate?.replaceAll("-", "") || ""
-  }`.toUpperCase();
+  return `${name?.at(0) ?? ""}${surname?.at(0) ?? ""}${birthdate?.replaceAll("-", "") ?? ""}`.toUpperCase();
 }

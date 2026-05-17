@@ -5,8 +5,9 @@ import "dayjs/locale/de";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import { useCallback, useMemo } from "react";
-import { Form } from "react-final-form";
+import { useTransition } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import PatientSection from "./patientSection";
 import BillingSection from "./billingSection";
 import { Patient } from "@/models/patient";
@@ -16,79 +17,82 @@ import { useRouter } from "next/navigation";
 import { PatientSave } from "@/repositories/patientsRepository";
 import { billingInfoIsPatient } from "./billingInfoIsPatient";
 import InvoiceSection from "./invoiceSection";
-
-type PatientFormData = PatientSave & {
-  billingInfoIsPatient: boolean;
-  enableInvoiceEncryption: boolean;
-};
+import { patientFormSchema, PatientFormData } from "./schema";
 
 interface Props {
-  action: (patient: PatientSave) => void;
+  action: (patient: PatientSave) => Promise<void>;
   initialValues?: Patient;
 }
 
-export default function PatientForm({
-  initialValues: initialValuesProps,
-  action,
-}: Props) {
+export default function PatientForm({ initialValues, action }: Props) {
   const { showSuccessMessage } = useSnackbar();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const initialValues = useMemo<Partial<PatientFormData>>(
-    () => ({
-      ...initialValuesProps,
-      billingInfoIsPatient: billingInfoIsPatient(initialValuesProps),
-      enableInvoiceEncryption: initialValuesProps && initialValuesProps.invoicePassword !== null,
-    }),
-    [initialValuesProps]
-  );
+  const methods = useForm<PatientFormData>({
+    resolver: zodResolver(patientFormSchema),
+    defaultValues: {
+      id: initialValues?.id,
+      name: initialValues?.name ?? "",
+      surname: initialValues?.surname ?? "",
+      email: initialValues?.email ?? "",
+      birthdate: initialValues?.birthdate ?? "",
+      address: {
+        street: initialValues?.address?.street ?? "",
+        zip: initialValues?.address?.zip ?? "",
+        city: initialValues?.address?.city ?? "",
+      },
+      diagnosis: initialValues?.diagnosis ?? null,
+      billingInfo: {
+        name: initialValues?.billingInfo?.name ?? "",
+        surname: initialValues?.billingInfo?.surname ?? "",
+        email: initialValues?.billingInfo?.email ?? "",
+        address: {
+          street: initialValues?.billingInfo?.address?.street ?? "",
+          zip: initialValues?.billingInfo?.address?.zip ?? "",
+          city: initialValues?.billingInfo?.address?.city ?? "",
+        },
+      },
+      invoicePassword: initialValues?.invoicePassword ?? null,
+      billingInfoIsPatient: billingInfoIsPatient(initialValues),
+      enableInvoiceEncryption: initialValues ? initialValues.invoicePassword !== null : false,
+    },
+  });
 
-  const onSubmit = useCallback(
-    (values: PatientFormData) => {
-      const {
-        billingInfoIsPatient,
-        enableInvoiceEncryption,
-        invoicePassword,
-        ...patientData
-      } = values;
-      action({
-        id: values.id,
-        invoicePassword: invoicePassword || null,
-        ...patientData,
+  const { handleSubmit, formState: { isSubmitting } } = methods;
+
+  const onSubmit = ({ billingInfoIsPatient, enableInvoiceEncryption, diagnosis, invoicePassword, ...data }: PatientFormData) => {
+    startTransition(async () => {
+      await action({
+        ...data,
+        diagnosis: diagnosis || null,
+        invoicePassword: enableInvoiceEncryption ? invoicePassword ?? null : null,
       });
       showSuccessMessage("Patient wurde angelegt");
       router.push("/administration/patients");
-    },
-    [showSuccessMessage, router, action]
-  );
+    });
+  };
 
   return (
     <LocalizationProvider
       dateAdapter={AdapterDayjs}
       adapterLocale="de"
-      localeText={
-        deDE.components.MuiLocalizationProvider.defaultProps.localeText
-      }
+      localeText={deDE.components.MuiLocalizationProvider.defaultProps.localeText}
     >
-      <Form<PatientFormData> onSubmit={onSubmit} initialValues={initialValues}>
-        {({ handleSubmit, submitSucceeded, submitting }) => (
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-flow-row m-4 gap-4 h-fit"
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-flow-row m-4 gap-4 h-fit">
+          <h1>Patient anlegen</h1>
+          <PatientSection />
+          <BillingSection />
+          <InvoiceSection />
+          <SubmitButton
+            submitting={isSubmitting || isPending}
+            className="justify-self-start self-center"
           >
-            <h1>Patient anlegen</h1>
-            <PatientSection />
-            <BillingSection />
-            <InvoiceSection />
-            <SubmitButton
-              submitting={!!submitting || !!submitSucceeded}
-              className="justify-self-start self-center"
-            >
-              {initialValuesProps ? "Speichern" : "Anlegen"}
-            </SubmitButton>
-          </form>
-        )}
-      </Form>
+            {initialValues ? "Speichern" : "Anlegen"}
+          </SubmitButton>
+        </form>
+      </FormProvider>
     </LocalizationProvider>
   );
 }

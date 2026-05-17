@@ -1,3 +1,5 @@
+"use client";
+
 import "dayjs/locale/de";
 
 import { Add } from "@mui/icons-material";
@@ -8,16 +10,10 @@ import TextField from "@mui/material/TextField";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { Fragment } from "react";
-import { Field } from "react-final-form";
-import { FieldArray } from "react-final-form-arrays";
-import { Factor, Service, Service as ServiceType } from "@/models/service";
+import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
+import { Factor, Service } from "@/models/service";
 import Section from "@/components/section";
-import { InvalidSubscription, ValueSubscription } from "@/components/forms";
-import { Price } from "./price";
-
-interface Props {
-  services: ServiceType[];
-}
+import type { FormInvoice } from ".";
 
 export interface InvoicePosition {
   serviceDate?: string;
@@ -27,157 +23,176 @@ export interface InvoicePosition {
   price?: number;
 }
 
+interface Props {
+  services: Service[];
+}
+
 export default function ServiceSection({ services }: Props) {
-  const addEntry = (
-    push: (value: Partial<Partial<InvoicePosition>>) => void
-  ) => {
-    push({
-      serviceDate: undefined,
-      service: undefined,
-      amount: 1,
-      factor: undefined,
-    });
+  const { control, getValues, setValue } = useFormContext<FormInvoice>();
+  const { fields, append, remove } = useFieldArray({ control, name: "invoicePositions" });
+
+  const recomputeTotal = () => {
+    const positions = getValues("invoicePositions");
+    const total = positions.reduce((sum, p) => sum + (p.price ?? 0), 0);
+    setValue("invoiceAmount", total);
+  };
+
+  const addEntry = () =>
+    append({ serviceDate: undefined, service: undefined, amount: 1, factor: undefined });
+
+  const removeEntry = (index: number) => {
+    remove(index);
+    recomputeTotal();
   };
 
   return (
     <Section>
       <h2 className="mb-4">Leistungen</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-4 lg:grid-cols-[2fr_2fr_1fr_1fr_auto] items-start">
-        <FieldArray<Partial<InvoicePosition>> name="invoicePositions">
-          {({ fields }) =>
-            fields.map((name, index) => (
-              <Fragment key={name}>
-                <Field<Date>
-                  key={`${name}.serviceDate`}
-                  name={`${name}.serviceDate`}
-                  type="input"
-                  validate={(value) =>
-                    value ? undefined : "Leistungs Datum wird benötigt"
-                  }
-                  s
-                >
-                  {({ input, meta: { error, touched } }) => (
-                    <DatePicker
-                      label="Leistungs Datum"
-                      value={
-                        input.value
-                          ? dayjs(input.value).isValid()
-                            ? dayjs(input.value)
-                            : null
-                          : null
-                      }
-                      onChange={(newValue) =>
-                        input.onChange(
-                          newValue ? newValue.format("YYYY-MM-DD") : null
-                        )
-                      }
-                      minDate={dayjs.unix(0)}
-                      slotProps={{
-                        textField: {
-                          helperText: error && touched ? error : undefined,
-                          error: error && touched,
-                          onBlur: input.onBlur,
-                        },
-                      }}
-                    />
-                  )}
-                </Field>
-                <Field<Service>
-                  key={`${name}.service`}
-                  name={`${name}.service`}
-                  type="select"
-                  validate={(value) =>
-                    value ? undefined : "Eine Leistung wird benötigt"
-                  }
-                >
-                  {({ input, meta: { touched, error } }) => (
-                    <Autocomplete
-                      options={services}
-                      onChange={(_, value) => input.onChange(value)}
-                      getOptionLabel={(option) => option.short}
-                      getOptionKey={(option) => option.short}
-                      value={
-                        services.find((s) => s.id === input.value.id) || null
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={touched && error}
-                          helperText={touched && error ? error : undefined}
-                          label="Leistung"
-                          onBlur={input.onBlur}
-                        />
-                      )}
-                    />
-                  )}
-                </Field>
-                <Field<number>
-                  key={`${name}.amount`}
-                  name={`${name}.amount`}
-                  type="number"
-                >
-                  {({ input }) => (
-                    <InvalidSubscription name={`${name}.service`}>
-                      {(invalid: boolean) => (
-                        <TextField
-                          {...input}
-                          type="number"
-                          disabled={invalid}
-                          label={"Anzahl"}
-                          slotProps={{ htmlInput: { min: 1 } }}
-                        />
-                      )}
-                    </InvalidSubscription>
-                  )}
-                </Field>
-                <ValueSubscription<Service | undefined>
-                  name={`${name}.service`}
-                >
-                  {(service) => (
-                    <Field<string>
-                      key={`${name}.factor.${service?.id || ""}`}
-                      name={`${name}.factor`}
-                      type="select"
-                      initialValue={(service?.amounts || []).at(-1)?.["factor"]}
-                    >
-                      {({ input }) => (
-                        <TextField
-                          select
-                          label="Faktor"
-                          disabled={!service}
-                          {...input}
-                        >
-                          {(service?.amounts || []).map(({ factor }) => (
-                            <MenuItem key={factor} value={factor}>
-                              {factor}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      )}
-                    </Field>
-                  )}
-                </ValueSubscription>
-                <Price name={name} />
-                <div className="flex min-h-14 items-center">
-                  <IconButton
-                    onClick={() => fields.remove(index)}
-                    disabled={fields.length === 1}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </div>
-                {index === (fields.length || 0) - 1 && (
-                  <div className="justify-self-start">
-                    <IconButton onClick={() => addEntry(fields.push)}>
-                      <Add />
-                    </IconButton>
-                  </div>
-                )}
-              </Fragment>
-            ))
-          }
-        </FieldArray>
+        {fields.map((field, index) => (
+          <Fragment key={field.id}>
+            <ServiceRow
+              index={index}
+              services={services}
+              onRemove={() => removeEntry(index)}
+              isLast={index === fields.length - 1}
+              onAdd={addEntry}
+              canRemove={fields.length > 1}
+              onRecomputeTotal={recomputeTotal}
+            />
+          </Fragment>
+        ))}
       </div>
     </Section>
+  );
+}
+
+interface ServiceRowProps {
+  index: number;
+  services: Service[];
+  onRemove: () => void;
+  isLast: boolean;
+  onAdd: () => void;
+  canRemove: boolean;
+  onRecomputeTotal: () => void;
+}
+
+function ServiceRow({ index, services, onRemove, isLast, onAdd, canRemove, onRecomputeTotal }: ServiceRowProps) {
+  const { control, setValue, getValues } = useFormContext<FormInvoice>();
+  const service = useWatch({ control, name: `invoicePositions.${index}.service` });
+
+  const computePrice = () => {
+    const svc = getValues(`invoicePositions.${index}.service`);
+    const factor = getValues(`invoicePositions.${index}.factor`);
+    const amount = getValues(`invoicePositions.${index}.amount`);
+    const price = svc && factor
+      ? (svc.amounts.find((a) => a.factor === factor)?.price ?? 0) * amount
+      : undefined;
+    setValue(`invoicePositions.${index}.price`, price);
+    onRecomputeTotal();
+  };
+
+  return (
+    <>
+      <Controller
+        name={`invoicePositions.${index}.serviceDate`}
+        control={control}
+        rules={{ required: "Leistungs Datum wird benötigt" }}
+        render={({ field, fieldState: { error } }) => (
+          <DatePicker
+            label="Leistungs Datum"
+            value={field.value ? dayjs(field.value) : null}
+            onChange={(newValue) => field.onChange(newValue ? newValue.format("YYYY-MM-DD") : null)}
+            minDate={dayjs.unix(0)}
+            slotProps={{
+              textField: {
+                helperText: error?.message,
+                error: !!error,
+                onBlur: field.onBlur,
+              },
+            }}
+          />
+        )}
+      />
+      <Controller
+        name={`invoicePositions.${index}.service`}
+        control={control}
+        rules={{ required: "Eine Leistung wird benötigt" }}
+        render={({ field, fieldState: { error } }) => (
+          <Autocomplete
+            options={services}
+            onChange={(_, value) => {
+              field.onChange(value);
+              setValue(`invoicePositions.${index}.factor`, value?.amounts.at(-1)?.factor ?? undefined);
+              computePrice();
+            }}
+            getOptionLabel={(option) => option.short}
+            getOptionKey={(option) => option.id}
+            value={services.find((s) => s.id === field.value?.id) ?? null}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                error={!!error}
+                helperText={error?.message}
+                label="Leistung"
+                onBlur={field.onBlur}
+              />
+            )}
+          />
+        )}
+      />
+      <Controller
+        name={`invoicePositions.${index}.amount`}
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            type="number"
+            disabled={!service}
+            label="Anzahl"
+            slotProps={{ htmlInput: { min: 1 } }}
+            onChange={(e) => {
+              field.onChange(Number(e.target.value));
+              computePrice();
+            }}
+          />
+        )}
+      />
+      <Controller
+        name={`invoicePositions.${index}.factor`}
+        control={control}
+        render={({ field }) => (
+          <TextField
+            select
+            label="Faktor"
+            disabled={!service}
+            value={field.value ?? ""}
+            onChange={(e) => {
+              field.onChange(e.target.value as Factor);
+              computePrice();
+            }}
+            onBlur={field.onBlur}
+          >
+            {(service?.amounts ?? []).map(({ factor }) => (
+              <MenuItem key={factor} value={factor}>
+                {factor}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+      />
+      <div className="flex min-h-14 items-center">
+        <IconButton onClick={onRemove} disabled={!canRemove}>
+          <DeleteIcon />
+        </IconButton>
+      </div>
+      {isLast && (
+        <div className="justify-self-start">
+          <IconButton onClick={onAdd}>
+            <Add />
+          </IconButton>
+        </div>
+      )}
+    </>
   );
 }

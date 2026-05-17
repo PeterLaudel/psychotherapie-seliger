@@ -1,7 +1,7 @@
 import { type Database } from "@/initialize";
 import { Therapeut } from "@/models/therapeut";
 
-type SaveTherapeut = Omit<Therapeut, "id"> & { id?: number };
+export type TherapeutSave = Omit<Therapeut, "id"> & { id?: number };
 
 export class TherapeutRepository {
   constructor(private readonly database: Database) {}
@@ -10,7 +10,7 @@ export class TherapeutRepository {
     return await this.database.selectFrom("therapeuts").selectAll().execute();
   }
 
-  public async save(therapeut: SaveTherapeut): Promise<Therapeut> {
+  public async save(therapeut: TherapeutSave): Promise<Therapeut> {
     if (therapeut.id) {
       return await this.database
         .updateTable("therapeuts")

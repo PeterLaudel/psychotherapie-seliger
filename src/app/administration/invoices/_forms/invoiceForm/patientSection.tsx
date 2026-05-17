@@ -2,46 +2,45 @@
 
 import { TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Field } from "react-final-form";
-import { Patient, Patient as PatientType } from "@/models/patient";
+import { Controller, useFormContext } from "react-hook-form";
+import { Patient } from "@/models/patient";
 import Section from "@/components/section";
+import type { FormInvoice } from ".";
 
 interface Props {
-  patients: PatientType[];
+  patients: Patient[];
 }
 
-const validatePatient = (value?: number) =>
-  value ? undefined : "Bitte wählen Sie einen Patienten aus";
-
 export default function PatientSection({ patients }: Props) {
+  const { control } = useFormContext<FormInvoice>();
+
   return (
     <Section>
       <h2 className="mb-4">Patient</h2>
       <div className="grid grid-flow-col gap-x-4">
-        <Field<Patient>
+        <Controller
           name="patient"
-          type="select"
-          validate={validatePatient}
-        >
-          {({ input, meta: { error, touched } }) => (
+          control={control}
+          rules={{ required: "Bitte wählen Sie einen Patienten aus" }}
+          render={({ field, fieldState: { error } }) => (
             <Autocomplete
               options={patients}
-              onChange={(_, value) => input.onChange(value)}
+              onChange={(_, value) => field.onChange(value)}
               getOptionLabel={(patient) => `${patient.name} ${patient.surname}`}
               getOptionKey={(patient) => patient.id}
-              value={patients.find(({ id }) => id === input.value.id) || null}
+              value={patients.find(({ id }) => id === field.value?.id) ?? null}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Patient"
-                  onBlur={input.onBlur}
-                  error={error && touched}
-                  helperText={touched && error ? error : undefined}
+                  onBlur={field.onBlur}
+                  error={!!error}
+                  helperText={error?.message}
                 />
               )}
             />
           )}
-        </Field>
+        />
       </div>
     </Section>
   );

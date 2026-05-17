@@ -3,11 +3,10 @@
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { deDE } from "@mui/x-date-pickers/locales";
-import arrayMutators from "final-form-arrays";
-import { useCallback, useMemo } from "react";
-import { Form } from "react-final-form";
+import { useTransition } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import PatientSection from "./patientSection";
-import ServiceSection, { InvoicePosition } from "./serviceSection";
+import ServiceSection from "./serviceSection";
 import InvoiceViewer from "./invoiceViewer";
 import { Service } from "@/models/service";
 import { Patient } from "@/models/patient";
@@ -17,7 +16,7 @@ import { InvoiceSave } from "@/repositories/invoicesRepository";
 import { useSnackbar } from "@/contexts/snackbarProvider";
 import { Invoice } from "@/models/invoice";
 import { useRouter } from "next/navigation";
-import { InvoiceAmount } from "./invoiceAmount";
+import type { InvoicePosition } from "./serviceSection";
 
 interface Props {
   invoiceId?: number;
@@ -26,13 +25,13 @@ interface Props {
   services: Service[];
   therapeut: Therapeut;
   invoiceNumber: string;
-  initialValues?: Required<FormInvoice>;
+  initialValues?: FormInvoice;
 }
 
 export type FormInvoice = {
   patient?: Patient;
   invoicePositions: InvoicePosition[];
-  invoiceAmount?: number;
+  invoiceAmount: number;
   base64Pdf?: string;
   invoiceNumber: string;
 };
@@ -44,34 +43,32 @@ export default function InvoiceForm({
   services,
   invoiceNumber,
   therapeut,
-  initialValues: initialValuesProps,
+  initialValues,
 }: Props) {
   const router = useRouter();
   const { showSuccessMessage } = useSnackbar();
-  const initialValues = useMemo<Partial<FormInvoice>>(() => {
-    if (initialValuesProps) return initialValuesProps;
+  const [isPending, startTransition] = useTransition();
 
-    return {
+  const methods = useForm<FormInvoice>({
+    defaultValues: initialValues ?? {
       invoiceNumber,
       invoicePositions: [
-        {
-          serviceDate: undefined,
-          service: undefined,
-          amount: 1,
-          factor: undefined,
-        },
+        { serviceDate: undefined, service: undefined, amount: 1, factor: undefined },
       ],
-    };
-  }, [invoiceNumber, initialValuesProps]);
+      invoiceAmount: 0,
+    },
+  });
 
-  const onSubmit = useCallback(
-    async (values: FormInvoice) => {
+  const { handleSubmit, formState: { isSubmitting } } = methods;
+
+  const onSubmit = (values: FormInvoice) => {
+    startTransition(async () => {
       const invoice = await action({
         id: invoiceId,
         patient: values.patient!,
         invoiceNumber: values.invoiceNumber,
         base64Pdf: values.base64Pdf!,
-        invoiceAmount: values.invoiceAmount!,
+        invoiceAmount: values.invoiceAmount,
         status: "pending",
         positions: values.invoicePositions.map((position) => ({
           serviceDate: position.serviceDate!,
@@ -82,53 +79,34 @@ export default function InvoiceForm({
         })),
       });
       showSuccessMessage("Rechnung wurde gespeichert");
-
       router.push(`/administration/invoices/${invoice.id}`);
-    },
-    [action, invoiceId, router, showSuccessMessage]
-  );
+    });
+  };
 
   return (
     <LocalizationProvider
       dateAdapter={AdapterDayjs}
       adapterLocale="de"
-      localeText={
-        deDE.components.MuiLocalizationProvider.defaultProps.localeText
-      }
+      localeText={deDE.components.MuiLocalizationProvider.defaultProps.localeText}
     >
-      <Form<FormInvoice>
-        onSubmit={onSubmit}
-        initialValues={initialValues}
-        mutators={{
-          ...arrayMutators,
-        }}
-      >
-        {({ handleSubmit, submitting }) => (
-          <div className="grid grid-cols-2 gap-4 h-full overflow-hidden">
-            <div className="overflow-auto h-full">
-              <form
-                onSubmit={handleSubmit}
-                className="grid m-4 grid-flow-row gap-4 h-fit"
+      <FormProvider {...methods}>
+        <div className="grid grid-cols-2 gap-4 h-full overflow-hidden">
+          <div className="overflow-auto h-full">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid m-4 grid-flow-row gap-4 h-fit">
+              <h1>Rechnung erstellen</h1>
+              <PatientSection patients={patients} />
+              <ServiceSection services={services} />
+              <SubmitButton
+                submitting={isSubmitting || isPending}
+                className="justify-self-start self-center"
               >
-                <h1>Rechnung erstellen</h1>
-                <PatientSection patients={patients} />
-                <ServiceSection services={services} />
-                <InvoiceAmount />
-                <SubmitButton
-                  submitting={!!submitting}
-                  className="justify-self-start self-center"
-                >
-                  {initialValuesProps ? "Speichern" : "Anlegen"}
-                </SubmitButton>
-              </form>
-            </div>
-            <InvoiceViewer
-              therapeut={therapeut}
-              invoiceNumber={invoiceNumber}
-            />
+                {initialValues ? "Speichern" : "Anlegen"}
+              </SubmitButton>
+            </form>
           </div>
-        )}
-      </Form>
+          <InvoiceViewer therapeut={therapeut} invoiceNumber={invoiceNumber} />
+        </div>
+      </FormProvider>
     </LocalizationProvider>
   );
 }
