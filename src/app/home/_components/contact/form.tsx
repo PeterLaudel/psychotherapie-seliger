@@ -121,7 +121,7 @@ export default function Form() {
             <option hidden value=""></option>
             <option value="privatversichert">Privatversichert</option>
             <option value="beihilfe">Beihilfe</option>
-            <option value="heilførsorge">Heilførsorge</option>
+            <option value="heilfürsorge">Heilfürsorge</option>
             <option value="selbstzahler">Selbstzahler</option>
           </select>
           {validationErrors?.payment && (
