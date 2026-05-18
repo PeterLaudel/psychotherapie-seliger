@@ -95,7 +95,7 @@ export default function Form() {
 
         <label className="grid">
           <div className="font-bold text-lg">Email</div>
-          <input name="email" className="border-2 p-2 rounded-md" />
+          <input name="email" type="email" className="border-2 p-2 rounded-md" />
           {validationErrors?.email && <Error>{validationErrors.email}</Error>}
         </label>
 
@@ -121,7 +121,7 @@ export default function Form() {
             <option hidden value=""></option>
             <option value="privatversichert">Privatversichert</option>
             <option value="beihilfe">Beihilfe</option>
-            <option value="heilfürsorge">Heilfürsorge</option>
+            <option value="heilførsorge">Heilførsorge</option>
             <option value="selbstzahler">Selbstzahler</option>
           </select>
           {validationErrors?.payment && (
