@@ -13,6 +13,7 @@ export interface CreatePdfParams {
   patient?: Patient;
   therapeut: Therapeut;
   invoiceNumber: string;
+  invoiceDate?: string;
   positions: InvoicePosition[];
   invoiceAmount: number;
   options?: {
@@ -27,14 +28,23 @@ function mm(n: number) {
 
 /** Page margins and DIN 5008–oriented zones (window envelope–friendly). */
 const PAGE_MARGIN = mm(20);
+/** DIN 5008 §4.3 Form A: Schreibfeld starts 24.1 mm from left edge. */
+const BODY_LEFT = mm(24.1);
 /** Sender / return line — sits in upper part of address window. */
 const RETURN_ADDRESS_TOP = mm(27);
 /** First line of recipient address (Form A, common for business mail). */
 const RECIPIENT_ADDRESS_TOP = mm(50.8);
-/** Max width for address block (fits typical C6/5 window). */
-const ADDRESS_FIELD_WIDTH = mm(85);
+/** Right edge of address field is at 105 mm from page edge (DIN 5008 envelope window). */
+const ADDRESS_FIELD_WIDTH = mm(105) - BODY_LEFT;
 /** Right column for logo + practice (outside left window). */
 const RIGHT_COLUMN_WIDTH = mm(72);
+/** DIN 5008 Form A: body / information zone starts at 97.4 mm from top. */
+const INFO_ZONE_TOP = mm(97.4);
+/** Fold marks (left edge tick lines) at DIN 5008–specified positions. */
+const FOLD_1 = mm(87);
+const FOLD_2 = mm(192);
+/** Hole punch mark at vertical centre of A4. */
+const PUNCH = mm(148.5);
 
 /**
  * Font sizes in PDF points (aligned with common DE business letters / DIN 5008).
@@ -113,7 +123,7 @@ export async function generateInvoiceBlob(params: CreatePdfParams) {
 
   const rightColumnBottom = letterheadRight(doc, params);
   const addressBottom = addressPart(doc, params);
-  doc.y = Math.max(rightColumnBottom, addressBottom) + mm(10);
+  doc.y = Math.max(rightColumnBottom, addressBottom, INFO_ZONE_TOP);
 
   invoiceContext(doc, params);
   positionsPart(doc, params);
@@ -161,7 +171,15 @@ function pageFooter(doc: PdfDoc, { therapeut }: CreatePdfParams) {
     });
     doc.page.margins.bottom = reservedBottom;
 
-    doc.text("", doc.page.margins.left, doc.page.margins.top);
+    // DIN 5008 fold marks (4 mm ticks at left paper edge)
+    doc.save();
+    doc.lineWidth(0.25).strokeColor("#888888");
+    doc.moveTo(0, FOLD_1).lineTo(mm(4), FOLD_1).stroke();
+    doc.moveTo(0, FOLD_2).lineTo(mm(4), FOLD_2).stroke();
+    doc.moveTo(0, PUNCH).lineTo(mm(3), PUNCH).stroke();
+    doc.restore();
+
+    doc.text("", BODY_LEFT, doc.page.margins.top);
   });
 }
 
@@ -213,7 +231,7 @@ function letterheadRight(doc: PdfDoc, { therapeut }: CreatePdfParams) {
  * Returns bottom Y of the address block (for continuing body text).
  */
 function addressPart(doc: PdfDoc, { therapeut, patient }: CreatePdfParams) {
-  const left = doc.page.margins.left;
+  const left = BODY_LEFT;
   const returnLine =
     `${therapeut.name} ${therapeut.surname} · ${therapeut.street} · ${therapeut.zip} ${therapeut.city}`;
 
@@ -238,7 +256,7 @@ function addressPart(doc: PdfDoc, { therapeut, patient }: CreatePdfParams) {
     `${patient.billingInfo.address.street}\n` +
     `${patient.billingInfo.address.zip} ${patient.billingInfo.address.city}`;
 
-  doc.font("Helvetica").fontSize(FS.body);
+  doc.font("Helvetica").fontSize(12);
   doc.text(recipient, left, recipientTop, {
     width: ADDRESS_FIELD_WIDTH,
     lineGap: BODY_LINE_GAP,
@@ -255,14 +273,15 @@ function addressPart(doc: PdfDoc, { therapeut, patient }: CreatePdfParams) {
 
 function invoiceContext(
   doc: PdfDoc,
-  { invoiceNumber, patient, therapeut }: CreatePdfParams
+  { invoiceNumber, invoiceDate, patient, therapeut }: CreatePdfParams
 ) {
   const invTop = doc.y;
+  const dateStr = formatDate(invoiceDate ?? new Date().toISOString());
 
   doc
     .font("Helvetica-Bold")
     .fontSize(FS.title)
-    .text(`Rechnung Nr. ${invoiceNumber}`, doc.page.margins.left, invTop, {
+    .text(`Rechnung Nr. ${invoiceNumber}`, BODY_LEFT, invTop, {
       align: "left",
     });
 
@@ -270,8 +289,8 @@ function invoiceContext(
     .fontSize(FS.table)
     .font("Helvetica")
     .text(
-      `${therapeut.city}, ${formatDate((new Date()).toISOString())}`,
-      doc.page.margins.left,
+      `${therapeut.city}, ${dateStr}`,
+      BODY_LEFT,
       invTop,
       {
         align: "right",
@@ -421,7 +440,9 @@ function ensureSpace(doc: PdfDoc, neededHeight: number) {
 
 function attachZugferXml(doc: PdfDoc, params: CreatePdfParams) {
   const zugferdXml = createZugferdXml({
-    invoiceDate: dayjs().format("YYYYMMDD"),
+    invoiceDate: params.invoiceDate
+      ? dayjs(params.invoiceDate).format("YYYYMMDD")
+      : dayjs().format("YYYYMMDD"),
     invoiceNumber: params.invoiceNumber,
     positions: params.positions.map((p, index) => ({
       id: index.toString(),
