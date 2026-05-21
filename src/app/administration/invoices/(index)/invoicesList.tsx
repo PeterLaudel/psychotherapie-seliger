@@ -78,7 +78,7 @@ export function InvoicesList() {
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">
-      <h1>Invoices</h1>
+      <h1>Rechnungen</h1>
       <Section>
         <div className="grid grid-flow-row gap-4">
           <div className="w-full flex justify-end gap-4">

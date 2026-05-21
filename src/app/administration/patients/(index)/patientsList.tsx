@@ -11,10 +11,16 @@ import { patientsQueryKey, fetchPatients } from "@/queries/patients";
 import { useState } from "react";
 
 const columns: GridColDef<Patient>[] = [
-  { field: "name", headerName: "Name", width: 150 },
-  { field: "surname", headerName: "Surname", width: 150 },
-  { field: "email", headerName: "Email", width: 200 },
-  { field: "birthdate", headerName: "Birthdate", width: 150 },
+  { field: "name", headerName: "Name", flex: 1 },
+  { field: "surname", headerName: "Surname", flex: 1 },
+  { field: "email", headerName: "Email", flex: 1 },
+  {
+    field: "birthdate",
+    headerName: "Geburtsdatum",
+    flex: 1,
+    renderCell: (params) =>
+      new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(params.value)),
+  },
 ];
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -26,10 +32,19 @@ export default function PatientsList() {
   const page = Number(searchParams.get("page")) || 0;
   const pageSize = Number(searchParams.get("pageSize")) || DEFAULT_PAGE_SIZE;
 
-  const [paginationModel, setPaginationModel] = useState({ page, pageSize, filterKey: search });
+  const [paginationModel, setPaginationModel] = useState({
+    page,
+    pageSize,
+    filterKey: search,
+  });
 
-  const currentPage = paginationModel.filterKey !== search ? 0 : paginationModel.page;
-  const query = { search, page: currentPage, pageSize: paginationModel.pageSize };
+  const currentPage =
+    paginationModel.filterKey !== search ? 0 : paginationModel.page;
+  const query = {
+    search,
+    page: currentPage,
+    pageSize: paginationModel.pageSize,
+  };
 
   const { data } = useQuery({
     queryKey: patientsQueryKey(query),
@@ -61,7 +76,9 @@ export default function PatientsList() {
                 paginationMode="server"
                 paginationModel={paginationModel}
                 pageSizeOptions={[DEFAULT_PAGE_SIZE]}
-                onPaginationModelChange={(model) => setPaginationModel({ ...model, filterKey: search })}
+                onPaginationModelChange={(model) =>
+                  setPaginationModel({ ...model, filterKey: search })
+                }
                 onRowClick={(params) => {
                   router.push(`/administration/patients/${params.row.id}`);
                 }}
