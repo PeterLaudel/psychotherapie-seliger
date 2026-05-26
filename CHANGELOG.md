@@ -1,5 +1,16 @@
 # psychotherapie-seliger
 
+## 0.5.0
+
+### Minor Changes
+
+- d07c671: Support postgres and sqlite as database dialect
+
+### Patch Changes
+
+- 171a7e3: Add pagination and improve styling
+- 1bb1683: Adapt invoice styling
+
 ## 0.4.6
 
 ### Patch Changes
