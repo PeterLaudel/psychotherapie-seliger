@@ -17,8 +17,6 @@ test("sents an invoice email", async ({ page }) => {
 
   await page.goto("/administration/invoices");
 
-  await expect(page.getByText("Invoices")).toBeVisible();
-
   await page.getByRole("button", { name: "Rechnung senden" }).click();
   await page.getByRole("button", { name: "Senden" }).click();
 

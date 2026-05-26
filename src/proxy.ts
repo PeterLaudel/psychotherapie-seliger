@@ -37,5 +37,5 @@ const proxy = isDevMode ? default_Middleware : auth_Middleware;
 export default proxy;
 
 export const config = {
-  matcher: ["/administration/:path*"],
+  matcher: ["/administration/:path*", "/api/:path*"],
 };

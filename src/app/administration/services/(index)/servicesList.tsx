@@ -10,24 +10,24 @@ import { fetchServices, servicesQueryKey } from "@/queries/services";
 import { useState } from "react";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 90 },
-  { field: "short", headerName: "Kürzel", width: 200 },
-  { field: "originalGopNr", headerName: "GopNr", width: 150 },
+  { field: "id", headerName: "ID", flex: 1 },
+  { field: "short", headerName: "Kürzel", flex: 1 },
+  { field: "originalGopNr", headerName: "GopNr", flex: 1 },
   {
     field: "description",
     headerName: "Beschreibung",
-    width: 400,
+    flex: 3,
     renderCell: (params) => (
       <Tooltip title={params.value} placement="top-start">
         <span className="truncate">{params.value}</span>
       </Tooltip>
     ),
   },
-  { field: "points", headerName: "Punkte", width: 110 },
+  { field: "points", headerName: "Punkte", flex: 1 },
   ...factorArray.map<GridColDef>((factor) => ({
     field: `${factor}`,
     headerName: `${factor}-fach in €`,
-    width: 110,
+    flex: 1,
   })),
 ];
 
