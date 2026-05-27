@@ -1,16 +1,11 @@
-import {
-  Kysely,
-  ParseJSONResultsPlugin,
-  SqliteDialect,
-  Migrator,
-  FileMigrationProvider,
-} from "kysely";
+import { Kysely, ParseJSONResultsPlugin, SqliteDialect, Migrator } from "kysely";
 import Database from "better-sqlite3";
 import { Database as DatabaseDescription } from "@/db";
 import { sqliteUrl } from "../environment";
-import fs, { promises } from "fs";
+import fs from "fs";
 import path from "path";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/sqlite";
+import { migrationProvider } from "./migrationProvider";
 
 export { jsonArrayFrom, jsonObjectFrom };
 
@@ -51,11 +46,7 @@ export function dbDrop() {
 export async function dbMigrate() {
   const migration = new Migrator({
     db: sqliteDb(),
-    provider: new FileMigrationProvider({
-      fs: promises,
-      path,
-      migrationFolder: path.join(__dirname, "/../migrations"),
-    }),
+    provider: migrationProvider,
   });
 
   await migration.migrateToLatest().then(({ error, results }) => {

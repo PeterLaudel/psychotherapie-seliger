@@ -1,5 +1,11 @@
 # psychotherapie-seliger
 
+## 0.5.1
+
+### Patch Changes
+
+- Fix build
+
 ## 0.5.0
 
 ### Minor Changes

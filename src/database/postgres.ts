@@ -5,13 +5,11 @@ import {
   PostgresDialect,
   sql,
   Migrator,
-  FileMigrationProvider,
 } from "kysely";
 import { Database } from "@/db";
 import { Pool } from "pg";
-import { promises } from "fs";
-import path from "path";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
+import { migrationProvider } from "./migrationProvider";
 
 export { jsonArrayFrom, jsonObjectFrom };
 
@@ -60,11 +58,7 @@ export async function dbDrop() {
 export async function dbMigrate() {
   const migration = new Migrator({
     db: postgresDb(),
-    provider: new FileMigrationProvider({
-      fs: promises,
-      path,
-      migrationFolder: path.join(__dirname, "/../migrations"),
-    }),
+    provider: migrationProvider,
   });
 
   await migration.migrateToLatest().then(({ error, results }) => {
