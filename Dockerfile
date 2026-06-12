@@ -38,6 +38,10 @@ COPY --from=builder --chown=nonroot:nonroot /app/next.config.ts ./
 COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/.next ./.next
 COPY --from=builder --chown=nonroot:nonroot /app/node_modules ./node_modules
+COPY --from=builder --chown=nonroot:nonroot /app/src ./src
+COPY --from=builder --chown=nonroot:nonroot /app/migrations ./migrations
+COPY --from=builder --chown=nonroot:nonroot /app/tasks ./tasks
+COPY --from=builder --chown=nonroot:nonroot /app/tsconfig.json ./tsconfig.json
 
 USER nonroot
 
