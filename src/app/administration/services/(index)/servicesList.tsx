@@ -62,24 +62,28 @@ export default function ServiceList() {
       <Section>
         <div className="grid grid-flow-row gap-4">
           <div className="w-full flex justify-end">
-            <Button onClick={() => router.push("/administration/services/create")}>
+            <Button
+              onClick={() => router.push("/administration/services/create")}
+            >
               Leistung anlegen
             </Button>
           </div>
           <NoSsr>
-            <DataGrid
-              rows={rows}
-              rowCount={data?.total ?? 0}
-              columns={columns}
-              disableColumnMenu
-              paginationMode="server"
-              paginationModel={paginationModel}
-              pageSizeOptions={[DEFAULT_PAGE_SIZE]}
-              onPaginationModelChange={setPaginationModel}
-              onRowClick={(params) =>
-                router.push(`/administration/services/${params.row.id}`)
-              }
-            />
+            <div className="h-full w-full">
+              <DataGrid
+                rows={rows}
+                rowCount={data?.total ?? 0}
+                columns={columns}
+                disableColumnMenu
+                paginationMode="server"
+                paginationModel={paginationModel}
+                pageSizeOptions={[DEFAULT_PAGE_SIZE]}
+                onPaginationModelChange={setPaginationModel}
+                onRowClick={(params) =>
+                  router.push(`/administration/services/${params.row.id}`)
+                }
+              />
+            </div>
           </NoSsr>
         </div>
       </Section>
