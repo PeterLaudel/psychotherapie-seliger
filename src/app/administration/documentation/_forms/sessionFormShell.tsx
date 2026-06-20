@@ -80,16 +80,15 @@ export default function SessionFormShell({
 
   useEffect(() => {
     if (initialSession || !lockedPatientId) return;
-    createSession(lockedPatientId).then((s) => {
+    void createSession(lockedPatientId).then((s) => {
       setSession(s);
       setSaveStatus("saved");
     });
   }, [initialSession, lockedPatientId]);
 
-  // Re-subscribe whenever the session id changes so the closure captures the current id.
-  // getValues() provides the full current form state so no stale-partial problem.
   useEffect(() => {
     if (!session) return;
+    // eslint-disable-next-line react-hooks/incompatible-library -- RHF watch() is intentionally used outside render; subscription is cleaned up on unmount
     const subscription = methods.watch(() => {
       setSaveStatus("saving");
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -100,7 +99,7 @@ export default function SessionFormShell({
       }, 2500);
     });
     return () => subscription.unsubscribe();
-  }, [session?.id]);
+  }, [session, methods]);
 
   const handleFinalize = useCallback(async () => {
     if (!session) return;
@@ -112,7 +111,7 @@ export default function SessionFormShell({
     });
     setSession(updated);
     setSaveStatus("saved");
-  }, [session]);
+  }, [session, methods]);
 
   if (!session && lockedPatientId) {
     return <p className="text-gray-500">Sitzung wird vorbereitet…</p>;
@@ -130,7 +129,7 @@ export default function SessionFormShell({
           session
             ? undefined
             : (patientId) => {
-                createSession(patientId).then((s) => {
+                void createSession(patientId).then((s) => {
                   setSession(s);
                   setSaveStatus("saved");
                 });

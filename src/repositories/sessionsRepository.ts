@@ -1,8 +1,9 @@
 import { Database } from "@/initialize";
 import { Session } from "@/models/session";
 import { sessionSelector } from "./selectors/session";
+import { Patient } from "@/models/patient";
 
-export type SessionSave = Omit<Session, "id" | "createdAt" | "interventions" | "patient"> & {
+export type SessionSave = Omit<Session, "id" | "createdAt" | "interventions"> & {
   id?: number;
   interventions: string[];
 };
@@ -33,13 +34,14 @@ export class SessionsRepository {
       query = query.where("sessions.patientId", "=", patientId);
     }
 
-    const [rows, countResult] = await Promise.all([
+    const [rawRows, countResult] = await Promise.all([
       query
         .orderBy("sessions.sessionDate", "desc")
         .orderBy("sessions.id", "desc")
         .limit(pageSize)
         .offset(page * pageSize)
-        .execute() as unknown as Session[],
+        .$castTo<Session>()
+        .execute(),
       this.database
         .selectFrom("sessions")
         .select(this.database.fn.countAll<number>().as("total"))
@@ -48,24 +50,22 @@ export class SessionsRepository {
         .executeTakeFirstOrThrow(),
     ]);
 
-    return { rows, total: Number(countResult.total) };
+    return { rows: rawRows, total: Number(countResult.total) };
   }
 
-  async nextSessionNumber(patientId: number): Promise<number> {
+  async nextSessionNumber(patient: Pick<Patient, "id">): Promise<number> {
     const result = await this.database
       .selectFrom("sessions")
       .select(this.database.fn.max("sessionNumber").as("max"))
-      .where("sessions.patientId", "=", patientId)
+      .where("sessions.patientId", "=", patient.id)
       .executeTakeFirst();
 
     return (result?.max ?? 0) + 1;
   }
 
   async save(session: SessionSave): Promise<Session> {
-    // Callers may pass a full Session; strip fields that aren't DB columns
-    const { id: originId, interventions, ...rest } = session as SessionSave & { patient?: unknown; createdAt?: unknown };
-    const { patient: _patient, createdAt: _createdAt, ...dbFields } = rest;
-    const data = { ...dbFields, interventions: JSON.stringify(interventions) };
+    const { id: originId, interventions, ...rest } = session;
+    const data = { ...rest, interventions: JSON.stringify(interventions), patientId: rest.patient.id };
 
     const { id } = originId
       ? await this.database

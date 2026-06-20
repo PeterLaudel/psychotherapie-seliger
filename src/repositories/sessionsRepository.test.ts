@@ -2,6 +2,7 @@ import { getDb } from "@/initialize";
 import { SessionsRepository } from "./sessionsRepository";
 import { sessionFactory } from "factories/session";
 import { patientFactory } from "factories/patient";
+import { Session } from "@/models/session";
 
 describe("SessionsRepository", () => {
   let sessionsRepository: SessionsRepository;
@@ -101,20 +102,23 @@ describe("SessionsRepository", () => {
     it("returns 1 when the patient has no sessions", async () => {
       const patient = await patientFactory.create();
 
-      const next = await sessionsRepository.nextSessionNumber(patient.id);
+      const next = await sessionsRepository.nextSessionNumber(patient);
 
       expect(next).toBe(1);
     });
 
     it("returns one more than the current highest session number", async () => {
-      const session = await sessionFactory.create();
+      const patient = await patientFactory.create();
+      const session = await sessionFactory.create({
+        patientId: patient.id
+      });
       await getDb()
         .updateTable("sessions")
         .set({ sessionNumber: 5 })
         .where("id", "=", session.id)
         .execute();
 
-      const next = await sessionsRepository.nextSessionNumber(session.patientId);
+      const next = await sessionsRepository.nextSessionNumber(patient);
 
       expect(next).toBe(6);
     });
@@ -125,7 +129,7 @@ describe("SessionsRepository", () => {
       const patient = await patientFactory.create();
 
       const session = await sessionsRepository.save({
-        patientId: patient.id,
+        patient,
         therapeutId: null,
         sessionDate: "2024-06-01",
         sessionNumber: 1,
@@ -157,7 +161,7 @@ describe("SessionsRepository", () => {
       const interventions = ["Psychoedukation", "EMDR"];
 
       const session = await sessionsRepository.save({
-        patientId: patient.id,
+        patient,
         therapeutId: null,
         sessionDate: "2024-06-01",
         sessionNumber: 1,
@@ -178,17 +182,23 @@ describe("SessionsRepository", () => {
     });
 
     it("updates an existing session", async () => {
-      const row = await sessionFactory.create();
+      const patient = await patientFactory.create();
+      const session = await sessionFactory.create({
+        patientId: patient.id
+      });
 
       const updated = await sessionsRepository.save({
-        ...row,
-        interventions: row.interventions as unknown as string[],
+        ...session,
+        patient,
+        sessionType: session.sessionType as Session["sessionType"],
+        phase: session.phase as Session["phase"],
+        interventions: JSON.parse(session.interventions) as unknown as string[],
         riskLevel: "high",
         status: "final",
-      } as import("./sessionsRepository").SessionSave);
+      });
 
       expect(updated).toMatchObject({
-        id: row.id,
+        id: session.id,
         riskLevel: "high",
         status: "final",
       });

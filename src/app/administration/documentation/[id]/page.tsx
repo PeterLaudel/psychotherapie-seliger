@@ -25,7 +25,7 @@ export default async function Page(props: Props) {
       </h1>
       <SessionFormShell
         patients={patients}
-        lockedPatientId={session.patientId}
+        lockedPatientId={session.patient.id}
         initialSession={session}
       />
     </div>

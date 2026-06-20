@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Autocomplete,
   Button,
   Chip,
   FormControl,
@@ -66,7 +67,7 @@ export default function SessionForm({
   const selectedPatient = lockedPatientId
     ? patients.find((p) => p.id === lockedPatientId)
     : session
-    ? patients.find((p) => p.id === session.patientId)
+    ? patients.find((p) => p.id === session.patient.id)
     : null;
 
   return (
@@ -128,20 +129,14 @@ export default function SessionForm({
               className="col-span-2"
             />
           ) : (
-            <FormControl className="col-span-2">
-              <InputLabel>Patient</InputLabel>
-              <Select
-                label="Patient"
-                value={session?.patientId ?? ""}
-                onChange={(e) => onPatientSelected?.(Number(e.target.value))}
-              >
-                {patients.map((p) => (
-                  <MenuItem key={p.id} value={p.id}>
-                    {p.name} {p.surname}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              className="col-span-2"
+              options={patients}
+              getOptionLabel={(p) => `${p.name} ${p.surname}`}
+              getOptionKey={(p) => p.id}
+              onChange={(_, p) => p && onPatientSelected?.(p.id)}
+              renderInput={(params) => <TextField {...params} label="Patient" />}
+            />
           )}
 
           <TextField

@@ -50,7 +50,6 @@ import { Patient } from "./patient";
 
 export interface Session {
   id: number;
-  patientId: number;
   therapeutId: number | null;
   sessionDate: string;
   sessionNumber: number;

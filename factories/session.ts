@@ -5,12 +5,13 @@ import { getDb } from "@/initialize";
 import { SessionsTable } from "@/db";
 import { patientFactory } from "./patient";
 
-type SessionBuild = Omit<Insertable<SessionsTable>, "id" | "createdAt">;
+type SessionBuild = Omit<Insertable<SessionsTable>, "id" | "createdAt" | "patientId"> & {
+  patientId?: number;
+};
 type SessionCreated = Selectable<SessionsTable>;
 
 export const sessionFactory = Factory.define<SessionBuild, unknown, SessionCreated>(
   ({ sequence }) => ({
-    patientId: sequence,
     therapeutId: null,
     sessionDate: faker.date.recent({ days: 60 }).toISOString().split("T")[0],
     sessionNumber: sequence,
@@ -27,10 +28,10 @@ export const sessionFactory = Factory.define<SessionBuild, unknown, SessionCreat
     deletedAt: null,
   })
 ).onCreate(async (attrs) => {
-  const patient = await patientFactory.create();
+  const patientId = attrs.patientId ?? (await patientFactory.create()).id;
   return await getDb()
     .insertInto("sessions")
-    .values({ ...attrs, patientId: patient.id } as Insertable<SessionsTable>)
+    .values({ ...attrs, patientId })
     .returningAll()
-    .executeTakeFirstOrThrow() as unknown as SessionCreated;
+    .executeTakeFirstOrThrow();
 });
