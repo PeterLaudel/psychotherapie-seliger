@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button, Chip, NoSsr } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import Section from "@/components/section";
 import { Session } from "@/models/session";
 import { sessionsQueryKey, fetchSessions } from "@/queries/sessions";
+import { createSession } from "./actions";
 
 const riskColors: Record<string, "default" | "warning" | "error" | "success"> = {
   none: "default",
@@ -66,6 +68,7 @@ interface Props {
 
 export default function PatientSessionsList({ patientId, initialSessions }: Props) {
   const router = useRouter();
+  const [creating, setCreating] = useState(false);
   const query = { patientId: Number(patientId) };
 
   const { data } = useQuery({
@@ -79,11 +82,15 @@ export default function PatientSessionsList({ patientId, initialSessions }: Prop
       <div className="grid grid-flow-row gap-4">
         <div className="flex justify-end">
           <Button
-            onClick={() =>
-              router.push(
-                `/administration/documentation/create?patientId=${patientId}`
-              )
-            }
+            disabled={creating}
+            onClick={() => {
+              setCreating(true);
+              void createSession(Number(patientId)).then((session) => {
+                router.push(
+                  `/administration/patients/${patientId}/sessions/${session.id}`
+                );
+              });
+            }}
           >
             Sitzung dokumentieren
           </Button>
@@ -96,7 +103,9 @@ export default function PatientSessionsList({ patientId, initialSessions }: Prop
               disableColumnMenu
               autoHeight
               onRowClick={(params) =>
-                router.push(`/administration/documentation/${params.row.id}`)
+                router.push(
+                  `/administration/patients/${patientId}/sessions/${params.row.id}`
+                )
               }
               getRowId={(row) => row.id}
             />

@@ -1,5 +1,5 @@
 import { getSessionsRepository } from "@/server";
-import PatientSessionsList from "./patientSessionsList";
+import PatientSessionsList from "../../sessions/patientSessionsList";
 
 interface Props {
   params: Promise<{ patientId: string }>;

@@ -64,8 +64,8 @@ export class SessionsRepository {
   }
 
   async save(session: SessionSave): Promise<Session> {
-    const { id: originId, interventions, ...rest } = session;
-    const data = { ...rest, interventions: JSON.stringify(interventions), patientId: rest.patient.id };
+    const { id: originId, interventions, patient, ...rest } = session;
+    const data = { ...rest, interventions: JSON.stringify(interventions), patientId: patient.id };
 
     const { id } = originId
       ? await this.database

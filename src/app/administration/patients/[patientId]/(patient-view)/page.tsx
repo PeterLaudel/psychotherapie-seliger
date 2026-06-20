@@ -1,6 +1,6 @@
 import { getPatientsRepository } from "@/server";
-import PatientForm from "../_forms/patientForm";
-import { updatePatient } from "./action";
+import PatientForm from "../../_forms/patientForm";
+import { updatePatient } from "../action";
 
 interface Props {
   params: Promise<{

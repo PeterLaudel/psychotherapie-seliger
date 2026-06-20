@@ -192,7 +192,7 @@ describe("SessionsRepository", () => {
         patient,
         sessionType: session.sessionType as Session["sessionType"],
         phase: session.phase as Session["phase"],
-        interventions: JSON.parse(session.interventions) as unknown as string[],
+        interventions: session.interventions as unknown as string[],
         riskLevel: "high",
         status: "final",
       });

@@ -8,7 +8,9 @@ test("shows a session with pre-filled values", async ({ page }) => {
     status: "draft",
   });
 
-  await page.goto(`/administration/documentation/${session.id}`);
+  await page.goto(
+    `/administration/patients/${session.patientId}/sessions/${session.id}`
+  );
 
   await expect(page.getByText(/Sitzung 3/)).toBeVisible();
   await expect(
@@ -19,7 +21,9 @@ test("shows a session with pre-filled values", async ({ page }) => {
 test("disables finalize for a final session", async ({ page }) => {
   const session = await sessionFactory.create({ status: "final" });
 
-  await page.goto(`/administration/documentation/${session.id}`);
+  await page.goto(
+    `/administration/patients/${session.patientId}/sessions/${session.id}`
+  );
 
   await expect(page.getByRole("button", { name: "Abschließen" })).toBeDisabled();
 });

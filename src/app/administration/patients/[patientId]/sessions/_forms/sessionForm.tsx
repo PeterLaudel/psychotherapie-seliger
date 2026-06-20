@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Autocomplete,
   Button,
   Chip,
   FormControl,
@@ -13,7 +12,6 @@ import {
 } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import Section from "@/components/section";
-import { Patient } from "@/models/patient";
 import {
   Session,
   SESSION_TYPES,
@@ -25,12 +23,9 @@ import {
 import { SessionFormValues } from "./sessionFormShell";
 
 interface Props {
-  patients: Patient[];
-  lockedPatientId?: number;
-  session: Session | null;
+  session: Session;
   saveStatus: "idle" | "saving" | "saved";
   onFinalize: () => void;
-  onPatientSelected?: (patientId: number) => void;
 }
 
 const riskButtonColors: Record<RiskLevel, string> = {
@@ -46,29 +41,17 @@ const saveStatusLabel: Record<"idle" | "saving" | "saved", string> = {
   saved: "Entwurf gespeichert",
 };
 
-export default function SessionForm({
-  patients,
-  lockedPatientId,
-  session,
-  saveStatus,
-  onFinalize,
-  onPatientSelected,
-}: Props) {
+export default function SessionForm({ session, saveStatus, onFinalize }: Props) {
   const { control, register, watch } = useFormContext<SessionFormValues>();
-  const [riskLevel, sessionDate, sessionType, phase] = watch(["riskLevel", "sessionDate", "sessionType", "phase"]);
+  const [riskLevel, sessionDate, sessionType, phase] = watch([
+    "riskLevel",
+    "sessionDate",
+    "sessionType",
+    "phase",
+  ]);
 
   const isFinalizeable =
-    session !== null &&
-    session.status !== "final" &&
-    !!sessionDate &&
-    !!riskLevel &&
-    !!sessionType;
-
-  const selectedPatient = lockedPatientId
-    ? patients.find((p) => p.id === lockedPatientId)
-    : session
-    ? patients.find((p) => p.id === session.patient.id)
-    : null;
+    session.status !== "final" && !!sessionDate && !!riskLevel && !!sessionType;
 
   return (
     <div className="grid gap-4">
@@ -117,27 +100,12 @@ export default function SessionForm({
       <Section>
         <h2 className="mb-4">Basis</h2>
         <div className="grid grid-cols-2 gap-4">
-          {lockedPatientId ? (
-            <TextField
-              label="Patient"
-              value={
-                selectedPatient
-                  ? `${selectedPatient.name} ${selectedPatient.surname}`
-                  : `#${lockedPatientId}`
-              }
-              disabled
-              className="col-span-2"
-            />
-          ) : (
-            <Autocomplete
-              className="col-span-2"
-              options={patients}
-              getOptionLabel={(p) => `${p.name} ${p.surname}`}
-              getOptionKey={(p) => p.id}
-              onChange={(_, p) => p && onPatientSelected?.(p.id)}
-              renderInput={(params) => <TextField {...params} label="Patient" />}
-            />
-          )}
+          <TextField
+            label="Patient"
+            value={`${session.patient.name} ${session.patient.surname}`}
+            disabled
+            className="col-span-2"
+          />
 
           <TextField
             {...register("sessionDate")}
@@ -149,7 +117,7 @@ export default function SessionForm({
           <TextField
             label="Sitzungsnummer"
             type="number"
-            value={session?.sessionNumber ?? ""}
+            value={session.sessionNumber}
             disabled
           />
 
@@ -161,7 +129,11 @@ export default function SessionForm({
 
           <FormControl>
             <InputLabel>Sitzungstyp</InputLabel>
-            <Select {...register("sessionType")} value={sessionType ?? ""} label="Sitzungstyp">
+            <Select
+              {...register("sessionType")}
+              value={sessionType ?? ""}
+              label="Sitzungstyp"
+            >
               {SESSION_TYPES.map((t) => (
                 <MenuItem key={t} value={t}>
                   {t}
@@ -198,7 +170,10 @@ export default function SessionForm({
                 </p>
                 <Slider
                   value={field.value ?? 5}
-                  min={1} max={10} step={1} marks
+                  min={1}
+                  max={10}
+                  step={1}
+                  marks
                   valueLabelDisplay="auto"
                   onChange={(_e, v) => field.onChange(v)}
                 />
@@ -215,7 +190,10 @@ export default function SessionForm({
                 </p>
                 <Slider
                   value={field.value ?? 5}
-                  min={1} max={10} step={1} marks
+                  min={1}
+                  max={10}
+                  step={1}
+                  marks
                   valueLabelDisplay="auto"
                   onChange={(_e, v) => field.onChange(v)}
                 />

@@ -15,7 +15,6 @@ export default function Navbar() {
   const isInvoiceRoute = /invoice/.test(pathname);
   const isTherapeutRoute = /therapeuts/.test(pathname);
   const isServiceRoute = /services/.test(pathname);
-  const isDocumentationRoute = /documentation/.test(pathname);
 
   return (
     <nav className="bg-white">
@@ -74,9 +73,6 @@ export default function Navbar() {
             </li>
             <li className={isServiceRoute ? "font-bold" : ""}>
               <Link href="/administration/services">Leistungen</Link>
-            </li>
-            <li className={isDocumentationRoute ? "font-bold" : ""}>
-              <Link href="/administration/documentation">Dokumentation</Link>
             </li>
           </ul>
         </div>
