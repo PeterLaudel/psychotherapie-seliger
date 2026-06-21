@@ -24,6 +24,31 @@ CI=true npm run e2e # playwright e2e tests (CI=true disables retries and the bro
 
 `npm run ci` runs typecheck, lint, and unit tests in one command. E2e tests require the dev server to be running and a seeded database, so they are run separately.
 
+## E2e tests cover every UI feature with Playwright
+
+Every user-facing feature must have Playwright e2e tests in `e2e/<feature>/`. Tests use the custom `test` fixture from `e2e/fixtures.ts`, which injects an auth cookie and clears the database after each test. Seed data goes through factories — never raw DB calls in spec files.
+
+```ts
+import { patientFactory } from "factories/patient";
+import { test, expect } from "../fixtures";
+
+test("creates a treatment plan and shows success message", async ({ page }) => {
+  const patient = await patientFactory.create();
+  await page.goto(`/administration/patients/${patient.id}/treatment-plan`);
+
+  await page.getByRole("textbox", { name: "Beginn" }).fill("2024-01-15");
+  await page.getByRole("button", { name: "Speichern" }).click();
+
+  await expect(page.getByText("Behandlungsplan gespeichert")).toBeVisible();
+});
+```
+
+Use `getByRole` with an accessible name as the primary locator. Interactive elements that have no visible label (icon buttons) must carry an `aria-label` so tests can target them without relying on emoji text or DOM structure.
+
+Split tests by operation: `create.spec.ts` for creation flows, `update.spec.ts` for edit/delete flows, `show.spec.ts` for read-only display assertions.
+
+E2e tests require a production build (`npm run build`) and run with `CI=true npm run e2e`. They are separate from the unit/integration suite (`npm run ci`) because they need the dev server and a seeded database.
+
 ## Form save button placement
 
 Every form that persists data must use `SubmitButton` (`src/components/submitButton.tsx`) as its submit control. Place it at the bottom of the form, left-aligned:

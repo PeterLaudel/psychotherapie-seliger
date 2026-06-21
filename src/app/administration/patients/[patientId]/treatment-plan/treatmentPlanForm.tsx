@@ -144,7 +144,7 @@ export default function TreatmentPlanForm({ onSubmit, isPending }: Props) {
                 />
 
                 <Tooltip title="Entfernen">
-                  <IconButton size="small" onClick={() => remove(index)}>
+                  <IconButton size="small" aria-label="Ziel entfernen" onClick={() => remove(index)}>
                     🗑️
                   </IconButton>
                 </Tooltip>
