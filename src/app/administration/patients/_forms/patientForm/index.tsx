@@ -80,8 +80,7 @@ export default function PatientForm({ initialValues, action }: Props) {
       localeText={deDE.components.MuiLocalizationProvider.defaultProps.localeText}
     >
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-flow-row m-4 gap-4 h-fit">
-          <h1>Patient anlegen</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-flow-row gap-4 h-fit">
           <PatientSection />
           <BillingSection />
           <InvoiceSection />

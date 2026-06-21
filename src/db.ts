@@ -8,6 +8,7 @@ export interface Database {
   services: ServicesTable;
   serviceAmounts: ServiceAmountsTable;
   therapeuts: TherapeutsTable;
+  sessions: SessionsTable;
 }
 
 interface PatientTable {
@@ -86,4 +87,24 @@ interface TherapeutsTable {
   bankName: string;
   website: string;
   enr: string;
+}
+
+export interface SessionsTable {
+  id: Generated<number>;
+  patientId: number;
+  therapeutId: number | null;
+  sessionDate: string;
+  sessionNumber: number;
+  durationMinutes: Generated<number>;
+  sessionType: string;
+  phase: string | null;
+  moodStart: number | null;
+  moodEnd: number | null;
+  riskLevel: string | null;
+  interventions: string;
+  clinicalNotes: string | null;
+  nextSessionPlan: string | null;
+  status: "draft" | "final";
+  deletedAt: string | null;
+  createdAt: Generated<string>;
 }
