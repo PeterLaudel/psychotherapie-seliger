@@ -157,3 +157,41 @@ The React Compiler eslint plugin flags `methods.watch()` inside a `useEffect` as
 // eslint-disable-next-line react-hooks/incompatible-library -- RHF watch() subscription; cleaned up on unmount
 const subscription = methods.watch(() => { ... });
 ```
+
+## Models must embed parent entities, not foreign key IDs
+
+A model interface must include the full parent entity object, not a raw foreign key integer. The repository is responsible for the join.
+
+```ts
+// correct
+export interface Session {
+  patient: Patient;
+  // ...
+}
+
+// wrong
+export interface Session {
+  patientId: number;
+  // ...
+}
+```
+
+This ensures callers always have access to the full entity graph without a second lookup, and keeps the model layer decoupled from database column names.
+
+## One-to-many child collections are saved atomically with their parent
+
+When a model owns a list of children (e.g. `TreatmentPlan.goals`, `Invoice.positions`), the repository must save the children as part of the parent `save()` call using a transaction — delete all existing children for that parent, then reinsert from the array in the payload.
+
+Do not expose individual `saveChild` / `deleteChild` methods on the repository for children that are always managed through their parent.
+
+```ts
+private async upsertGoals(planId: number, goals: TreatmentGoal[], trx: Database) {
+  await trx.deleteFrom("treatment_goals").where("treatmentPlanId", "=", planId).execute();
+  if (goals.length === 0) return;
+  await trx.insertInto("treatment_goals").values(
+    goals.map((g) => ({ ...g, treatmentPlanId: planId }))
+  ).execute();
+}
+```
+
+The child model type contains only data fields — no `id`, no parent FK, no `createdAt`. These are DB implementation details managed by the repository.

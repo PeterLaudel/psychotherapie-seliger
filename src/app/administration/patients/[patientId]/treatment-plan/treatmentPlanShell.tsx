@@ -1,0 +1,59 @@
+"use client";
+
+import { useTransition } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { TreatmentPlan } from "@/models/treatmentPlan";
+import { upsertTreatmentPlan } from "./actions";
+import TreatmentPlanForm, { PlanFormValues } from "./treatmentPlanForm";
+
+function toFormValues(plan: TreatmentPlan | null): PlanFormValues {
+  return {
+    startDate: plan?.startDate ?? new Date().toISOString().slice(0, 10),
+    endDate: plan?.endDate ?? "",
+    therapyForm: plan?.therapyForm ?? "Einzeltherapie",
+    phase: plan?.phase ?? "Diagnostik",
+    approvedSessions: plan?.approvedSessions ?? null,
+    notes: plan?.notes ?? "",
+    goals: plan?.goals ?? [],
+  };
+}
+
+interface Props {
+  patientId: number;
+  initialPlan: TreatmentPlan | null;
+}
+
+export default function TreatmentPlanShell({ patientId, initialPlan }: Props) {
+  const [isPending, startTransition] = useTransition();
+
+  const methods = useForm<PlanFormValues>({
+    defaultValues: toFormValues(initialPlan),
+  });
+
+  const onSubmit = (values: PlanFormValues) => {
+    startTransition(async () => {
+      await upsertTreatmentPlan(
+        patientId,
+        {
+          startDate: values.startDate,
+          endDate: values.endDate || null,
+          therapyForm: values.therapyForm,
+          phase: values.phase,
+          approvedSessions: values.approvedSessions,
+          notes: values.notes || null,
+          goals: values.goals,
+        },
+        initialPlan?.id
+      );
+    });
+  };
+
+  return (
+    <FormProvider {...methods}>
+      <TreatmentPlanForm
+        onSubmit={methods.handleSubmit(onSubmit)}
+        isPending={isPending}
+      />
+    </FormProvider>
+  );
+}

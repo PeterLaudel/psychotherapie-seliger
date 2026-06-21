@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Session } from "@/models/session";
+import { TreatmentPlan } from "@/models/treatmentPlan";
 import { updateSession } from "../actions";
 import SessionForm from "./sessionForm";
 
@@ -47,9 +48,11 @@ function toSessionPayload(values: SessionFormValues): Partial<Session> {
 
 interface Props {
   initialSession: Session;
+  treatmentPlan: TreatmentPlan | null;
+  previousSession: Session | null;
 }
 
-export default function SessionFormShell({ initialSession }: Props) {
+export default function SessionFormShell({ initialSession, treatmentPlan, previousSession }: Props) {
   const [session, setSession] = useState<Session>(initialSession);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -89,6 +92,8 @@ export default function SessionFormShell({ initialSession }: Props) {
         session={session}
         saveStatus={saveStatus}
         onFinalize={handleFinalize}
+        treatmentPlan={treatmentPlan}
+        previousSession={previousSession}
       />
     </FormProvider>
   );
