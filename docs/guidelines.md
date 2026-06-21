@@ -24,6 +24,64 @@ CI=true npm run e2e # playwright e2e tests (CI=true disables retries and the bro
 
 `npm run ci` runs typecheck, lint, and unit tests in one command. E2e tests require the dev server to be running and a seeded database, so they are run separately.
 
+## E2e tests cover every UI feature with Playwright
+
+Every user-facing feature must have Playwright e2e tests in `e2e/<feature>/`. Tests use the custom `test` fixture from `e2e/fixtures.ts`, which injects an auth cookie and clears the database after each test. Seed data goes through factories — never raw DB calls in spec files.
+
+```ts
+import { patientFactory } from "factories/patient";
+import { test, expect } from "../fixtures";
+
+test("creates a treatment plan and shows success message", async ({ page }) => {
+  const patient = await patientFactory.create();
+  await page.goto(`/administration/patients/${patient.id}/treatment-plan`);
+
+  await page.getByRole("textbox", { name: "Beginn" }).fill("2024-01-15");
+  await page.getByRole("button", { name: "Speichern" }).click();
+
+  await expect(page.getByText("Behandlungsplan gespeichert")).toBeVisible();
+});
+```
+
+Use `getByRole` with an accessible name as the primary locator. Interactive elements that have no visible label (icon buttons) must carry an `aria-label` so tests can target them without relying on emoji text or DOM structure.
+
+Split tests by operation: `create.spec.ts` for creation flows, `update.spec.ts` for edit/delete flows, `show.spec.ts` for read-only display assertions.
+
+E2e tests require a production build (`npm run build`) and run with `CI=true npm run e2e`. They are separate from the unit/integration suite (`npm run ci`) because they need the dev server and a seeded database.
+
+## Form save button placement
+
+Every form that persists data must use `SubmitButton` (`src/components/submitButton.tsx`) as its submit control. Place it at the bottom of the form, left-aligned:
+
+```tsx
+<form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+  <Section>...</Section>
+  <Section>...</Section>
+  <SubmitButton submitting={isPending} className="justify-self-start">
+    Speichern
+  </SubmitButton>
+</form>
+```
+
+Use `"Speichern"` for edit forms and `"Anlegen"` for creation forms. Do not place save triggers inside section cards, in a top bar, or as floating buttons — the bottom position sets a consistent expectation for users and makes the save action easy to find after editing any field.
+
+## Show a success snackbar after every form save
+
+After a successful mutation, call `showSuccessMessage` from `useSnackbar` (`@/contexts/snackbarProvider`). This gives the user explicit confirmation that their change was persisted.
+
+```tsx
+const { showSuccessMessage } = useSnackbar();
+
+const onSubmit = (values: FormValues) => {
+  startTransition(async () => {
+    await save(values);
+    showSuccessMessage("Behandlungsplan gespeichert");
+  });
+};
+```
+
+Use a past-tense German phrase that names the entity: `"Patient gespeichert"`, `"Behandlungsplan gespeichert"`, `"Sitzung abgeschlossen"`. Do not show a snackbar on error — let the form handle validation feedback inline.
+
 ## Use React Hook Form for all forms
 
 All forms must use `useForm` / `FormProvider` / `useFormContext`. Do not manage form state with `useState` or track values with refs. RHF stores field state internally via refs, which means `getValues()` always returns the current, complete form snapshot without triggering re-renders.
@@ -157,3 +215,41 @@ The React Compiler eslint plugin flags `methods.watch()` inside a `useEffect` as
 // eslint-disable-next-line react-hooks/incompatible-library -- RHF watch() subscription; cleaned up on unmount
 const subscription = methods.watch(() => { ... });
 ```
+
+## Models must embed parent entities, not foreign key IDs
+
+A model interface must include the full parent entity object, not a raw foreign key integer. The repository is responsible for the join.
+
+```ts
+// correct
+export interface Session {
+  patient: Patient;
+  // ...
+}
+
+// wrong
+export interface Session {
+  patientId: number;
+  // ...
+}
+```
+
+This ensures callers always have access to the full entity graph without a second lookup, and keeps the model layer decoupled from database column names.
+
+## One-to-many child collections are saved atomically with their parent
+
+When a model owns a list of children (e.g. `TreatmentPlan.goals`, `Invoice.positions`), the repository must save the children as part of the parent `save()` call using a transaction — delete all existing children for that parent, then reinsert from the array in the payload.
+
+Do not expose individual `saveChild` / `deleteChild` methods on the repository for children that are always managed through their parent.
+
+```ts
+private async upsertGoals(planId: number, goals: TreatmentGoal[], trx: Database) {
+  await trx.deleteFrom("treatment_goals").where("treatmentPlanId", "=", planId).execute();
+  if (goals.length === 0) return;
+  await trx.insertInto("treatment_goals").values(
+    goals.map((g) => ({ ...g, treatmentPlanId: planId }))
+  ).execute();
+}
+```
+
+The child model type contains only data fields — no `id`, no parent FK, no `createdAt`. These are DB implementation details managed by the repository.

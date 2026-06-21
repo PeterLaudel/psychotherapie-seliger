@@ -19,11 +19,13 @@ export default function Layout({
       <body className={inter.className}>
         <Provider>
           <SnackbarProvider>
-            <div className="flex flex-col bg-gray-100 h-screen overflow-auto">
-              <div className="sticky top-0 left-0 z-10">
+            <div className="flex flex-col bg-gray-100 h-screen">
+              <div className="shrink-0 z-10">
                 <Navbar />
               </div>
-              {children}
+              <div className="flex-1 overflow-auto">
+                {children}
+              </div>
             </div>
           </SnackbarProvider>
         </Provider>

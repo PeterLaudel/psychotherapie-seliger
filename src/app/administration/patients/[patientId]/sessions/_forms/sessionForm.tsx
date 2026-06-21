@@ -3,6 +3,7 @@
 import {
   Button,
   Chip,
+  Collapse,
   FormControl,
   InputLabel,
   MenuItem,
@@ -10,6 +11,7 @@ import {
   Slider,
   TextField,
 } from "@mui/material";
+import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import Section from "@/components/section";
 import {
@@ -20,12 +22,15 @@ import {
   INTERVENTIONS,
   RiskLevel,
 } from "@/models/session";
+import { TreatmentPlan, GOAL_STATUSES } from "@/models/treatmentPlan";
 import { SessionFormValues } from "./sessionFormShell";
 
 interface Props {
   session: Session;
   saveStatus: "idle" | "saving" | "saved";
   onFinalize: () => void;
+  treatmentPlan: TreatmentPlan | null;
+  previousSession: Session | null;
 }
 
 const riskButtonColors: Record<RiskLevel, string> = {
@@ -41,7 +46,88 @@ const saveStatusLabel: Record<"idle" | "saving" | "saved", string> = {
   saved: "Entwurf gespeichert",
 };
 
-export default function SessionForm({ session, saveStatus, onFinalize }: Props) {
+function ContextPanel({ treatmentPlan, previousSession }: Pick<Props, "treatmentPlan" | "previousSession">) {
+  const [goalsOpen, setGoalsOpen] = useState(true);
+  const [prevOpen, setPrevOpen] = useState(false);
+
+  const activeGoals = treatmentPlan?.goals.filter((g) => g.status === "active") ?? [];
+
+  return (
+    <div className="shadow-xl bg-white p-4 grid gap-4 self-start lg:sticky lg:top-4">
+      <h2>Kontext</h2>
+
+      {treatmentPlan ? (
+        <div className="grid gap-1">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Behandlungsplan</p>
+          <p className="text-sm">{treatmentPlan.therapyForm}</p>
+          <p className="text-sm text-gray-500">{treatmentPlan.phase}</p>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-400">Kein Behandlungsplan vorhanden.</p>
+      )}
+
+      {treatmentPlan && (
+        <div>
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2"
+            onClick={() => setGoalsOpen((o) => !o)}
+          >
+            Therapieziele ({activeGoals.length})
+            <span>{goalsOpen ? "▲" : "▼"}</span>
+          </button>
+          <Collapse in={goalsOpen}>
+            {activeGoals.length === 0 ? (
+              <p className="text-sm text-gray-400">Keine aktiven Ziele.</p>
+            ) : (
+              <ul className="grid gap-1">
+                {activeGoals.map((g, i) => {
+                  const statusLabel = GOAL_STATUSES.find((s) => s.value === g.status)?.label;
+                  return (
+                    <li key={i} className="text-sm flex items-start gap-2">
+                      <Chip label={statusLabel} size="small" color="primary" />
+                      <span>{g.description}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </Collapse>
+        </div>
+      )}
+
+      {previousSession && (
+        <div>
+          <button
+            type="button"
+            className="flex items-center gap-1 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2"
+            onClick={() => setPrevOpen((o) => !o)}
+          >
+            Letzte Sitzung ({new Intl.DateTimeFormat("de-DE").format(new Date(previousSession.sessionDate))})
+            <span>{prevOpen ? "▲" : "▼"}</span>
+          </button>
+          <Collapse in={prevOpen}>
+            <div className="grid gap-1">
+              {previousSession.riskLevel && previousSession.riskLevel !== "none" && (
+                <p className="text-sm">
+                  Risiko:{" "}
+                  <span className="font-medium">
+                    {RISK_LEVELS.find((r) => r.value === previousSession.riskLevel)?.label ?? previousSession.riskLevel}
+                  </span>
+                </p>
+              )}
+              {previousSession.nextSessionPlan && (
+                <p className="text-sm text-gray-600 whitespace-pre-wrap">{previousSession.nextSessionPlan}</p>
+              )}
+            </div>
+          </Collapse>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function SessionForm({ session, saveStatus, onFinalize, treatmentPlan, previousSession }: Props) {
   const { control, register, watch } = useFormContext<SessionFormValues>();
   const [riskLevel, sessionDate, sessionType, phase] = watch([
     "riskLevel",
@@ -53,7 +139,7 @@ export default function SessionForm({ session, saveStatus, onFinalize }: Props) 
   const isFinalizeable =
     session.status !== "final" && !!sessionDate && !!riskLevel && !!sessionType;
 
-  return (
+  const formPanel = (
     <div className="grid gap-4">
       {riskLevel === "high" && (
         <div className="bg-red-500 text-white px-4 py-3 rounded font-semibold">
@@ -255,6 +341,13 @@ export default function SessionForm({ session, saveStatus, onFinalize }: Props) 
           fullWidth
         />
       </Section>
+    </div>
+  );
+
+  return (
+    <div className="grid lg:grid-cols-[280px_1fr] gap-4 items-start">
+      <ContextPanel treatmentPlan={treatmentPlan} previousSession={previousSession} />
+      {formPanel}
     </div>
   );
 }

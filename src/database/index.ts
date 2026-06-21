@@ -64,7 +64,9 @@ type DatabaseRecord = Record<keyof Database, undefined>;
 
 export async function clearDatabase(db: Kysely<Database>) {
   const allRecords: DatabaseRecord = {
-    sessions: undefined,        // FK → patients, must delete before patients
+    treatment_goals: undefined,  // FK → treatment_plans
+    treatment_plans: undefined,  // FK → patients
+    sessions: undefined,         // FK → patients
     invoicePositions: undefined,
     patientInvoices: undefined,
     invoices: undefined,

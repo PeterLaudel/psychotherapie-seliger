@@ -9,6 +9,8 @@ export interface Database {
   serviceAmounts: ServiceAmountsTable;
   therapeuts: TherapeutsTable;
   sessions: SessionsTable;
+  treatment_plans: TreatmentPlansTable;
+  treatment_goals: TreatmentGoalsTable;
 }
 
 interface PatientTable {
@@ -106,5 +108,27 @@ export interface SessionsTable {
   nextSessionPlan: string | null;
   status: "draft" | "final";
   deletedAt: string | null;
+  createdAt: Generated<string>;
+}
+
+export interface TreatmentPlansTable {
+  id: Generated<number>;
+  patientId: number;
+  therapeutId: number | null;
+  startDate: string;
+  endDate: string | null;
+  therapyForm: string;
+  phase: string;
+  approvedSessions: number | null;
+  notes: string | null;
+  createdAt: Generated<string>;
+}
+
+export interface TreatmentGoalsTable {
+  id: Generated<number>;
+  treatmentPlanId: number;
+  description: string;
+  status: string;
+  priority: number;
   createdAt: Generated<string>;
 }
