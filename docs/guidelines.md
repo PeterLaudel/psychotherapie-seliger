@@ -24,6 +24,22 @@ CI=true npm run e2e # playwright e2e tests (CI=true disables retries and the bro
 
 `npm run ci` runs typecheck, lint, and unit tests in one command. E2e tests require the dev server to be running and a seeded database, so they are run separately.
 
+## Form save button placement
+
+Every form that persists data must use `SubmitButton` (`src/components/submitButton.tsx`) as its submit control. Place it at the bottom of the form, left-aligned:
+
+```tsx
+<form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+  <Section>...</Section>
+  <Section>...</Section>
+  <SubmitButton submitting={isPending} className="justify-self-start">
+    Speichern
+  </SubmitButton>
+</form>
+```
+
+Use `"Speichern"` for edit forms and `"Anlegen"` for creation forms. Do not place save triggers inside section cards, in a top bar, or as floating buttons — the bottom position sets a consistent expectation for users and makes the save action easy to find after editing any field.
+
 ## Use React Hook Form for all forms
 
 All forms must use `useForm` / `FormProvider` / `useFormContext`. Do not manage form state with `useState` or track values with refs. RHF stores field state internally via refs, which means `getValues()` always returns the current, complete form snapshot without triggering re-renders.

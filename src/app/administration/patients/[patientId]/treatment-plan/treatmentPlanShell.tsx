@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { TreatmentPlan } from "@/models/treatmentPlan";
 import { upsertTreatmentPlan } from "./actions";
@@ -24,6 +24,7 @@ interface Props {
 }
 
 export default function TreatmentPlanShell({ patientId, initialPlan }: Props) {
+  const [plan, setPlan] = useState<TreatmentPlan | null>(initialPlan);
   const [isPending, startTransition] = useTransition();
 
   const methods = useForm<PlanFormValues>({
@@ -32,7 +33,7 @@ export default function TreatmentPlanShell({ patientId, initialPlan }: Props) {
 
   const onSubmit = (values: PlanFormValues) => {
     startTransition(async () => {
-      await upsertTreatmentPlan(
+      const saved = await upsertTreatmentPlan(
         patientId,
         {
           startDate: values.startDate,
@@ -43,8 +44,9 @@ export default function TreatmentPlanShell({ patientId, initialPlan }: Props) {
           notes: values.notes || null,
           goals: values.goals,
         },
-        initialPlan?.id
+        plan?.id
       );
+      setPlan(saved);
     });
   };
 
