@@ -63,14 +63,16 @@ POST and PATCH mutations should be `"use server"` functions in an `actions.ts` f
 
 GET endpoints that return data (used by server components or external clients) remain as route handlers in `app/api/`.
 
-## PATCH handlers must use an explicit field allowlist
+## API route PATCH handlers must use an explicit field allowlist
 
-Never spread the raw request body into a `save` or `update` call. An `...body` spread lets a client overwrite any column, including `deletedAt`, `status`, or other fields not intended to be user-editable.
+Never spread the raw request body into a `save` or `update` call in an API route handler. An `...body` spread lets a client overwrite any column, including `deletedAt`, `status`, or other fields not intended to be user-editable.
 
 For each field, be explicit about nullability:
 
 - Non-nullable fields: `data.field ?? existing.field`
 - Nullable fields: `data.field !== undefined ? data.field : existing.field`
+
+This does not apply to server actions. Because server actions are called from typed TypeScript code rather than accepting raw HTTP input, `{ ...existing, ...data }` is safe — the TypeScript signature already constrains what `data` can contain.
 
 ## Route naming: use `/create`, not `/new`
 
