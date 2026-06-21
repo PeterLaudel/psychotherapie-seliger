@@ -35,29 +35,5 @@ export async function updateSession(
 ): Promise<Session> {
   const repo = await getSessionsRepository();
   const existing = await repo.find(id);
-  return repo.save({
-    ...existing,
-    id,
-    sessionDate: data.sessionDate ?? existing.sessionDate,
-    durationMinutes: data.durationMinutes ?? existing.durationMinutes,
-    sessionType: data.sessionType ?? existing.sessionType,
-    status: data.status ?? existing.status,
-    therapeutId:
-      data.therapeutId !== undefined ? data.therapeutId : existing.therapeutId,
-    phase: data.phase !== undefined ? data.phase : existing.phase,
-    moodStart:
-      data.moodStart !== undefined ? data.moodStart : existing.moodStart,
-    moodEnd: data.moodEnd !== undefined ? data.moodEnd : existing.moodEnd,
-    riskLevel:
-      data.riskLevel !== undefined ? data.riskLevel : existing.riskLevel,
-    interventions: data.interventions ?? existing.interventions,
-    clinicalNotes:
-      data.clinicalNotes !== undefined
-        ? data.clinicalNotes
-        : existing.clinicalNotes,
-    nextSessionPlan:
-      data.nextSessionPlan !== undefined
-        ? data.nextSessionPlan
-        : existing.nextSessionPlan,
-  });
+  return repo.save({ ...existing, ...data });
 }
