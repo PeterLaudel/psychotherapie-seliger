@@ -5,6 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { TreatmentPlan } from "@/models/treatmentPlan";
 import { upsertTreatmentPlan } from "./actions";
 import TreatmentPlanForm, { PlanFormValues } from "./treatmentPlanForm";
+import { useSnackbar } from "@/contexts/snackbarProvider";
 
 function toFormValues(plan: TreatmentPlan | null): PlanFormValues {
   return {
@@ -26,6 +27,7 @@ interface Props {
 export default function TreatmentPlanShell({ patientId, initialPlan }: Props) {
   const [plan, setPlan] = useState<TreatmentPlan | null>(initialPlan);
   const [isPending, startTransition] = useTransition();
+  const { showSuccessMessage } = useSnackbar();
 
   const methods = useForm<PlanFormValues>({
     defaultValues: toFormValues(initialPlan),
@@ -47,6 +49,7 @@ export default function TreatmentPlanShell({ patientId, initialPlan }: Props) {
         plan?.id
       );
       setPlan(saved);
+      showSuccessMessage("Behandlungsplan gespeichert");
     });
   };
 

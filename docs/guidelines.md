@@ -40,6 +40,23 @@ Every form that persists data must use `SubmitButton` (`src/components/submitBut
 
 Use `"Speichern"` for edit forms and `"Anlegen"` for creation forms. Do not place save triggers inside section cards, in a top bar, or as floating buttons — the bottom position sets a consistent expectation for users and makes the save action easy to find after editing any field.
 
+## Show a success snackbar after every form save
+
+After a successful mutation, call `showSuccessMessage` from `useSnackbar` (`@/contexts/snackbarProvider`). This gives the user explicit confirmation that their change was persisted.
+
+```tsx
+const { showSuccessMessage } = useSnackbar();
+
+const onSubmit = (values: FormValues) => {
+  startTransition(async () => {
+    await save(values);
+    showSuccessMessage("Behandlungsplan gespeichert");
+  });
+};
+```
+
+Use a past-tense German phrase that names the entity: `"Patient gespeichert"`, `"Behandlungsplan gespeichert"`, `"Sitzung abgeschlossen"`. Do not show a snackbar on error — let the form handle validation feedback inline.
+
 ## Use React Hook Form for all forms
 
 All forms must use `useForm` / `FormProvider` / `useFormContext`. Do not manage form state with `useState` or track values with refs. RHF stores field state internally via refs, which means `getValues()` always returns the current, complete form snapshot without triggering re-renders.
