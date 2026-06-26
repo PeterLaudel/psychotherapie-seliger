@@ -63,7 +63,7 @@ Every form that persists data must use `SubmitButton` (`src/components/submitBut
 </form>
 ```
 
-Use `"Speichern"` for edit forms and `"Anlegen"` for creation forms. Do not place save triggers inside section cards, in a top bar, or as floating buttons — the bottom position sets a consistent expectation for users and makes the save action easy to find after editing any field.
+Use `"Speichern"` for all save/create actions — do not use `"Anlegen"`, `"Erstellen"`, or `"Hinzufügen"`. Do not place save triggers inside section cards, in a top bar, or as floating buttons — the bottom position sets a consistent expectation for users and makes the save action easy to find after editing any field.
 
 ## Show a success snackbar after every form save
 
@@ -253,3 +253,33 @@ private async upsertGoals(planId: number, goals: TreatmentGoal[], trx: Database)
 ```
 
 The child model type contains only data fields — no `id`, no parent FK, no `createdAt`. These are DB implementation details managed by the repository.
+
+## Repository write methods are always named `save`
+
+Use `save` for both insert and update — never `create`, `insert`, `update`, or `upsert`. The method detects which operation to perform based on whether an `id` is present on the payload.
+
+```ts
+async save(plan: TreatmentPlanSave): Promise<TreatmentPlan> {
+  const { id: originId, ... } = plan;
+  const { id } = originId
+    ? await trx.updateTable(...).executeTakeFirstOrThrow()
+    : await trx.insertInto(...).executeTakeFirstOrThrow();
+  return this.find(id);
+}
+```
+
+## Repository methods take models, not raw IDs
+
+Methods that act on a specific entity receive the model (or a `Pick<Model, "id">`), never a bare integer. This makes call sites self-documenting and prevents accidental ID mix-ups between entity types.
+
+```ts
+// correct
+async updateStatus(homework: Pick<Homework, "id">, status: HomeworkStatus): Promise<void>
+async softDelete(session: Pick<Session, "id">): Promise<void>
+
+// wrong
+async updateStatus(id: number, status: HomeworkStatus): Promise<void>
+async softDelete(id: number): Promise<void>
+```
+
+Query methods that take filter parameters (e.g. `patientId` as a search criterion) are not entity references and may use scalar types.

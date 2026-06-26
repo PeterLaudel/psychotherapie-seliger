@@ -5,7 +5,7 @@ test("creates a session from the patient sessions page", async ({ page }) => {
   const patient = await patientFactory.create({ name: "Anna", surname: "Müller" });
 
   await page.goto(`/administration/patients/${patient.id}/sessions`);
-  await page.getByRole("button", { name: "Sitzung dokumentieren" }).click();
+  await page.getByRole("button", { name: "Sitzung starten" }).click();
 
   await expect(page).toHaveURL(
     new RegExp(`/administration/patients/${patient.id}/sessions/\\d+`),
@@ -20,7 +20,7 @@ test("creates and finalizes a session", async ({ page }) => {
   const patient = await patientFactory.create({ name: "Anna", surname: "Müller" });
 
   await page.goto(`/administration/patients/${patient.id}/sessions`);
-  await page.getByRole("button", { name: "Sitzung dokumentieren" }).click();
+  await page.getByRole("button", { name: "Sitzung starten" }).click();
 
   await expect(page).toHaveURL(
     new RegExp(`/administration/patients/${patient.id}/sessions/\\d+`),

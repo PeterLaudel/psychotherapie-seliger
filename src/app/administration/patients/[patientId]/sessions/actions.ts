@@ -2,13 +2,16 @@
 
 import { getPatientsRepository, getSessionsRepository } from "@/server";
 import { Session } from "@/models/session";
+import { SessionSave } from "@/repositories/sessionsRepository";
 
 export async function createSession(patientId: number): Promise<Session> {
-  const patientRepository = await getPatientsRepository();
+  const [patientRepository, repo] = await Promise.all([
+    getPatientsRepository(),
+    getSessionsRepository(),
+  ]);
   const patient = await patientRepository.find(patientId);
-
-  const repo = await getSessionsRepository();
   const sessionNumber = await repo.nextSessionNumber(patient);
+  const previousSession = await repo.findPreviousSession(patientId, sessionNumber);
 
   return repo.save({
     patient,
@@ -26,12 +29,17 @@ export async function createSession(patientId: number): Promise<Session> {
     nextSessionPlan: null,
     status: "draft",
     deletedAt: null,
+    givenHomework: [],
+    reviewHomework: previousSession?.givenHomework.map((h) => ({
+      description: h.description,
+      status: "open" as const,
+    })) ?? [],
   });
 }
 
 export async function updateSession(
   id: number,
-  data: Partial<Session>,
+  data: Partial<SessionSave>,
 ): Promise<Session> {
   const repo = await getSessionsRepository();
   const existing = await repo.find(id);

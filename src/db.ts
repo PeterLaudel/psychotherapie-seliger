@@ -11,6 +11,7 @@ export interface Database {
   sessions: SessionsTable;
   treatment_plans: TreatmentPlansTable;
   treatment_goals: TreatmentGoalsTable;
+  homework: HomeworkTable;
 }
 
 interface PatientTable {
@@ -130,5 +131,14 @@ export interface TreatmentGoalsTable {
   description: string;
   status: string;
   priority: number;
+  createdAt: Generated<string>;
+}
+
+export interface HomeworkTable {
+  id: Generated<number>;
+  sessionId: number;
+  type: "given" | "review";
+  description: string;
+  status: string | null; // null for given items, HomeworkStatus for review items
   createdAt: Generated<string>;
 }

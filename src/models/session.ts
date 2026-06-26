@@ -47,6 +47,7 @@ export const INTERVENTIONS: string[] = [
 ];
 
 import { Patient } from "./patient";
+import { GivenHomework, ReviewHomework } from "./homework";
 
 export interface Session {
   id: number;
@@ -66,4 +67,6 @@ export interface Session {
   deletedAt: string | null;
   createdAt: string;
   patient: Patient;
+  givenHomework: GivenHomework[];
+  reviewHomework: ReviewHomework[];
 }
