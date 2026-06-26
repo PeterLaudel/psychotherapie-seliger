@@ -1,5 +1,5 @@
 import { type Database } from "@/initialize";
-import { jsonObjectFrom } from "@/database";
+import { jsonObjectFrom, jsonArrayFrom } from "@/database";
 import { patientSelector } from "./patient";
 
 export function sessionSelector(database: Database) {
@@ -30,5 +30,21 @@ export function sessionSelector(database: Database) {
       )
         .$notNull()
         .as("patient"),
+      jsonArrayFrom(
+        database
+          .selectFrom("homework")
+          .select(["homework.description"])
+          .whereRef("homework.sessionId", "=", ref("sessions.id"))
+          .where("homework.type", "=", "given")
+          .orderBy("homework.createdAt", "asc")
+      ).as("givenHomework"),
+      jsonArrayFrom(
+        database
+          .selectFrom("homework")
+          .select(["homework.description", "homework.status"])
+          .whereRef("homework.sessionId", "=", ref("sessions.id"))
+          .where("homework.type", "=", "review")
+          .orderBy("homework.createdAt", "asc")
+      ).as("reviewHomework"),
     ]);
 }

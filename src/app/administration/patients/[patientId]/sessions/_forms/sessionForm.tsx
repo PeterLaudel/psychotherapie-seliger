@@ -5,14 +5,17 @@ import {
   Chip,
   Collapse,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   Slider,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import Section from "@/components/section";
 import {
   Session,
@@ -22,6 +25,7 @@ import {
   INTERVENTIONS,
   RiskLevel,
 } from "@/models/session";
+import { HOMEWORK_STATUSES, HomeworkStatus } from "@/models/homework";
 import { TreatmentPlan, GOAL_STATUSES } from "@/models/treatmentPlan";
 import { SessionFormValues } from "./sessionFormShell";
 
@@ -129,6 +133,9 @@ function ContextPanel({ treatmentPlan, previousSession }: Pick<Props, "treatment
 
 export default function SessionForm({ session, saveStatus, onFinalize, treatmentPlan, previousSession }: Props) {
   const { control, register, watch } = useFormContext<SessionFormValues>();
+  const { fields: givenFields, append: appendGiven, remove: removeGiven } = useFieldArray({ control, name: "givenHomework" });
+  const { fields: reviewFields } = useFieldArray({ control, name: "reviewHomework" });
+
   const [riskLevel, sessionDate, sessionType, phase] = watch([
     "riskLevel",
     "sessionDate",
@@ -340,6 +347,74 @@ export default function SessionForm({ session, saveStatus, onFinalize, treatment
           minRows={3}
           fullWidth
         />
+      </Section>
+
+      {reviewFields.length > 0 && (
+        <Section>
+          <h2 className="mb-4">Hausaufgaben — Rückschau</h2>
+          <div className="grid gap-4">
+            {/* Controller required: ToggleButtonGroup is not a native input */}
+            {reviewFields.map((field, index) => (
+              <Controller
+                key={field.id}
+                name={`reviewHomework.${index}.status`}
+                control={control}
+                render={({ field: statusField }) => (
+                  <div className="grid gap-1">
+                    <p className="text-sm">{field.description}</p>
+                    <ToggleButtonGroup
+                      value={statusField.value}
+                      exclusive
+                      onChange={(_e, value: HomeworkStatus | null) => {
+                        if (value) statusField.onChange(value);
+                      }}
+                      size="small"
+                      aria-label="Hausaufgaben-Status"
+                    >
+                      {HOMEWORK_STATUSES.map(({ value, label }) => (
+                        <ToggleButton key={value} value={value} aria-label={label}>
+                          {label}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+                  </div>
+                )}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
+
+      <Section>
+        <h2 className="mb-4">Hausaufgaben — Vergabe</h2>
+        <div className="grid gap-2">
+          {givenFields.map((field, index) => (
+            <div key={field.id} className="flex gap-2 items-center">
+              <TextField
+                {...register(`givenHomework.${index}.description`)}
+                label={`Hausaufgabe ${index + 1}`}
+                size="small"
+                fullWidth
+              />
+              <IconButton
+                onClick={() => removeGiven(index)}
+                aria-label="Hausaufgabe entfernen"
+                size="small"
+              >
+                ✕
+              </IconButton>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outlined"
+            size="small"
+            onClick={() => appendGiven({ description: "" })}
+            className="justify-self-start"
+          >
+            + Hausaufgabe hinzufügen
+          </Button>
+        </div>
       </Section>
     </div>
   );

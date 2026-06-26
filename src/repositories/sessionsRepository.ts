@@ -1,5 +1,6 @@
 import { Database } from "@/initialize";
 import { Session } from "@/models/session";
+import { GivenHomework, ReviewHomework } from "@/models/homework";
 import { sessionSelector } from "./selectors/session";
 import { Patient } from "@/models/patient";
 
@@ -53,6 +54,28 @@ export class SessionsRepository {
     return { rows: rawRows, total: Number(countResult.total) };
   }
 
+  async findOpenSession(patientId: number): Promise<Session | null> {
+    const row = await sessionSelector(this.database)
+      .where("sessions.patientId", "=", patientId)
+      .where("sessions.status", "=", "draft")
+      .where("sessions.deletedAt", "is", null)
+      .$castTo<Session>()
+      .executeTakeFirst();
+
+    return row ?? null;
+  }
+
+  async findPreviousSession(patientId: number, currentSessionNumber: number): Promise<Session | null> {
+    const row = await sessionSelector(this.database)
+      .where("sessions.patientId", "=", patientId)
+      .where("sessions.sessionNumber", "=", currentSessionNumber - 1)
+      .where("sessions.deletedAt", "is", null)
+      .$castTo<Session>()
+      .executeTakeFirst();
+
+    return row ?? null;
+  }
+
   async nextSessionNumber(patient: Pick<Patient, "id">): Promise<number> {
     const result = await this.database
       .selectFrom("sessions")
@@ -64,30 +87,52 @@ export class SessionsRepository {
   }
 
   async save(session: SessionSave): Promise<Session> {
-    const { id: originId, interventions, patient, ...rest } = session;
+    const { id: originId, interventions, patient, givenHomework, reviewHomework, ...rest } = session;
     const data = { ...rest, interventions: JSON.stringify(interventions), patientId: patient.id };
 
-    const { id } = originId
-      ? await this.database
-          .updateTable("sessions")
-          .set(data)
-          .returning(["id"])
-          .where("sessions.id", "=", originId)
-          .executeTakeFirstOrThrow()
-      : await this.database
-          .insertInto("sessions")
-          .values(data)
-          .returning(["id"])
-          .executeTakeFirstOrThrow();
+    const id = await this.database.transaction().execute(async (trx) => {
+      const { id: savedId } = originId
+        ? await trx
+            .updateTable("sessions")
+            .set(data)
+            .returning(["id"])
+            .where("sessions.id", "=", originId)
+            .executeTakeFirstOrThrow()
+        : await trx
+            .insertInto("sessions")
+            .values(data)
+            .returning(["id"])
+            .executeTakeFirstOrThrow();
+
+      await this.upsertHomework(savedId, givenHomework, reviewHomework, trx);
+      return savedId;
+    });
 
     return this.find(id);
   }
 
-  async softDelete(id: number): Promise<void> {
+  private async upsertHomework(
+    sessionId: number,
+    givenHomework: GivenHomework[],
+    reviewHomework: ReviewHomework[],
+    trx: Database
+  ) {
+    await trx.deleteFrom("homework").where("homework.sessionId", "=", sessionId).execute();
+
+    const rows = [
+      ...givenHomework.map((h) => ({ sessionId, type: "given" as const, description: h.description, status: null })),
+      ...reviewHomework.map((h) => ({ sessionId, type: "review" as const, description: h.description, status: h.status })),
+    ];
+
+    if (rows.length === 0) return;
+    await trx.insertInto("homework").values(rows).execute();
+  }
+
+  async softDelete(session: Pick<Session, "id">): Promise<void> {
     await this.database
       .updateTable("sessions")
       .set({ deletedAt: new Date().toISOString() })
-      .where("sessions.id", "=", id)
+      .where("sessions.id", "=", session.id)
       .execute();
   }
 }

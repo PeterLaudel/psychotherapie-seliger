@@ -12,15 +12,12 @@ export default async function Page(props: Props) {
     getTreatmentPlansRepository(),
   ]);
 
-  const [session, treatmentPlan, { rows: allSessions }] = await Promise.all([
-    sessionsRepo.find(Number(sessionId)),
-    plansRepo.findByPatientId(Number(patientId)),
-    sessionsRepo.filter({ patientId: Number(patientId) }),
-  ]);
+  const session = await sessionsRepo.find(Number(sessionId));
 
-  const previousSession = allSessions.find(
-    (s) => s.sessionNumber === session.sessionNumber - 1
-  ) ?? null;
+  const [treatmentPlan, previousSession] = await Promise.all([
+    plansRepo.findByPatientId(Number(patientId)),
+    sessionsRepo.findPreviousSession(Number(patientId), session.sessionNumber),
+  ]);
 
   return (
     <div className="m-4 grid gap-4 grid-flow-row h-fit">

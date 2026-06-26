@@ -34,7 +34,7 @@ describe("SessionsRepository", () => {
 
     it("throws when the session is soft-deleted", async () => {
       const session = await sessionFactory.create();
-      await sessionsRepository.softDelete(session.id);
+      await sessionsRepository.softDelete(session);
 
       await expect(sessionsRepository.find(session.id)).rejects.toThrow();
     });
@@ -67,7 +67,7 @@ describe("SessionsRepository", () => {
     it("excludes soft-deleted sessions", async () => {
       const kept = await sessionFactory.create();
       const deleted = await sessionFactory.create();
-      await sessionsRepository.softDelete(deleted.id);
+      await sessionsRepository.softDelete(deleted);
 
       const { rows, total } = await sessionsRepository.filter({});
 
@@ -144,6 +144,8 @@ describe("SessionsRepository", () => {
         nextSessionPlan: null,
         status: "draft",
         deletedAt: null,
+        givenHomework: [],
+        reviewHomework: [],
       });
 
       expect(session).toMatchObject({
@@ -176,6 +178,8 @@ describe("SessionsRepository", () => {
         nextSessionPlan: null,
         status: "draft",
         deletedAt: null,
+        givenHomework: [],
+        reviewHomework: [],
       });
 
       expect(session.interventions).toEqual(interventions);
@@ -195,6 +199,8 @@ describe("SessionsRepository", () => {
         interventions: session.interventions as unknown as string[],
         riskLevel: "high",
         status: "final",
+        givenHomework: [],
+        reviewHomework: [],
       });
 
       expect(updated).toMatchObject({
@@ -209,7 +215,7 @@ describe("SessionsRepository", () => {
     it("sets deletedAt and hides the session from find and filter", async () => {
       const session = await sessionFactory.create();
 
-      await sessionsRepository.softDelete(session.id);
+      await sessionsRepository.softDelete(session);
 
       await expect(sessionsRepository.find(session.id)).rejects.toThrow();
       const { total } = await sessionsRepository.filter({
@@ -221,7 +227,7 @@ describe("SessionsRepository", () => {
     it("records a non-null deletedAt timestamp in the DB", async () => {
       const session = await sessionFactory.create();
 
-      await sessionsRepository.softDelete(session.id);
+      await sessionsRepository.softDelete(session);
 
       const row = await getDb()
         .selectFrom("sessions")

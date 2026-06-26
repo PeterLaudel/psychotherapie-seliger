@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Session } from "@/models/session";
+import { HomeworkStatus } from "@/models/homework";
 import { TreatmentPlan } from "@/models/treatmentPlan";
 import { updateSession } from "../actions";
 import SessionForm from "./sessionForm";
@@ -18,6 +19,8 @@ export type SessionFormValues = {
   interventions: string[];
   clinicalNotes: string;
   nextSessionPlan: string;
+  givenHomework: { description: string }[];
+  reviewHomework: { description: string; status: HomeworkStatus }[];
 };
 
 function toFormValues(session: Session): SessionFormValues {
@@ -32,6 +35,8 @@ function toFormValues(session: Session): SessionFormValues {
     interventions: session.interventions,
     clinicalNotes: session.clinicalNotes ?? "",
     nextSessionPlan: session.nextSessionPlan ?? "",
+    givenHomework: session.givenHomework,
+    reviewHomework: session.reviewHomework,
   };
 }
 

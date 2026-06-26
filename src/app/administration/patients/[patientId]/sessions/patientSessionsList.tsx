@@ -64,9 +64,10 @@ const columns: GridColDef<Session>[] = [
 interface Props {
   patientId: string;
   initialSessions: Session[];
+  openSession: Session | null;
 }
 
-export default function PatientSessionsList({ patientId, initialSessions }: Props) {
+export default function PatientSessionsList({ patientId, initialSessions, openSession }: Props) {
   const router = useRouter();
   const [creating, setCreating] = useState(false);
   const query = { patientId: Number(patientId) };
@@ -77,23 +78,30 @@ export default function PatientSessionsList({ patientId, initialSessions }: Prop
     initialData: { rows: initialSessions, total: initialSessions.length },
   });
 
+  const sessionUrl = (id: number) =>
+    `/administration/patients/${patientId}/sessions/${id}`;
+
   return (
     <Section>
       <div className="grid grid-flow-row gap-4">
         <div className="flex justify-end">
-          <Button
-            disabled={creating}
-            onClick={() => {
-              setCreating(true);
-              void createSession(Number(patientId)).then((session) => {
-                router.push(
-                  `/administration/patients/${patientId}/sessions/${session.id}`
-                );
-              });
-            }}
-          >
-            Sitzung dokumentieren
-          </Button>
+          {openSession ? (
+            <Button onClick={() => router.push(sessionUrl(openSession.id))}>
+              Sitzung fortsetzen
+            </Button>
+          ) : (
+            <Button
+              disabled={creating}
+              onClick={() => {
+                setCreating(true);
+                void createSession(Number(patientId)).then((session) => {
+                  router.push(sessionUrl(session.id));
+                });
+              }}
+            >
+              Sitzung starten
+            </Button>
+          )}
         </div>
         <NoSsr>
           <div className="h-full w-full">

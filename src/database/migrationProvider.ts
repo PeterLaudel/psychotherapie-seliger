@@ -14,6 +14,8 @@ import * as m0012 from "../../migrations/0012_alter_invoice_positions_add_price"
 import * as m0013 from "../../migrations/0013_alter_patients_add_encryption";
 import * as m0014 from "../../migrations/0014_add_more_service_default_data";
 import * as m0015 from "../../migrations/0015_add_sessions";
+import * as m0016 from "../../migrations/0016_add_treatment_plans";
+import * as m0017 from "../../migrations/0017_add_homework";
 
 const migrations: Record<string, Migration> = {
   "0001_add_patients_table": m0001,
@@ -31,6 +33,8 @@ const migrations: Record<string, Migration> = {
   "0013_alter_patients_add_encryption": m0013,
   "0014_add_more_service_default_data": m0014,
   "0015_add_sessions": m0015,
+  "0016_add_treatment_plans": m0016,
+  "0017_add_homework": m0017,
 };
 
 export const migrationProvider: MigrationProvider = {
