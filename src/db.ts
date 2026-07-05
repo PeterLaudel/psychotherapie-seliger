@@ -110,6 +110,9 @@ export interface SessionsTable {
   status: "draft" | "final";
   deletedAt: string | null;
   createdAt: Generated<string>;
+  pseudonymizedNotes: string | null;
+  pseudonymizedNextPlan: string | null;
+  pseudonymizationStatus: "pending" | "done" | "failed" | null;
 }
 
 export interface TreatmentPlansTable {
