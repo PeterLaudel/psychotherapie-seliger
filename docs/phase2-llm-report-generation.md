@@ -3,20 +3,26 @@
 ## Architecture Overview
 
 ```
-Session finalized by therapist
-        ↓
-[Background] Ollama/mistral → pseudonymized_notes stored in DB
-        ↓
-Therapist clicks "Generate Report"
-        ↓
-Verification modal: review & optionally edit pseudonymized text
-        ↓
-[Confirm] → Claude API → report draft (placeholders only)
-        ↓
-Therapist reviews, edits, approves
-        ↓
-Export: placeholders → real names (final document only)
+┌─────────────────────────────┐     ┌─────────────────────────────┐
+│        Next.js app          │     │         Worker process       │
+│                             │     │         (src/worker.ts)      │
+│  Finalize session           │     │                              │
+│    → UPDATE sessions        │     │  Poll outbox every ~2s       │
+│    → INSERT outbox event    │     │    → pseudonymize_session    │
+│      [single transaction]   │     │      → Ollama/mistral        │
+│                             │     │    → generate_report         │
+│  Generate report            │     │      → Claude API            │
+│    → INSERT reports         │     │                              │
+│    → INSERT report_sessions │     │  Marks outbox row processed  │
+│    → INSERT outbox event    │     │  Updates session/report row  │
+│      [single transaction]   │     └─────────────────────────────┘
+│    → returns reportId       │
+│                             │
+│  UI polls report status     │
+└─────────────────────────────┘
 ```
+
+Two processes run in Docker Compose — Next.js and the worker. The outbox table is the handoff point. Either process can restart independently without losing jobs.
 
 ---
 
@@ -30,7 +36,17 @@ New fields on the existing `sessions` table:
 | `pseudonymized_next_plan` | text \| null | Pseudonymized `nextSessionPlan` text |
 | `pseudonymization_status` | text \| null | `"pending"` \| `"done"` \| `"failed"` |
 
-Deliverables: migration file, Kysely DB types updated.
+New **`outbox`** table (shared by all event types):
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | PK |
+| `event_type` | text | e.g. `"session.finalized"`, `"report.requested"` |
+| `payload` | text | JSON payload |
+| `processed_at` | text \| null | null = unprocessed, set by worker on completion |
+| `created_at` | text | |
+
+Deliverables: two migration files, Kysely DB types updated.
 
 ---
 
@@ -38,106 +54,71 @@ Deliverables: migration file, Kysely DB types updated.
 
 Runs entirely within the local cluster. Real patient data never leaves the system.
 
-### Timing — async on session finalization
+### Timing — event-based, processed by separate worker
 
 ```
-Therapist clicks "Finalize session"
+Therapist clicks "Sitzung abschließen" (existing Server Action)
         ↓
-session.status → "final"             (immediate, synchronous)
-pseudonymization_status → "pending"  (immediate, synchronous)
+BEGIN TRANSACTION
+  session.status → "final"
+  INSERT outbox ({ type: "session.finalized", sessionId })
+COMMIT
+        ↓  [returns immediately to UI]
+
+Worker process polls outbox
         ↓
-jobQueue.enqueue({ type: "pseudonymize_session", sessionId })
-        ↓  [background, non-blocking]
-Ollama pseudonymizes clinicalNotes + nextSessionPlan
+Picks up "session.finalized" event
+        ↓
+Ollama/mistral pseudonymizes clinicalNotes + nextSessionPlan
         ↓
 pseudonymized_notes + pseudonymized_next_plan stored
 pseudonymization_status → "done"
+outbox row marked processed
 ```
 
 When the therapist later clicks "Generate Report", the pseudonymized text is already ready — only the Claude API call (~3–5s) remains.
 
-**Crash safety:** On server startup, re-enqueue all sessions with `pseudonymization_status: "pending"`:
+**Crash safety** is guaranteed by the outbox: the event is written in the same transaction as the session status update. If the worker crashes mid-job, it picks up the unprocessed outbox row on restart and retries. No manual re-enqueue logic needed.
+
+**Failed jobs:** if `pseudonymizeSession()` throws, the worker sets `pseudonymization_status: "failed"` on the session and leaves the outbox row unprocessed (`processed_at` remains null). On the next poll cycle the worker picks it up and retries automatically.
+
+### Worker Process (`src/worker.ts`)
+
+A separate Node.js process that runs alongside Next.js in Docker Compose. It polls the `outbox` table and processes events:
 
 ```typescript
-// server startup
-const pending = await db.selectFrom("sessions")
-  .where("pseudonymization_status", "=", "pending")
-  .selectAll().execute();
-pending.forEach(s =>
-  jobQueue.enqueue({ type: "pseudonymize_session", sessionId: s.id })
-);
-```
+async function processOutbox() {
+  while (true) {
+    const events = await db
+      .selectFrom("outbox")
+      .where("processed_at", "is", null)
+      .selectAll()
+      .execute();
 
-### Job Queue Abstraction (`src/server/queue/`)
-
-The queue is hidden behind an interface so the implementation can be swapped later (e.g. BullMQ, RabbitMQ) without changing any other code.
-
-Important: systems like RabbitMQ cannot transfer functions — only serializable JSON messages. The interface is therefore based on **job types**, not functions.
-
-```
-src/server/queue/
-  types.ts           ← job types and JobQueue interface
-  jobProcessor.ts    ← handles each job type
-  inProcess.ts       ← current implementation (in-process, no external service)
-  index.ts           ← exports the active queue instance
-```
-
-**`types.ts`:**
-```typescript
-export type Job =
-  | { type: "pseudonymize_session"; sessionId: number }
-  | { type: "generate_report"; reportId: number }  // Step 5
-
-export interface JobQueue {
-  enqueue(job: Job): void;
-}
-```
-
-**`jobProcessor.ts`:**
-```typescript
-export async function processJob(job: Job) {
-  switch (job.type) {
-    case "pseudonymize_session":
-      return pseudonymizeSession(job.sessionId);
-    case "generate_report":
-      return generateReport(job.reportId);
-  }
-}
-```
-
-**`inProcess.ts`** — runs in the same Node.js process, no external service needed:
-```typescript
-export class InProcessQueue implements JobQueue {
-  private queue: Job[] = [];
-  private running = false;
-
-  enqueue(job: Job) {
-    this.queue.push(job);
-    if (!this.running) this.drain();
-  }
-
-  private async drain() {
-    this.running = true;
-    while (this.queue.length > 0) {
-      const job = this.queue.shift()!;
-      await processJob(job).catch(console.error);
+    for (const event of events) {
+      await handleEvent(event);
+      await db.updateTable("outbox")
+        .set({ processed_at: new Date().toISOString() })
+        .where("id", "=", event.id)
+        .execute();
     }
-    this.running = false;
+
+    await sleep(2000);
+  }
+}
+
+async function handleEvent(event: OutboxEvent) {
+  const payload = JSON.parse(event.payload);
+  switch (event.event_type) {
+    case "session.finalized":
+      return pseudonymizeSession(payload.sessionId);
+    case "report.requested":
+      return generateReport(payload.reportId);
   }
 }
 ```
 
-**`index.ts`** — the only file that needs to change when swapping implementations:
-```typescript
-import { InProcessQueue } from "./inProcess";
-export const jobQueue: JobQueue = new InProcessQueue();
-```
-
-Usage everywhere in the codebase:
-```typescript
-import { jobQueue } from "@/server/queue";
-jobQueue.enqueue({ type: "pseudonymize_session", sessionId });
-```
+The worker and Next.js app share the same DB and `src/server/` code — no duplication needed. To swap to RabbitMQ or BullMQ later, only `src/worker.ts` needs to change.
 
 ### Two-Pass Approach
 
@@ -209,12 +190,18 @@ Antworte NUR mit dem bereinigten Text, keine Erklärungen, keine Kommentare.
 
 ## Step 3 — Verification Modal (UI)
 
-Before any data is sent to Claude, the therapist reviews the pseudonymized text in a modal.
+New UX flow — the "Berichte" tab on the patient detail page drives the full workflow:
 
 ```
-Therapist clicks "Generate Report"
+Therapist selects sessions + report type, clicks "Bericht generieren"
         ↓
-Modal opens:
+New Server Action: getPseudonymizedTextForSessions(sessionIds)
+  → fetches pseudonymized_notes + pseudonymized_next_plan for each session
+  → if any session has pseudonymization_status "pending" → return { status: "pending" }
+  → if any session has pseudonymization_status "failed"  → return { status: "failed" }
+  → otherwise → return { status: "ready", text: combinedText }
+        ↓
+Modal opens (Datenschutz-Prüfung):
   ┌─────────────────────────────────────────────────┐
   │ Datenschutz-Prüfung                             │
   │                                                 │
@@ -228,9 +215,10 @@ Modal opens:
   └─────────────────────────────────────────────────┘
 ```
 
-- Text is editable — therapist can manually correct any missed identifiers
-- Edited text is used for the Claude call but **not** written back to the DB
-- Button shows status indicator if pseudonymization is still running (`⏳`) or failed (`⚠️`)
+- If status is `"pending"`: button disabled, shows `⏳ Pseudonymisierung läuft...`
+- If status is `"failed"`: shows `⚠️ Pseudonymisierung fehlgeschlagen` — worker will retry automatically
+- Text is editable — therapist can manually fix any missed identifiers
+- Edited text is passed to `generateReport()` but **not** written back to the DB
 
 ---
 
@@ -383,31 +371,30 @@ The worker picks up the job, calls Claude, and updates `draftContent` + `status:
 
 ## Step 6 — Report UI
 
-New "Berichte" tab on the patient detail page:
+New "Berichte" tab on the patient detail page.
 
-1. **"Bericht generieren"** button → opens verification modal (Step 3)
-2. After confirmation: loading indicator *"Befund wird erstellt..."*
-3. Draft rendered with prominent banner:
+### Generating a report
+
+1. Therapist selects sessions + report type, clicks **"Bericht generieren"**
+2. `getPseudonymizedTextForSessions()` is called → verification modal opens (Step 3)
+3. After confirmation, `generateReport()` Server Action is called → returns `reportId` immediately
+4. UI switches to the report detail view and polls `getReportStatus(reportId)` via TanStack Query at 1s interval
+5. While `status: "pending"`: show *"Befund wird erstellt..."* spinner
+6. When `status: "draft"`: render `draftContent` with banner:
    > KI-Entwurf — Prüfung und Freigabe durch Therapeut:in erforderlich
-4. Draft is editable (rich text editor)
-5. **"Freigeben"** → saves `approvedContent`, status → `approved`
-6. **"Verwerfen"** → deletes draft
+7. Draft is displayed as formatted text (no rich text editor for now)
+8. **"Freigeben"** → sets `approvedContent = draftContent`, status → `"approved"`
+9. **"Verwerfen"** → deletes the report row
 
-Approved reports listed in the tab with date, type, status chip, and download button.
+### Report list
+
+Approved and draft reports listed in the tab with date, type, and status chip.
 
 ---
 
-## Step 7 — Export (Placeholder Substitution)
+## Step 7 — Export (Out of Scope for Phase 2)
 
-Export only — no LLM involved.
-
-`src/server/reportExporter.ts`:
-1. Takes `approvedContent` (still contains placeholders)
-2. Fetches real patient and therapist data from DB
-3. Substitutes all placeholders with real values
-4. Exports as DOCX or PDF
-
-The final exported document is the **only artifact that ever contains real names**. Nothing with real names is stored in the DB from the LLM pipeline.
+Export (placeholder substitution → DOCX/PDF) is deferred to Phase 3. For now, approved reports are read directly in the UI. Real names are never stored in the DB.
 
 ---
 
@@ -415,7 +402,7 @@ The final exported document is the **only artifact that ever contains real names
 
 ### Docker Compose
 
-Ollama is already integrated in `docker-compose.yml`:
+Ollama and the worker process are both defined in `docker-compose.yml`:
 
 ```yaml
 ollama:
@@ -430,7 +417,22 @@ ollama:
     timeout: 5s
     retries: 10
     start_period: 30s
+
+worker:
+  build: .
+  command: npx tsx src/worker.ts
+  depends_on:
+    db:
+      condition: service_healthy
+    ollama:
+      condition: service_healthy
+  environment:
+    - DATABASE_URL=${DATABASE_URL}
+    - OLLAMA_URL=http://ollama:11434
+    - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
 ```
+
+`src/worker.ts` polls the outbox table in a loop and calls `processJob()` for each unprocessed event. The Next.js app and worker share the same DB and codebase — no extra dependencies needed.
 
 ### First-time model pull
 
@@ -460,9 +462,9 @@ docker compose exec ollama ollama pull tinyllama
 
 ## Open Questions
 
-1. **Streaming vs. polling** — Claude API call (~3–5s) during report generation: simple polling or streaming directly in the UI?
-2. **Token limit strategy** — patients with 40+ sessions may exceed Claude's context window. Options: summarize older sessions, truncate, or warn therapist to narrow the date range.
-3. **Ollama unavailable fallback** — block report generation or fall back to rule-based pass only?
+1. **Token limit strategy** — patients with 40+ sessions may exceed Claude's context window. Options: summarize older sessions, truncate, or warn therapist to narrow the date range.
+2. **Ollama unavailable fallback** — block report generation or fall back to rule-based pass only?
+3. **Retry limit** — the worker retries failed jobs indefinitely. Should there be a max retry count before marking a job permanently failed?
 
 ---
 
