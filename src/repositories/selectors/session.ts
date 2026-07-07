@@ -23,6 +23,9 @@ export function sessionSelector(database: Database) {
       "sessions.status",
       "sessions.deletedAt",
       "sessions.createdAt",
+      "sessions.pseudonymizedNotes",
+      "sessions.pseudonymizedNextPlan",
+      "sessions.pseudonymizationStatus",
     ])
     .select(({ ref }) => [
       jsonObjectFrom(

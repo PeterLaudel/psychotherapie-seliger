@@ -12,6 +12,7 @@ export interface Database {
   treatment_plans: TreatmentPlansTable;
   treatment_goals: TreatmentGoalsTable;
   homework: HomeworkTable;
+  outbox: OutboxTable;
 }
 
 interface PatientTable {
@@ -143,5 +144,13 @@ export interface HomeworkTable {
   type: "given" | "review";
   description: string;
   status: string | null; // null for given items, HomeworkStatus for review items
+  createdAt: Generated<string>;
+}
+
+export interface OutboxTable {
+  id: Generated<number>;
+  eventType: string;
+  payload: string;
+  processedAt: string | null;
   createdAt: Generated<string>;
 }

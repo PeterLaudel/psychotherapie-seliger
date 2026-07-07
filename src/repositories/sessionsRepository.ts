@@ -3,6 +3,7 @@ import { Session } from "@/models/session";
 import { GivenHomework, ReviewHomework } from "@/models/homework";
 import { sessionSelector } from "./selectors/session";
 import { Patient } from "@/models/patient";
+import { OutboxRepository } from "./outboxRepository";
 
 export type SessionSave = Omit<Session, "id" | "createdAt" | "interventions"> & {
   id?: number;
@@ -91,10 +92,21 @@ export class SessionsRepository {
     const data = { ...rest, interventions: JSON.stringify(interventions), patientId: patient.id };
 
     const id = await this.database.transaction().execute(async (trx) => {
+      const previousStatus = originId
+        ? (
+            await trx
+              .selectFrom("sessions")
+              .select("status")
+              .where("sessions.id", "=", originId)
+              .executeTakeFirst()
+          )?.status
+        : null;
+      const isFinalizing = data.status === "final" && previousStatus !== "final";
+
       const { id: savedId } = originId
         ? await trx
             .updateTable("sessions")
-            .set(data)
+            .set(isFinalizing ? { ...data, pseudonymizationStatus: "pending" } : data)
             .returning(["id"])
             .where("sessions.id", "=", originId)
             .executeTakeFirstOrThrow()
@@ -105,6 +117,14 @@ export class SessionsRepository {
             .executeTakeFirstOrThrow();
 
       await this.upsertHomework(savedId, givenHomework, reviewHomework, trx);
+
+      if (isFinalizing) {
+        await new OutboxRepository(trx).enqueue({
+          eventType: "session.finalized",
+          payload: { sessionId: savedId },
+        });
+      }
+
       return savedId;
     });
 

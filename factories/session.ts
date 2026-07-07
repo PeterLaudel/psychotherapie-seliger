@@ -26,6 +26,9 @@ export const sessionFactory = Factory.define<SessionBuild, unknown, SessionCreat
     nextSessionPlan: null,
     status: "draft",
     deletedAt: null,
+    pseudonymizedNotes: null,
+    pseudonymizedNextPlan: null,
+    pseudonymizationStatus: null,
   })
 ).onCreate(async (attrs) => {
   const patientId = attrs.patientId ?? (await patientFactory.create()).id;

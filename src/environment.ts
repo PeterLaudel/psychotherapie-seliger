@@ -30,3 +30,11 @@ export function databaseDialect(): string {
 export function postgresUrl(): string {
   return process.env.POSTGRES_URL || ''
 }
+
+export function ollamaUrl(): string {
+  return process.env.OLLAMA_URL || "http://localhost:11434";
+}
+
+export function ollamaModel(): string {
+  return process.env.OLLAMA_MODEL || "mistral";
+}

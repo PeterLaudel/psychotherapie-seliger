@@ -144,6 +144,9 @@ describe("SessionsRepository", () => {
         nextSessionPlan: null,
         status: "draft",
         deletedAt: null,
+        pseudonymizedNotes: null,
+        pseudonymizedNextPlan: null,
+        pseudonymizationStatus: null,
         givenHomework: [],
         reviewHomework: [],
       });
@@ -178,6 +181,9 @@ describe("SessionsRepository", () => {
         nextSessionPlan: null,
         status: "draft",
         deletedAt: null,
+        pseudonymizedNotes: null,
+        pseudonymizedNextPlan: null,
+        pseudonymizationStatus: null,
         givenHomework: [],
         reviewHomework: [],
       });
@@ -208,6 +214,61 @@ describe("SessionsRepository", () => {
         riskLevel: "high",
         status: "final",
       });
+    });
+
+    it("enqueues a session.finalized outbox event and marks pseudonymization pending when transitioning to final", async () => {
+      const patient = await patientFactory.create();
+      const session = await sessionFactory.create({ patientId: patient.id, status: "draft" });
+
+      await sessionsRepository.save({
+        ...session,
+        patient,
+        sessionType: session.sessionType as Session["sessionType"],
+        phase: session.phase as Session["phase"],
+        riskLevel: session.riskLevel as Session["riskLevel"],
+        interventions: session.interventions as unknown as string[],
+        status: "final",
+        givenHomework: [],
+        reviewHomework: [],
+      });
+
+      const outboxRows = await getDb()
+        .selectFrom("outbox")
+        .selectAll()
+        .where("processedAt", "is", null)
+        .execute();
+      expect(outboxRows).toHaveLength(1);
+      expect(outboxRows[0]).toMatchObject({
+        eventType: "session.finalized",
+        payload: { sessionId: session.id },
+      });
+
+      const row = await getDb()
+        .selectFrom("sessions")
+        .select("pseudonymizationStatus")
+        .where("id", "=", session.id)
+        .executeTakeFirstOrThrow();
+      expect(row.pseudonymizationStatus).toBe("pending");
+    });
+
+    it("does not enqueue a second outbox event when saving an already-final session again", async () => {
+      const patient = await patientFactory.create();
+      const session = await sessionFactory.create({ patientId: patient.id, status: "final" });
+
+      await sessionsRepository.save({
+        ...session,
+        patient,
+        sessionType: session.sessionType as Session["sessionType"],
+        phase: session.phase as Session["phase"],
+        interventions: session.interventions as unknown as string[],
+        riskLevel: "high",
+        status: "final",
+        givenHomework: [],
+        reviewHomework: [],
+      });
+
+      const outboxRows = await getDb().selectFrom("outbox").selectAll().execute();
+      expect(outboxRows).toHaveLength(0);
     });
   });
 
