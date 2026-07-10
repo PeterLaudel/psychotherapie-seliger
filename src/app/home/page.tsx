@@ -28,7 +28,7 @@ export default function Home() {
           {/* Light scrim for text contrast on the bright photo */}
           <div className="absolute inset-0 bg-linear-to-t from-black/35 via-black/10 to-transparent" />
           <div className="relative flex flex-col items-center justify-center h-full text-white text-center px-4">
-            <h1 className="text-4xl md:text-7xl [text-shadow:0_2px_12px_rgb(0_0_0/55%)] shrink-on-scroll">
+            <h1 className="text-4xl md:text-7xl [text-shadow:0_2px_12px_rgb(0_0_0/55%)]">
               Privatpraxis für Psychotherapie in Leipzig
             </h1>
             <p className="text-lg md:text-3xl pt-4 [text-shadow:0_1px_8px_rgb(0_0_0/55%)]">
