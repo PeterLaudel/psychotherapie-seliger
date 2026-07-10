@@ -14,9 +14,7 @@ export default function AboutMe() {
         />
       </div>
       <div className="text">
-        <div className="pb-4">
-          <h2 className="text-4xl">Ute Seliger</h2>
-        </div>
+        <h2 className="pb-4 text-4xl">Ute Seliger</h2>
         <div>
           <p className="pb-4">
             Ich bin Psychologische Psychotherapeutin mit dem Schwerpunkt

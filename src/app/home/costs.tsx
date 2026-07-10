@@ -2,7 +2,7 @@ export default function Costs() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="pb-2">Kosten der Therapie</h2>
+        <h2 className="pb-4">Kosten der Therapie</h2>
         <p className="text-lg leading-relaxed">
           Die Abrechnung in meiner Praxis erfolgt gemäß den aktuellen{" "}
           <a
