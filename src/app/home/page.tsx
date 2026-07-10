@@ -1,4 +1,3 @@
-import Script from "next/script";
 import AboutMe from "./aboutMe";
 import Contact from "./_components/contact";
 import Costs from "./costs";
@@ -10,24 +9,25 @@ import { graph } from "./structuredData";
 export default function Home() {
   return (
     <main>
-      <Script
-        id="jsonld-organization"
+      <script
         type="application/ld+json"
-        strategy="afterInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
       />
       <div className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden">
         <Image
           src="/raum.jpeg"
-          alt="Praxisraum"
+          alt="Praxisraum der Privatpraxis für Psychotherapie Seliger in Leipzig"
           fill
           priority
           className="object-cover object-center"
         />
         <div className="relative flex flex-col items-center justify-center h-full text-white text-center px-4">
           <h1 className="text-2xl md:text-7xl [text-shadow:1px_1px_1px_rgb(0_0_0/20%)] shrink-on-scroll">
-            Privatpraxis für Psychotherapie
+            Privatpraxis für Psychotherapie in Leipzig
           </h1>
+          <p className="text-lg md:text-3xl pt-4 [text-shadow:1px_1px_1px_rgb(0_0_0/20%)]">
+            Verhaltenstherapie für Erwachsene – Ute Seliger
+          </p>
         </div>
       </div>
 

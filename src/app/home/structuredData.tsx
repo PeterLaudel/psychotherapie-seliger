@@ -4,12 +4,15 @@ export const graph: Graph = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Organization",
+      "@type": "MedicalClinic",
       "@id": "https://www.psychotherapie-seliger.de/home",
-      name: "Psychotherapie Seliger",
+      name: "Psychotherapie Seliger – Privatpraxis für Psychotherapie",
       url: "https://www.psychotherapie-seliger.de/home",
       logo: "https://www.psychotherapie-seliger.de/logo.svg",
-      image: "https://www.psychotherapie-seliger.de/person.jpg",
+      image: "https://www.psychotherapie-seliger.de/raum.jpeg",
+      telephone: "+4915252735959",
+      email: "psychotherapie@praxis-seliger.com",
+      medicalSpecialty: "https://schema.org/Psychiatric",
       contactPoint: {
         "@type": "ContactPoint",
         telephone: "+4915252735959",
@@ -25,6 +28,25 @@ export const graph: Graph = {
         postalCode: "04105",
         addressCountry: "DE",
       },
+      founder: {
+        "@id": "https://www.psychotherapie-seliger.de/home#ute-seliger",
+      },
+      sameAs: ["https://www.therapie.de/profil/seliger/"],
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.psychotherapie-seliger.de/home#ute-seliger",
+      name: "Ute Seliger",
+      jobTitle: "Psychologische Psychotherapeutin",
+      image: "https://www.psychotherapie-seliger.de/person.jpg",
+      worksFor: {
+        "@id": "https://www.psychotherapie-seliger.de/home",
+      },
+      knowsAbout: [
+        "Verhaltenstherapie",
+        "Schematherapie",
+        "Akzeptanz- und Commitment-Therapie",
+      ],
       sameAs: ["https://www.therapie.de/profil/seliger/"],
     },
     {
@@ -36,7 +58,7 @@ export const graph: Graph = {
       description:
         "Informationen über die Psychotherapeutin, ihre Qualifikationen und Erfahrungen.",
       mainEntity: {
-        "@id": "https://www.psychotherapie-seliger.de/home",
+        "@id": "https://www.psychotherapie-seliger.de/home#ute-seliger",
       },
     },
     {

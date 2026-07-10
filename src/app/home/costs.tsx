@@ -20,7 +20,7 @@ export default function Costs() {
         </p>
       </div>
       <div>
-        <h4 className="font-bold mb-4">Therapie möglich für:</h4>
+        <h3 className="text-xl font-bold mb-4">Therapie möglich für:</h3>
         <ul className="list-disc pl-5 space-y-2">
           <li>Privatversicherte</li>
           <li>Beihilfefähige</li>

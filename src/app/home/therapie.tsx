@@ -6,7 +6,7 @@ export default function Therapie() {
       <div className="image w-full h-auto md:h-full md:w-[30vw]">
         <Image
           src="/filler.jpeg"
-          alt="Füllbild was den Verlauf der Therapie darstellt"
+          alt="Symbolbild für den Verlauf einer Verhaltenstherapie"
           width={0}
           height={0}
           sizes="100%"
