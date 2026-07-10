@@ -67,7 +67,7 @@ export default function Form() {
   return (
     <div className="flex flex-col items-center justify-center">
       <form onSubmit={handleSubmit} className="w-full max-w-md grid gap-4">
-        <h1 className="text-2xl font-bold">Termin anfragen</h1>
+        <h2 className="text-2xl font-bold">Termin anfragen</h2>
         <div className="my-1">
           Bitte beschreiben Sie kurz Ihr Anliegen. Geben Sie uns bitte außerdem
           an, in welchen Zeiträumen Therapiesitzungen stattfinden könnten.

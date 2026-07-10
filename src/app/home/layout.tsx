@@ -10,10 +10,11 @@ export const dynamic = "force-static";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.psychotherapie-seliger.de"),
   title:
-    "Psychotherapie Seliger | Psychotherapie in Leipzig | Verhaltenstherapie",
+    "Psychotherapie in Leipzig | Privatpraxis Ute Seliger – Verhaltenstherapie",
   description:
-    "Psychotherapie in Leipzig: Vereinbaren Sie jetzt einen Termin für Ihre individuelle Therapieanfrage. Kontaktieren Sie uns für professionelle psychotherapeutische Unterstützung.",
+    "Privatpraxis für Psychotherapie im Waldstraßenviertel in Leipzig: Verhaltenstherapie für Erwachsene. Termine für Privatversicherte, Beihilfeberechtigte und Selbstzahler.",
   keywords: [
     "Psychotherapie Leipzig",
     "Psychologe Leipzig",
@@ -30,6 +31,21 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: "https://www.psychotherapie-seliger.de/home",
+  },
+  openGraph: {
+    title: "Psychotherapie in Leipzig | Privatpraxis Ute Seliger",
+    description:
+      "Privatpraxis für Psychotherapie im Waldstraßenviertel in Leipzig: Verhaltenstherapie für Erwachsene – für Privatversicherte, Beihilfeberechtigte und Selbstzahler.",
+    url: "https://www.psychotherapie-seliger.de/home",
+    siteName: "Psychotherapie Seliger",
+    locale: "de_DE",
+    type: "website",
+    images: [
+      {
+        url: "/raum.jpeg",
+        alt: "Praxisraum der Privatpraxis für Psychotherapie Seliger in Leipzig",
+      },
+    ],
   },
 };
 
