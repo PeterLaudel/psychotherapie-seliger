@@ -7,7 +7,9 @@ import Navbar from "./navbar";
 
 export const dynamic = "force-static";
 
-const inter = Inter({ subsets: ["latin"] });
+// display "optional": paint with the size-adjusted fallback if Inter isn't
+// ready within the block period — never swap mid-view (no text flicker)
+const inter = Inter({ subsets: ["latin"], display: "optional" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.psychotherapie-seliger.de"),

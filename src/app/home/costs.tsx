@@ -2,14 +2,14 @@ export default function Costs() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="pb-2">Kosten der Therapie</h2>
+        <h2 className="pb-4">Kosten der Therapie</h2>
         <p className="text-lg leading-relaxed">
           Die Abrechnung in meiner Praxis erfolgt gemäß den aktuellen{" "}
           <a
             href="https://api.bptk.de/uploads/Uebersicht_Analogleistungen_gemaess_Abrechnungsempfehlungen_B_Pt_K_B_Ae_K_PKV_Beihilfe_2024_07_01_5d59d963de.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 underline"
+            className="text-blue-200 hover:text-blue-100 underline"
           >
             Abrechnungsempfehlungen der Bundespsychotherapeutenkammer für
             Privatversicherte und Beihilfeberechtigte (Stand: 01.07.2024)

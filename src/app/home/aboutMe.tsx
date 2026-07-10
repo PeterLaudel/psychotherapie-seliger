@@ -3,20 +3,18 @@ import Image from "next/image";
 export default function AboutMe() {
   return (
     <div className="image-text">
-      <div className="image w-full h-auto md:h-full md:w-auto">
+      <div className="image w-full max-w-xs md:max-w-none h-auto md:h-full md:w-auto">
         <Image
           src="/person.jpg"
           alt="Foto von Ute Seliger"
           width={0}
           height={0}
-          sizes="100%"
+          sizes="(min-width: 768px) 40vw, 320px"
           className="w-full h-auto aspect-[3/4] rounded-[50%]"
         />
       </div>
       <div className="text">
-        <div className="pb-4">
-          <h2 className="text-4xl">Ute Seliger</h2>
-        </div>
+        <h2 className="pb-4 text-4xl">Ute Seliger</h2>
         <div>
           <p className="pb-4">
             Ich bin Psychologische Psychotherapeutin mit dem Schwerpunkt

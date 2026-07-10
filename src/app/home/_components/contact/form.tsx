@@ -77,6 +77,7 @@ export default function Form() {
           <div className="font-bold text-lg">Vorname</div>
           <input
             name="name"
+            autoComplete="given-name"
             className="border-2 border-gray-300 p-2 rounded-md"
           />
           {validationErrors?.name && <Error>{validationErrors.name}</Error>}
@@ -86,6 +87,7 @@ export default function Form() {
           <div className="font-bold text-lg">Nachname</div>
           <input
             name="surname"
+            autoComplete="family-name"
             className="border-2 border-gray-300 p-2 rounded-md"
           />
           {validationErrors?.surname && (
@@ -95,7 +97,12 @@ export default function Form() {
 
         <label className="grid">
           <div className="font-bold text-lg">Email</div>
-          <input name="email" className="border-2 p-2 rounded-md" />
+          <input
+            name="email"
+            type="email"
+            autoComplete="email"
+            className="border-2 p-2 rounded-md"
+          />
           {validationErrors?.email && <Error>{validationErrors.email}</Error>}
         </label>
 

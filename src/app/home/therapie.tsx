@@ -3,25 +3,25 @@ import Image from "next/image";
 export default function Therapie() {
   return (
     <div className="text-image">
-      <div className="image w-full h-auto md:h-full md:w-[30vw]">
+      <div className="image w-full max-w-[280px] h-auto md:h-full md:w-[30vw] md:max-w-none">
         <Image
           src="/filler.jpeg"
           alt="Symbolbild für den Verlauf einer Verhaltenstherapie"
           width={0}
           height={0}
-          sizes="100%"
+          sizes="(min-width: 768px) 30vw, 280px"
           className="w-full h-auto aspect-[6/9] rounded-[40%]"
         />
       </div>
       <div className="text">
-        <h2>Mein Angebot</h2>
+        <h2 className="pb-4">Mein Angebot</h2>
         <div className="pb-4">
           Ich biete Verhaltenstherapie für Erwachsene im Einzelgespräch an.
         </div>
         <div className="pb-4">
           Die typische Sitzungsfrequenz liegt bei einmal pro Woche à 50 Minuten.
         </div>
-        <h3 className="pb-2">Ablauf der Therapie</h3>
+        <h3 className="pt-2 pb-2">Ablauf der Therapie</h3>
         <div>
           <ul className="space-y-4">
             <li className="space-y-2">

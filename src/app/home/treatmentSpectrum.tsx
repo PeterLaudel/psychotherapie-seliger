@@ -3,18 +3,18 @@ import Image from "next/image";
 export default function TreatmentSpectrum() {
   return (
     <div className="image-text">
-      <div className="image w-full h-auto md:h-full md:w-[30vw] justify-self-center">
+      <div className="image w-full max-w-[280px] h-auto md:h-full md:w-[30vw] md:max-w-none justify-self-center">
         <Image
           src="/brain.jpeg"
           alt="Illustration eines Gehirns – Behandlungsspektrum der Psychotherapie-Praxis"
           width={0}
           height={0}
-          sizes="100%"
-          className="w-full h-auto aspect-[3/4] md:min-h-[70vh] rounded-[40%] align-center"
+          sizes="(min-width: 768px) 30vw, 280px"
+          className="w-full h-auto aspect-[3/4] rounded-[40%] align-center"
         />
       </div>
       <div className="text">
-        <h2 className="pb-2 text-2xl underline">Behandlungsspektrum</h2>
+        <h2 className="pb-4">Behandlungsspektrum</h2>
         <ul className="list-disc space-y-2 pl-5">
           <li>ADHS/ADS im Erwachsenenalter</li>
           <li>Beziehungs- und Interaktionsstörungen</li>
