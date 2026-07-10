@@ -3,13 +3,13 @@ import Image from "next/image";
 export default function Therapie() {
   return (
     <div className="text-image">
-      <div className="image w-full h-auto md:h-full md:w-[30vw]">
+      <div className="image w-full max-w-[280px] max-lg:order-last h-auto md:h-full md:w-[30vw] md:max-w-none">
         <Image
           src="/filler.jpeg"
           alt="Symbolbild für den Verlauf einer Verhaltenstherapie"
           width={0}
           height={0}
-          sizes="100%"
+          sizes="(min-width: 768px) 30vw, 280px"
           className="w-full h-auto aspect-[6/9] rounded-[40%]"
         />
       </div>
