@@ -31,7 +31,11 @@ export const graph: Graph = {
       founder: {
         "@id": "https://www.psychotherapie-seliger.de/home#ute-seliger",
       },
-      sameAs: ["https://www.therapie.de/profil/seliger/"],
+      hasMap: "https://maps.google.com/?cid=14392311910153151505",
+      sameAs: [
+        "https://www.therapie.de/profil/seliger/",
+        "https://maps.google.com/?cid=14392311910153151505",
+      ],
     },
     {
       "@type": "Person",
