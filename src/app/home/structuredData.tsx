@@ -23,7 +23,7 @@ export const graph: Graph = {
       },
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Friedrich-Ebert-Straße 19",
+        streetAddress: "Friedrich-Ebert-Straße 98",
         addressLocality: "Leipzig",
         postalCode: "04105",
         addressCountry: "DE",
