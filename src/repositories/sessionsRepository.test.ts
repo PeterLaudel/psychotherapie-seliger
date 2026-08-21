@@ -64,6 +64,16 @@ describe("SessionsRepository", () => {
       expect(rows[0].id).toBe(target.id);
     });
 
+    it("filters by status", async () => {
+      const final = await sessionFactory.create({ status: "final" });
+      await sessionFactory.create({ status: "draft" });
+
+      const { rows, total } = await sessionsRepository.filter({ status: "final" });
+
+      expect(total).toBe(1);
+      expect(rows[0].id).toBe(final.id);
+    });
+
     it("excludes soft-deleted sessions", async () => {
       const kept = await sessionFactory.create();
       const deleted = await sessionFactory.create();
@@ -144,6 +154,9 @@ describe("SessionsRepository", () => {
         nextSessionPlan: null,
         status: "draft",
         deletedAt: null,
+        pseudonymizedNotes: null,
+        pseudonymizedNextPlan: null,
+        pseudonymizationStatus: null,
         givenHomework: [],
         reviewHomework: [],
       });
@@ -178,6 +191,9 @@ describe("SessionsRepository", () => {
         nextSessionPlan: null,
         status: "draft",
         deletedAt: null,
+        pseudonymizedNotes: null,
+        pseudonymizedNextPlan: null,
+        pseudonymizationStatus: null,
         givenHomework: [],
         reviewHomework: [],
       });
@@ -208,6 +224,102 @@ describe("SessionsRepository", () => {
         riskLevel: "high",
         status: "final",
       });
+    });
+
+    it("enqueues a session.finalized outbox event and marks pseudonymization pending when transitioning to final", async () => {
+      const patient = await patientFactory.create();
+      const session = await sessionFactory.create({ patientId: patient.id, status: "draft" });
+
+      await sessionsRepository.save({
+        ...session,
+        patient,
+        sessionType: session.sessionType as Session["sessionType"],
+        phase: session.phase as Session["phase"],
+        riskLevel: session.riskLevel as Session["riskLevel"],
+        interventions: session.interventions as unknown as string[],
+        status: "final",
+        givenHomework: [],
+        reviewHomework: [],
+      });
+
+      const outboxRows = await getDb()
+        .selectFrom("outbox")
+        .selectAll()
+        .where("processedAt", "is", null)
+        .execute();
+      expect(outboxRows).toHaveLength(1);
+      expect(outboxRows[0]).toMatchObject({
+        eventType: "session.finalized",
+        payload: { sessionId: session.id },
+      });
+
+      const row = await getDb()
+        .selectFrom("sessions")
+        .select("pseudonymizationStatus")
+        .where("id", "=", session.id)
+        .executeTakeFirstOrThrow();
+      expect(row.pseudonymizationStatus).toBe("pending");
+    });
+
+    it("does not enqueue a second outbox event when saving an already-final session again", async () => {
+      const patient = await patientFactory.create();
+      const session = await sessionFactory.create({ patientId: patient.id, status: "final" });
+
+      await sessionsRepository.save({
+        ...session,
+        patient,
+        sessionType: session.sessionType as Session["sessionType"],
+        phase: session.phase as Session["phase"],
+        interventions: session.interventions as unknown as string[],
+        riskLevel: "high",
+        status: "final",
+        givenHomework: [],
+        reviewHomework: [],
+      });
+
+      const outboxRows = await getDb().selectFrom("outbox").selectAll().execute();
+      expect(outboxRows).toHaveLength(0);
+    });
+  });
+
+  describe("#enqueuePseudonymizationIfMissing", () => {
+    it("enqueues an outbox event and sets status pending for a session with no pseudonymization queued", async () => {
+      const session = await sessionFactory.create({
+        status: "final",
+        pseudonymizationStatus: null,
+      });
+
+      await sessionsRepository.enqueuePseudonymizationIfMissing(session);
+
+      const row = await getDb()
+        .selectFrom("sessions")
+        .select("pseudonymizationStatus")
+        .where("id", "=", session.id)
+        .executeTakeFirstOrThrow();
+      expect(row.pseudonymizationStatus).toBe("pending");
+
+      const outboxRows = await getDb()
+        .selectFrom("outbox")
+        .selectAll()
+        .where("processedAt", "is", null)
+        .execute();
+      expect(outboxRows).toHaveLength(1);
+      expect(outboxRows[0]).toMatchObject({
+        eventType: "session.finalized",
+        payload: { sessionId: session.id },
+      });
+    });
+
+    it("does nothing when pseudonymization is already pending, done, or failed", async () => {
+      const session = await sessionFactory.create({
+        status: "final",
+        pseudonymizationStatus: "done",
+      });
+
+      await sessionsRepository.enqueuePseudonymizationIfMissing(session);
+
+      const outboxRows = await getDb().selectFrom("outbox").selectAll().execute();
+      expect(outboxRows).toHaveLength(0);
     });
   });
 

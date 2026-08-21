@@ -11,6 +11,8 @@ export type RiskLevel = "none" | "low" | "moderate" | "high";
 
 export type SessionStatus = "draft" | "final";
 
+export type PseudonymizationStatus = "pending" | "done" | "failed";
+
 export const SESSION_TYPES: SessionType[] = [
   "Erstgespräch",
   "Probatorik",
@@ -69,4 +71,7 @@ export interface Session {
   patient: Patient;
   givenHomework: GivenHomework[];
   reviewHomework: ReviewHomework[];
+  pseudonymizedNotes: string | null;
+  pseudonymizedNextPlan: string | null;
+  pseudonymizationStatus: PseudonymizationStatus | null;
 }

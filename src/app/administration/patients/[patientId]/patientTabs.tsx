@@ -17,6 +17,8 @@ export default function PatientTabs({ patientId }: Props) {
     ? "sessions"
     : pathname.endsWith("/treatment-plan")
     ? "treatment-plan"
+    : pathname.endsWith("/reports")
+    ? "reports"
     : "stammdaten";
 
   return (
@@ -38,6 +40,12 @@ export default function PatientTabs({ patientId }: Props) {
         value="sessions"
         component={Link}
         href={`${base}/sessions`}
+      />
+      <Tab
+        label="Berichte"
+        value="reports"
+        component={Link}
+        href={`${base}/reports`}
       />
     </Tabs>
   );

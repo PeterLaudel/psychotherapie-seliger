@@ -64,6 +64,7 @@ type DatabaseRecord = Record<keyof Database, undefined>;
 
 export async function clearDatabase(db: Kysely<Database>) {
   const allRecords: DatabaseRecord = {
+    outbox: undefined,
     homework: undefined,          // FK → sessions, patients
     treatment_goals: undefined,  // FK → treatment_plans
     treatment_plans: undefined,  // FK → patients

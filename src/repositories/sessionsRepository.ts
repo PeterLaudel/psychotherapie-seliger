@@ -3,6 +3,7 @@ import { Session } from "@/models/session";
 import { GivenHomework, ReviewHomework } from "@/models/homework";
 import { sessionSelector } from "./selectors/session";
 import { Patient } from "@/models/patient";
+import { OutboxRepository } from "./outboxRepository";
 
 export type SessionSave = Omit<Session, "id" | "createdAt" | "interventions"> & {
   id?: number;
@@ -21,10 +22,12 @@ export class SessionsRepository {
 
   async filter({
     patientId,
+    status,
     page = 0,
     pageSize = 50,
   }: {
     patientId?: number;
+    status?: Session["status"];
     page?: number;
     pageSize?: number;
   }): Promise<{ rows: Session[]; total: number }> {
@@ -33,6 +36,9 @@ export class SessionsRepository {
 
     if (patientId !== undefined) {
       query = query.where("sessions.patientId", "=", patientId);
+    }
+    if (status !== undefined) {
+      query = query.where("sessions.status", "=", status);
     }
 
     const [rawRows, countResult] = await Promise.all([
@@ -48,6 +54,7 @@ export class SessionsRepository {
         .select(this.database.fn.countAll<number>().as("total"))
         .where("sessions.deletedAt", "is", null)
         .$if(patientId !== undefined, (qb) => qb.where("sessions.patientId", "=", patientId!))
+        .$if(status !== undefined, (qb) => qb.where("sessions.status", "=", status!))
         .executeTakeFirstOrThrow(),
     ]);
 
@@ -91,10 +98,21 @@ export class SessionsRepository {
     const data = { ...rest, interventions: JSON.stringify(interventions), patientId: patient.id };
 
     const id = await this.database.transaction().execute(async (trx) => {
+      const previousStatus = originId
+        ? (
+            await trx
+              .selectFrom("sessions")
+              .select("status")
+              .where("sessions.id", "=", originId)
+              .executeTakeFirst()
+          )?.status
+        : null;
+      const isFinalizing = data.status === "final" && previousStatus !== "final";
+
       const { id: savedId } = originId
         ? await trx
             .updateTable("sessions")
-            .set(data)
+            .set(isFinalizing ? { ...data, pseudonymizationStatus: "pending" } : data)
             .returning(["id"])
             .where("sessions.id", "=", originId)
             .executeTakeFirstOrThrow()
@@ -105,6 +123,14 @@ export class SessionsRepository {
             .executeTakeFirstOrThrow();
 
       await this.upsertHomework(savedId, givenHomework, reviewHomework, trx);
+
+      if (isFinalizing) {
+        await new OutboxRepository(trx).enqueue({
+          eventType: "session.finalized",
+          payload: { sessionId: savedId },
+        });
+      }
+
       return savedId;
     });
 
@@ -126,6 +152,28 @@ export class SessionsRepository {
 
     if (rows.length === 0) return;
     await trx.insertInto("homework").values(rows).execute();
+  }
+
+  // Safety net for sessions finalized before pseudonymization/outbox existed (or any other
+  // path that left status "final" without ever enqueueing a pseudonymize job). The WHERE
+  // clause makes this idempotent: only the first caller to see a null status wins the update
+  // and enqueues, so concurrent calls can't create duplicate outbox events for the same session.
+  async enqueuePseudonymizationIfMissing(session: Pick<Session, "id">): Promise<void> {
+    await this.database.transaction().execute(async (trx) => {
+      const result = await trx
+        .updateTable("sessions")
+        .set({ pseudonymizationStatus: "pending" })
+        .where("id", "=", session.id)
+        .where("pseudonymizationStatus", "is", null)
+        .executeTakeFirst();
+
+      if (Number(result.numUpdatedRows) > 0) {
+        await new OutboxRepository(trx).enqueue({
+          eventType: "session.finalized",
+          payload: { sessionId: session.id },
+        });
+      }
+    });
   }
 
   async softDelete(session: Pick<Session, "id">): Promise<void> {

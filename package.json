@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "worker": "tsx src/worker.ts",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint --ignore-pattern=.gitignore --max-warnings=0 .",

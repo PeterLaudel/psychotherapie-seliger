@@ -29,6 +29,9 @@ export async function createSession(patientId: number): Promise<Session> {
     nextSessionPlan: null,
     status: "draft",
     deletedAt: null,
+    pseudonymizedNotes: null,
+    pseudonymizedNextPlan: null,
+    pseudonymizationStatus: null,
     givenHomework: [],
     reviewHomework: previousSession?.givenHomework.map((h) => ({
       description: h.description,

@@ -283,3 +283,19 @@ async softDelete(id: number): Promise<void>
 ```
 
 Query methods that take filter parameters (e.g. `patientId` as a search criterion) are not entity references and may use scalar types.
+
+## New migration files must be registered in `migrationProvider.ts`
+
+Adding a file to `migrations/` is not enough on its own. `src/database/migrationProvider.ts` explicitly imports every migration into a `Record<string, Migration>` — this is what the app runtime, unit/integration tests, and e2e setup actually use via `Migrator`. The `kysely migrate:latest` CLI (`npm run db:migrate`) discovers files from the folder directly and will run a new migration fine, which can mask a missing registration until tests or a fresh e2e/CI database fail.
+
+When adding a migration, always update both files:
+
+```ts
+// src/database/migrationProvider.ts
+import * as m0018 from "../../migrations/0018_alter_sessions_add_pseudonymization";
+
+const migrations: Record<string, Migration> = {
+  // ...
+  "0018_alter_sessions_add_pseudonymization": m0018,
+};
+```
