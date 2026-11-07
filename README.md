@@ -1,49 +1,28 @@
-# Web page
+# Psychotherapie Seliger
 
-This is a website for a psychotherapy practice. Written in nextjs and deployed with vercel. The page can be accessed with www.psychotherapie-seliger.de. The repo contains a public area where the homepage is published. And it does have a private area for administration of patients and invoices.
+Public homepage of the psychotherapy practice of Ute Seliger in Leipzig, served at [www.psychotherapie-seliger.de](https://www.psychotherapie-seliger.de). Built with Next.js and Tailwind CSS.
 
-# Example
+The practice management app (patients, sessions, invoices) used to live here and moved to [Mosaik](https://github.com/PeterLaudel/mosaik).
 
+## Development
 
-https://github.com/user-attachments/assets/7ea487de-fc7b-4cc2-b294-5af0399acab6
-
-
-
-# Development
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
+```sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000); `/` redirects to `/home`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The contact form posts to the endpoint in `NEXT_PUBLIC_CONTACT_ENDPOINT`. The value is inlined at build time.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Checks
 
-## Learn More
+```sh
+npm run ci           # typecheck and lint
+npm run build
+CI=true npm run e2e  # Playwright against the production build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The shared [pipeline](https://github.com/PeterLaudel/actions) builds the Docker image, runs `docker compose run app test` and `app e2e`, pushes the image on `main`, and updates the image tag in the `psychotherapie-seliger-deploy` repository.

@@ -48,12 +48,5 @@ module.exports = defineConfig([
                 ],
             },
         },
-        {
-            files: ["**/tasks/**/*.{js,ts}", "src/database/**/*.{js,ts}"],
-            rules: {
-                "no-console": "off",
-                "@typescript-eslint/no-floating-promises": "off",
-            },
-        },
     ),
 ]);
